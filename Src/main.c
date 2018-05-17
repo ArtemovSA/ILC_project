@@ -847,7 +847,7 @@ void sampleTimerCall(void const * argument)
   /* USER CODE BEGIN sampleTimerCall */
   
   if (VCP_read(&usbData, 1) != 1)
-    continue;
+    VCP_write(&usbData, 1);
   
   /* USER CODE END sampleTimerCall */
 }

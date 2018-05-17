@@ -1,4 +1,4 @@
-"F:\JOB\Addmoney\INS\ILC_project\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_dma_ex.c"
+"F:\JOB\Addmoney\INS\ILC_project\Libs\V9203\V9203.c"
 -std=c99
 -ferror-limit=100
 -I
@@ -55,8 +55,6 @@ F:\JOB\Addmoney\INS\ILC_project\EWARM\..\Libs\Task transfer
 F:\JOB\Addmoney\INS\ILC_project\EWARM/../Middlewares/ST/STM32_USB_Device_Library/Core/Inc
 -I
 F:\JOB\Addmoney\INS\ILC_project\EWARM/../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc
--I
-F:\JOB\Addmoney\INS\ILC_project\EWARM\..\Libs\V9203
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -I
@@ -117,8 +115,6 @@ F:\JOB\Addmoney\INS\ILC_project\Libs\Task transfer
 F:\JOB\Addmoney\INS\ILC_project\Middlewares\ST\STM32_USB_Device_Library\Core\Inc
 -I
 F:\JOB\Addmoney\INS\ILC_project\Middlewares\ST\STM32_USB_Device_Library\Class\CDC\Inc
--I
-F:\JOB\Addmoney\INS\ILC_project\Libs\V9203
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -DUSE_HAL_DRIVER=1
