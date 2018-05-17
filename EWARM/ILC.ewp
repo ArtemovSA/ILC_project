@@ -345,6 +345,7 @@
           <state>$PROJ_DIR$\..\Libs\V9203</state>
           <state>$PROJ_DIR$\..\Libs\CRC16</state>
           <state>$PROJ_DIR$\..\Libs\CRC8</state>
+          <state>$PROJ_DIR$\..\Libs\PCA9555</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1205,6 +1206,15 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\Libs\MQTT\devMQTT.h</name>
+      </file>
+    </group>
+    <group>
+      <name>PCA9555</name>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\PCA9555\PCA9555.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\PCA9555\PCA9555.h</name>
       </file>
     </group>
     <group>

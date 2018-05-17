@@ -2,6 +2,10 @@
 #ifndef V9203_H
 #define V9203_H
 
+#define V9203_SPI_TIMEOUT       500
+
+//****************************************Registers*************************************************
+
 #define Work_normal  0x11
 //=============================================================
 //Analog control register
@@ -21,11 +25,11 @@
 #define   RegMTPARA3   0xC003
 
 #define   ZZCPSEL     0xEC15
-#define   ZZPA0          0xEC23
-#define   ZZPA1          0xEC24
-#define   ZZQA0         0xEC47
-#define   ZZQA1         0xEC48
-#define   ZZAPPA       0xEC05
+#define   ZZPA0       0xEC23
+#define   ZZPA1       0xEC24
+#define   ZZQA0       0xEC47
+#define   ZZQA1       0xEC48
+#define   ZZAPPA      0xEC05
 #define   ZZPCF0A     0XEC34
 
 

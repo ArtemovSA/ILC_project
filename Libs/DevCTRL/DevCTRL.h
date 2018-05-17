@@ -5,7 +5,9 @@
 
 //***********************************Device data****************************************************
 
+#define PCA9555_DEF_ADDR 0x20 //Address
 extern uint32_t DC_unicID[3]; //Unic ID
+
 
 //***********************************Default settings***********************************************
 
@@ -73,5 +75,13 @@ void DC_debug_ipAdrrOut(char *text, uint8_t* ip);
 HAL_StatusTypeDef DC_load_settings();
 //User function Get Current task ID 
 uint8_t DC_getCurrentTaskID();
+
+//**********************************Macros**********************************************************
+#define HI(x) (x & 0xFF00)>>8
+#define LO(x) (x & 0x00FF)
+#define ADD(x,y) (x)|(y<<8)
+#define max(a,b) ((a) > (b) ? (a) : (b))
+#define HIGH_LEVEL 1
+#define LOW_LEVEL  0
 
 #endif

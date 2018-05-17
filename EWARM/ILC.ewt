@@ -1371,6 +1371,15 @@
       </file>
     </group>
     <group>
+      <name>PCA9555</name>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\PCA9555\PCA9555.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\PCA9555\PCA9555.h</name>
+      </file>
+    </group>
+    <group>
       <name>Task transfer</name>
       <file>
         <name>$PROJ_DIR$\..\Libs\Task transfer\Task_transfer.c</name>

@@ -1,0 +1,10 @@
+
+#ifndef PCA9555_H
+#define PCA9555_H
+
+#define PCA9555_IO_INPUT      0
+#define PCA9555_IO_OUTPUT     2
+#define PCA9555_IO_INVERT     4
+#define PCA9555_IO_CONFIG     6
+
+#endif
