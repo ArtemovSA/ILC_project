@@ -7,6 +7,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "PCA9555.h"
+#include "EXP.h"
 
 //default variables
 const uint8_t DC_const_dev_ip_addr[] = DC_DEF_DEV_IP_ADDR;
@@ -46,12 +47,20 @@ void DC_init()
   PCA9555_init(&hi2c1);
   
   //Set pin mode
-  if (PCA9555_regSetValue(PCA9555_DEF_ADDR, PCA9555_REG_CONFIG, PCA9555_PIN_MODE_MASK) == HAL_OK)
-  {
-    DC_debugOut("# PCA9555 INIT OK\r\n");
+  if (PCA9555_regSetValue(PCA9555_DEF_ADDR, PCA9555_REG_CONFIG, PCA9555_PIN_MODE_DEF) == HAL_OK)
+  { 
+    //Set default out
+    if (PCA9555_regSetValue(PCA9555_DEF_ADDR, PCA9555_REG_OUTPUT, PCA9555_PIN_OUT_DEF) == HAL_OK)
+    {
+      DC_debugOut("# PCA9555 INIT OK\r\n");
+    }else{
+      DC_debugOut("# PCA9555 OUT ERROR\r\n"); 
+    }
   }else{
-    DC_debugOut("# PCA9555 INIT ERROR\r\n");
+    DC_debugOut("# PCA9555 MODE ERROR\r\n");
   }
+  
+  
   
     
 }
