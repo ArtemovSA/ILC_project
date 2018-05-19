@@ -2,10 +2,32 @@
 #define DEVCTRL_H
 
 #include "stm32f4xx_hal.h"
+#include "EXP.h"
 
 //***********************************Device data****************************************************
 
-#define PCA9555_DEF_ADDR 0x20 //Address
+//PCA9555
+#define PCA9555_DEF_ADDR           0x20    //Address
+
+//Init mode mask 1-input mode
+#define PCA9555_PIN_MODE_MASK      0b0000000000001111
+
+//PCA9555 PIN MAP
+#define PCA9555_PIN_DIN1           0       //
+#define PCA9555_PIN_DIN2           1       //
+#define PCA9555_PIN_DIN3           2       //
+#define PCA9555_PIN_DIN4           3       //
+
+#define PCA9555_PIN_CS1            8       //
+#define PCA9555_PIN_CS2            9       //
+#define PCA9555_PIN_CS3            10      //
+#define PCA9555_PIN_CS4            11      //
+
+#define PCA9555_PIN_K1             12      //
+#define PCA9555_PIN_K2             13      //
+#define PCA9555_PIN_K3             14      //
+#define PCA9555_PIN_K4             15      //
+
 extern uint32_t DC_unicID[3]; //Unic ID
 
 
@@ -75,13 +97,5 @@ void DC_debug_ipAdrrOut(char *text, uint8_t* ip);
 HAL_StatusTypeDef DC_load_settings();
 //User function Get Current task ID 
 uint8_t DC_getCurrentTaskID();
-
-//**********************************Macros**********************************************************
-#define HI(x) (x & 0xFF00)>>8
-#define LO(x) (x & 0x00FF)
-#define ADD(x,y) (x)|(y<<8)
-#define max(a,b) ((a) > (b) ? (a) : (b))
-#define HIGH_LEVEL 1
-#define LOW_LEVEL  0
 
 #endif

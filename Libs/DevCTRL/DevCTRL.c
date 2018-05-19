@@ -6,6 +6,7 @@
 #include "Memory.h"
 #include "FreeRTOS.h"
 #include "task.h"
+#include "PCA9555.h"
 
 //default variables
 const uint8_t DC_const_dev_ip_addr[] = DC_DEF_DEV_IP_ADDR;
@@ -16,6 +17,9 @@ const uint8_t DC_const_MQTT_ip_broc[] = DC_DEF_MQTT_BROC_IP;
 //Var
 DC_set_t DC_set; //Device settings
 uint32_t DC_unicID[3]; //Unic ID
+
+//Extern
+extern I2C_HandleTypeDef hi2c1;
 
 //Func
 HAL_StatusTypeDef DC_load_settings(); //Load settings
@@ -38,6 +42,18 @@ void DC_init()
     DC_debugOut("# Nand check ERROR\r\n");
   }
   
+  //PCA9555
+  PCA9555_init(&hi2c1);
+  
+  //Set pin mode
+  if (PCA9555_regSetValue(PCA9555_DEF_ADDR, PCA9555_REG_CONFIG, PCA9555_PIN_MODE_MASK) == HAL_OK)
+  {
+    DC_debugOut("# PCA9555 INIT OK\r\n");
+  }else{
+    DC_debugOut("# PCA9555 INIT ERROR\r\n");
+  }
+  
+    
 }
 //--------------------------------------------------------------------------------------------------
 //Out debug data

@@ -1,13 +1,6 @@
 
 #include "PCA9555.h"
 #include "DevCTRL.h"
-#include "stm32f4xx_hal.h"
-#include "stm32f4xx_hal_i2c.h"
-
-#define PCA9555_REG_INPUT      0
-#define PCA9555_REG_OUTPUT     2
-#define PCA9555_REG_INVERT     4
-#define PCA9555_REG_CONFIG     6
 
 I2C_HandleTypeDef *p_PCA9555_i2cH;
 

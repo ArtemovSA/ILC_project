@@ -77,7 +77,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>7.80.3.12143</state>
+          <state>7.80.4.12487</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -346,6 +346,7 @@
           <state>$PROJ_DIR$\..\Libs\CRC16</state>
           <state>$PROJ_DIR$\..\Libs\CRC8</state>
           <state>$PROJ_DIR$\..\Libs\PCA9555</state>
+          <state>$PROJ_DIR$\..\Libs\EXP</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1163,6 +1164,9 @@
   </group>
   <group>
     <name>Libs</name>
+    <group>
+      <name>EXP</name>
+    </group>
     <group>
       <name>CRC16</name>
       <file>

@@ -58,6 +58,7 @@
 #include "devMQTT.h"
 #include "DevCTRL.h"
 #include "usbd_cdc_if.h"
+#include "PCA9555.h"
 
 /* USER CODE END Includes */
 
@@ -789,6 +790,7 @@ void startDebugTask(void const * argument)
   MX_USB_DEVICE_Init();
 
   /* USER CODE BEGIN 5 */
+  
   /* Infinite loop */
 
   devMQTT_connect(DC_set.MQTT_broc_ip, DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass);
