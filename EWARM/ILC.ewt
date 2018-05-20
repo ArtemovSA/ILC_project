@@ -1327,6 +1327,9 @@
     <name>Libs</name>
     <group>
       <name>EXP</name>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\EXP\EXP.h</name>
+      </file>
     </group>
     <group>
       <name>CRC16</name>

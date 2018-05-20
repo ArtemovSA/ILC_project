@@ -10,9 +10,9 @@
 #define PCA9555_DEF_ADDR           0x20    //Address
 
 //Init mode mask 1-input mode
-#define PCA9555_PIN_MODE_DEF      b0000000000001111
+#define PCA9555_PIN_MODE_DEF      0x000F
 //Defaul output
-#define PCA9555_PIN_OUT_DEF       b0000111100000000
+#define PCA9555_PIN_OUT_DEF       0x0F00
 
 //PCA9555 PIN MAP
 #define PCA9555_PIN_DIN1           0       //

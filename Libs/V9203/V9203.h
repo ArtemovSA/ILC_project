@@ -5,12 +5,16 @@
 //****************************************DEV*******************************************************
 
 #define V9203_SPI_TIMEOUT       500
+#define V9203_TRY_COUNT         5      //1000 ms
 
 //****************************************Cmd*******************************************************
 
 #define V9203_CMD_WRITE_LO_WORD    0x08
 #define V9203_CMD_WRITE_HI_WORD    0x0A
 #define V9203_CMD_WRITE_TO_REG     0x0C
+#define V9203_CMD_READ_REG         0x10
+#define V9203_CMD_READ_LO_WORD     0x12
+#define V9203_CMD_READ_HI_WORD     0x14
 
 //****************************************Registers*************************************************
 
@@ -239,7 +243,7 @@ typedef struct
   unsigned int  RacWAPT;            //Full-wave active power ratio difference register
   unsigned int  RacWWAPT;           //Full-wave active power secondary compensation register                
   unsigned int  RacREWWAPT;         //Full-wave reactive power secondary compensation register               
-}S_JBRE;
+}JBRE_t;
 
 
 typedef struct 
@@ -261,16 +265,16 @@ typedef struct
   unsigned int  RacANCtrl1;         // Analog control register 1
   unsigned int  RacANCtrl2;         // Analog control register 2
   unsigned int  RacANCtrl3;         // Analog control register 2
-  S_JBRE  gs_JBA;             //A Compared to the difference group
-  S_JBRE  gs_JBB;             //B Compared to the difference group
-  S_JBRE  gs_JBC;             //C Compared to the difference group
+  JBRE_t  gs_JBA;             //A Compared to the difference group
+  JBRE_t  gs_JBB;             //B Compared to the difference group
+  JBRE_t  gs_JBC;             //C Compared to the difference group
   unsigned int ul_PG;               //Power proportional coefficient
   unsigned int ul_URmG;             //Voltage channel proportional coefficient
   unsigned int ul_I1RmG;            //Current channel 1 proportional coefficient
   
   unsigned short ui_Resve2;           // Retention
   unsigned short ui_JbCRC;            // Calibration table parameters CRC results
-}S_JBPM;
+}JBPM_t;
 
 
 
