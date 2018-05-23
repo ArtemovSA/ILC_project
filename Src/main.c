@@ -59,6 +59,7 @@
 #include "DevCTRL.h"
 #include "usbd_cdc_if.h"
 #include "PCA9555.h"
+#include "V9203.h"
 
 /* USER CODE END Includes */
 
@@ -792,13 +793,17 @@ void startDebugTask(void const * argument)
   /* USER CODE BEGIN 5 */
   
   /* Infinite loop */
-
   devMQTT_connect(DC_set.MQTT_broc_ip, DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass);
   
+  //Init
+  V9203_init(&hspi1);
+
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for(;;)
   {
+    float freqCh0LineA = V9203_getFreq(0, LINE_A);//Get frequency
+    DC_debugOut("@ ch 0 FREQ A: 0x%2f", freqCh0LineA);
     
     osDelay(1000);
   }

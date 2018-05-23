@@ -1,6 +1,5 @@
 
 #include "V9203.h"
-#include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_spi.h"
 #include "String.h"
 #include "DevCTRL.h"
@@ -14,11 +13,13 @@ JBPM_t JbPm_val;
 //Init dev
 HAL_StatusTypeDef V9203_initDev(uint8_t channel);
 //Setup registers
-HAL_StatusTypeDef V9203_setupReg(uint8_t channel);
+void V9203_setupReg(uint8_t channel);
 //Write flash
 HAL_StatusTypeDef V9203_wr_flash(uint8_t channel, uint16_t addrReg, uint32_t data);
 //Read flash
 HAL_StatusTypeDef V9203_rd_flash(uint8_t channel, uint16_t addrReg, uint32_t* data);
+//CRC16
+uint16_t V9203_crc16(const void *data, unsigned data_size);
 
 //--------------------------------------------------------------------------------------------------
 //Init
@@ -58,11 +59,7 @@ HAL_StatusTypeDef V9203_initDev(uint8_t channel)
     V9203_wr_flash(channel, (0xC800+i), 0);
   } 
   
-  if (V9203_setupReg(channel) != HAL_OK)
-  {
-    DC_debugOut(" #V9203 INIT ERROR CH:%d\r\n", channel);
-    return HAL_ERROR;
-  }
+  V9203_setupReg(channel); //Setup registers
     
   DC_debugOut(" #V9203 INIT OK CH:%d\r\n", channel);
   
@@ -70,7 +67,7 @@ HAL_StatusTypeDef V9203_initDev(uint8_t channel)
 }
 //--------------------------------------------------------------------------------------------------
 //Setup registers
-HAL_StatusTypeDef V9203_setupReg(uint8_t channel)
+void V9203_setupReg(uint8_t channel)
 {
   uint32_t checkSum = 0;
   
@@ -184,8 +181,42 @@ HAL_StatusTypeDef V9203_setupReg(uint8_t channel)
   // Active and phase 0 configuration
   V9203_wr_flash(channel, ZZPA0, 0x00000015);
   checkSum += 0x00000015;
+
+  // Active and phase 1 configuration
+  V9203_wr_flash(channel, ZZPA1, 0x0000002A);
+  checkSum += 0x0000002A;
   
+  // Reactive and phase 0 configuration
+  V9203_wr_flash(channel, ZZQA0, 0x00000015);
+  checkSum += 0x00000015;
+
+  // Reactive and phase 1 configuration
+  V9203_wr_flash(channel, ZZQA1, 0x0000002A);
+  checkSum += 0x0000002A;
   
+  // Visual and phase configuration
+  V9203_wr_flash(channel, ZZAPPA, 0x00000007);
+  checkSum += 0x00000007;
+  
+  // High-speed CF source selection
+  V9203_wr_flash(channel, ZZPCF0A, 0x00002211);
+  checkSum += 0x00002211;  
+  
+  // interrupted 0
+  V9203_wr_flash(channel, 0xA000, 0x00008000);
+  checkSum += 0x00008000;  
+  
+  // interrupted 1
+  V9203_wr_flash(channel, 0xA001, 0x00008000);
+  checkSum += 0x00008000;  
+  
+  checkSum += 0xff000000;	  //ANA2
+  checkSum += 0x00000005;	  //ANA3
+  checkSum = 0xffffffff - checkSum;
+  
+  V9203_wr_flash(channel, RegCKSUM, checkSum); //mt_para3 Self-test and  SUM+x=0xffffffff
+  vTaskDelay(10);
+  V9203_wr_flash(channel, 0xa002, 0); // Interrupt flag is cleared to 0
 }
 //--------------------------------------------------------------------------------------------------
 //Defaul reg val
@@ -226,6 +257,13 @@ void V9203_initRegVal()
   JbPm_val.gs_JBC.RacWAPT = 0xEF92325;   //Full-wave active power ratio difference register0xEC4A811B
   JbPm_val.gs_JBC.RacWWAPT = 0x00000000;  //Full-wave active power secondary compensation register
   JbPm_val.gs_JBC.RacREWWAPT = 0x00000000;  //Full-wave reactive power secondary compensation register 
+  
+  JbPm_val.ui_Resve2 = 0;
+  JbPm_val.ul_PG = 0x10B;               //Power proportional coefficient
+  JbPm_val.ul_URmG = 0x513b;            // Voltage channel proportional coefficient
+  JbPm_val.ul_I1RmG = 0x1A2C0;          // Current channel 1 proportional coefficient
+  
+  JbPm_val.ui_JbCRC = V9203_crc16((uint8_t*)&JbPm_val, sizeof(JBPM_t)-2);   // The CRC result of the calibration parameter
 }
 //--------------------------------------------------------------------------------------------------
 //Set chip select
@@ -355,5 +393,42 @@ uint16_t V9203_crc16(const void *data, unsigned data_size)
     crc = (crc >> 8) ^ V9203_crc16_table[(unsigned char)crc ^ *buf++];
   return crc;
 }
-//----------------------------------------------------------------------------------
-//
+
+//***********************************************API************************************************
+//Get frequency
+float V9203_getFreq(uint8_t channel, V9203_line_t line)
+{
+  uint16_t regAddr;
+  uint32_t regData;
+  
+  //Check channel
+  if (channel > V9203_COUNT_CHANNELS)
+  {
+    DC_debugOut("# Channel num ERROR\r\n");
+    return -1;
+  }
+  
+  //Get register address
+  switch(line)
+  {
+  case LINE_A: regAddr = DATAFREQA; break;
+  case LINE_B: regAddr = DATAFREQB; break;
+  case LINE_C: regAddr = DATAFREQC; break;
+  default: DC_debugOut("# Line num ERROR\r\n"); return -1;
+  }
+  
+  if (V9203_rd_flash(channel, regAddr, &regData) != HAL_OK)
+  {
+    DC_debugOut("# Frequncy read ERROR\r\n");
+    return -1;
+  }
+  
+  //Check return data
+  if (regData > 0xFFFF)
+    return -1;
+  
+  return regData*V9203_FREQ_MES_RES;
+}
+                    
+                    
+                    

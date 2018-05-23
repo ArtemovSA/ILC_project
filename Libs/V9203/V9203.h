@@ -2,10 +2,17 @@
 #ifndef V9203_H
 #define V9203_H
 
+#include "stm32f4xx_hal.h"
+
 //****************************************DEV*******************************************************
 
 #define V9203_SPI_TIMEOUT       500
 #define V9203_TRY_COUNT         5      //1000 ms
+#define V9203_COUNT_CHANNELS    4      //Count channels
+
+//****************************************Parametrs*************************************************
+
+#define V9203_FREQ_MES_RES      0.0008 //Hz
 
 //****************************************Cmd*******************************************************
 
@@ -206,9 +213,6 @@
 
 #define DATAFREQ    0xC008
 
-
-
-
 //The following is for the compiler through
 #define DATAP       0x0119
 #define DATAQ       0x10d7
@@ -222,10 +226,6 @@
 #define ARRTI       0x0105  // full wave voltage rms original value
 // The above is for compile through
 
-
-
-
-
 enum
 {
   Addr_UA=0,
@@ -235,6 +235,16 @@ enum
   Addr_UC,
   Addr_IC,
 };
+
+//Line num
+typedef enum
+{
+  LINE_A = 0,
+  LINE_B,
+  LINE_C,
+  LINE_N
+}V9203_line_t;
+
 
 typedef struct
 {
@@ -276,6 +286,12 @@ typedef struct
   unsigned short ui_JbCRC;            // Calibration table parameters CRC results
 }JBPM_t;
 
-
+//***********************************************API************************************************
+//Init
+void V9203_init(SPI_HandleTypeDef *hspi);
+//Setup registers
+void V9203_setupReg(uint8_t channel);
+//Get frequency
+float V9203_getFreq(uint8_t channel, V9203_line_t line);
 
 #endif

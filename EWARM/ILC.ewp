@@ -77,7 +77,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>7.80.4.12487</state>
+          <state>7.80.3.12143</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -1165,12 +1165,6 @@
   <group>
     <name>Libs</name>
     <group>
-      <name>EXP</name>
-      <file>
-        <name>$PROJ_DIR$\..\Libs\EXP\EXP.h</name>
-      </file>
-    </group>
-    <group>
       <name>CRC16</name>
       <file>
         <name>$PROJ_DIR$\..\Libs\CRC16\CRC16.c</name>
@@ -1195,6 +1189,12 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\Libs\DevCTRL\DevCTRL.h</name>
+      </file>
+    </group>
+    <group>
+      <name>EXP</name>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\EXP\EXP.h</name>
       </file>
     </group>
     <group>
