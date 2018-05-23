@@ -8,6 +8,8 @@
 #include "task.h"
 #include "PCA9555.h"
 #include "EXP.h"
+#include "Task_transfer.h"
+#include "stm32f4xx_hal_gpio.h"
 
 //default variables
 const uint8_t DC_const_dev_ip_addr[] = DC_DEF_DEV_IP_ADDR;
@@ -18,6 +20,7 @@ const uint8_t DC_const_MQTT_ip_broc[] = DC_DEF_MQTT_BROC_IP;
 //Var
 DC_set_t DC_set; //Device settings
 uint32_t DC_unicID[3]; //Unic ID
+osMessageQId *DC_eventQueue; //Event queue
 
 //Extern
 extern I2C_HandleTypeDef hi2c1;
@@ -27,7 +30,7 @@ HAL_StatusTypeDef DC_load_settings(); //Load settings
 
 //--------------------------------------------------------------------------------------------------
 //Init
-void DC_init()
+void DC_init(osMessageQId *eventQueue)
 {
   //Get unic ID
   HAL_GetUID(DC_unicID);
@@ -167,4 +170,65 @@ HAL_StatusTypeDef DC_load_settings()
   DC_debug_settingsOut();
   
   return HAL_OK;
+}
+//--------------------------------------------------------------------------------------------------
+//LED out
+void DC_LedOut(uint8_t led, uint8_t state)
+{
+  switch (led)
+  {
+  case 0: HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, (GPIO_PinState)state); break;
+  case 1: HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, (GPIO_PinState)state); break;
+  case 2: HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, (GPIO_PinState)state); break;
+  default: DC_debugOut("# Led num ERROR\r\n");
+  }
+}
+//--------------------------------------------------------------------------------------------------
+//LED blink
+void DC_LedBlink(uint8_t led, uint16_t rate_Hz, uint16_t count)
+{
+  uint8_t state;
+  uint16_t delay = 1/rate_Hz/2;
+  count = count*2;
+  
+  while (count--)
+  {
+    if (state)
+    {
+      state = 0;
+    }else{
+      state = 1;
+    }
+
+    DC_LedOut(led, state);
+    vTaskDelay(delay);
+  }
+}
+//--------------------------------------------------------------------------------------------------
+//Relay out
+HAL_StatusTypeDef DC_relayOut(uint8_t relNum, uint8_t state)
+{
+  uint8_t pin;
+  
+  switch (relNum)
+  {
+  case 1: pin = PCA9555_PIN_K1; break;
+  case 2: pin = PCA9555_PIN_K2; break;
+  case 3: pin = PCA9555_PIN_K3; break;
+  case 4: pin = PCA9555_PIN_K4; break;
+  default: DC_debugOut("# Relay num ERROR\r\n"); return HAL_ERROR;
+  }
+  
+  return PCA9555_digitalWrite(PCA9555_DEF_ADDR, pin, state);
+}
+//*********************************************IRQ**************************************************
+//GPIO EXTI callback
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  //PCA9555
+  if(GPIO_Pin == nPW_INT_Pin)
+  {    
+    TT_sendEventIRQ(EVENT_IRQ_PCA9555, NULL, DC_eventQueue); //Send event from IRQ
+    DC_debugOut("@ PCA9555 IRQ\r\n");
+  } 
 }

@@ -13,6 +13,41 @@ extern osMessageQId PW_TTqueueHandle;
 extern osMessageQId CL_TTqueueHandle;
 
 //--------------------------------------------------------------------------------------------------
+//Send event
+TT_stat_t TT_sendEvent(TT_mesID_t eventID, TT_sendMes_t *mes, QueueHandle_t *eventQueue)
+{
+  TT_mes_t event_mes;
+  event_mes.mesType = eventID;
+  if (mes != NULL)
+    memcpy(&event_mes.sendMes, mes, sizeof(event_mes.sendMes));
+    
+  //Send queue
+  if( xQueueSend( eventQueue, &event_mes, ( TickType_t ) 1000 ) != pdPASS )
+  {
+    return EXEC_ERROR;
+  }
+  
+  return EXEC_OK;
+}
+//--------------------------------------------------------------------------------------------------
+//Send event from IRQ
+TT_stat_t TT_sendEventIRQ(TT_mesID_t eventID, TT_sendMes_t *mes, QueueHandle_t *eventQueue)
+{
+  TT_mes_t event_mes;
+  event_mes.mesType = eventID;
+  if (mes != NULL)
+    memcpy(&event_mes.sendMes, mes, sizeof(event_mes.sendMes));
+  BaseType_t  xHigherPriorityTaskWoken = pdFALSE;
+  
+  //Send queue
+  if( xQueueSendFromISR( eventQueue, &event_mes, &xHigherPriorityTaskWoken ) != pdPASS )
+  {
+    return EXEC_ERROR;
+  }
+  
+  return EXEC_OK;
+}
+//--------------------------------------------------------------------------------------------------
 //Send query
 TT_stat_t TT_send_query(TT_taskID_t taskID, QueueHandle_t* queue_send, QueueHandle_t* queue_ret, void *mes, void (*p_func)()) {
   

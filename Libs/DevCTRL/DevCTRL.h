@@ -100,4 +100,14 @@ HAL_StatusTypeDef DC_load_settings();
 //User function Get Current task ID 
 uint8_t DC_getCurrentTaskID();
 
+//**********************************Digital IO******************************************************
+
+//LED blink
+void DC_LedBlink(uint8_t led, uint16_t rate_Hz, uint16_t count);
+//LED out
+void DC_LedOut(uint8_t led, uint8_t state);
+//Relay out
+HAL_StatusTypeDef DC_relayOut(uint8_t relNum, uint8_t state);
+
+
 #endif
