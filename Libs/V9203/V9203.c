@@ -428,7 +428,4 @@ float V9203_getFreq(uint8_t channel, V9203_line_t line)
     return -1;
   
   return regData*V9203_FREQ_MES_RES;
-}
-                    
-                    
-                    
+}               
