@@ -299,13 +299,13 @@ HAL_StatusTypeDef V9203_data_cmd_flash(uint8_t channel, uint8_t cmd, uint16_t da
   txBuf[0] = (0x3f & cmd) | 0x80;
   txBuf[1] = HI(dataTx);
   txBuf[2] = LO(dataTx);
-  txBuf[3] = ~((dataTx&0x00ff) + (dataTx>>8) + txBuf[0]);//~(LO(dataTx) + HI(dataTx) + txBuf[0]);
+  txBuf[3] = ~((dataTx & 0x00ff) + (dataTx >> 8) + txBuf[0]); //~(LO(dataTx) + HI(dataTx) + txBuf[0]);
   
   if ((state = V9203_set_CS(channel, LOW_LEVEL)) != HAL_OK)
     return state;
   
   if ((state = HAL_SPI_TransmitReceive(V9203_hspi, txBuf, rxBuf, 4, V9203_SPI_TIMEOUT)) != HAL_OK)
-     return state;
+    return state;
   
   if ((state = V9203_set_CS(channel, HIGH_LEVEL)) != HAL_OK)
     return state;

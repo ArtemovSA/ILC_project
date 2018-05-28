@@ -11,12 +11,12 @@ ByteLimit=50
 [StLinkDriver]
 CStepIntDis=_ 0
 LeaveTargetRunning=_ 0
-stlinkserialNo=00000001
+stlinkserialNo=28300987
 stlinkfoundProbes=
 stlinkResetStyle=0
 stlinkResetStrategy=1
 [DebugChecksum]
-Checksum=-1784242556
+Checksum=-1722454757
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -97,16 +97,11 @@ SumSortOrder=0
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\V9203\V9203.c}.47.5" 0 0 1 "" 0 "" 0
-Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\V9203\V9203.c}.304.3" 0 0 1 "" 0 "" 0
-Count=2
+Count=0
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
 Category=_ 0
-[TermIOLog]
-LoggingEnabled=_ 0
-LogFile=_ ""
 [Aliases]
 A0=_ "C:\Users\Sergey\Desktop\INS\ILC\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c" ""
 A1=_ "C:\Users\Sergey\Desktop\INS\ILC\Middlewares\Third_Party\FreeRTOS\Source\tasks.c" ""
@@ -123,3 +118,6 @@ Exclusions=
 Enabled=0
 [CallStackStripe]
 ShowTiming=1
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
