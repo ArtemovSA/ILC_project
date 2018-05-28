@@ -27,10 +27,10 @@ void V9203_init(SPI_HandleTypeDef *hspi)
 {
   V9203_hspi = hspi;
   
-  V9203_initDev(0);
   V9203_initDev(1);
   V9203_initDev(2);
   V9203_initDev(3);
+  V9203_initDev(4);
 }
 //--------------------------------------------------------------------------------------------------
 //Init dev
@@ -39,7 +39,7 @@ HAL_StatusTypeDef V9203_initDev(uint8_t channel)
   uint8_t try_count = V9203_TRY_COUNT;
   uint32_t readyFlag = 0;
   
-  while (try_count--)
+  while (--try_count)
   {
     if (readyFlag == 0x100000ff)
       break;
@@ -50,8 +50,11 @@ HAL_StatusTypeDef V9203_initDev(uint8_t channel)
     vTaskDelay(1000);
   }
   
-  if (try_count == 0)
+  if (try_count == 0x0)
+  {
+    DC_debugOut(" #V9203 INIT CH:%d  ERROR\r\n", channel);
     return HAL_ERROR;
+  }
   
   //Clear
   for(unsigned char i=0;i<56;i++)
@@ -271,6 +274,9 @@ HAL_StatusTypeDef V9203_set_CS(uint8_t channel, uint8_t state)
 {
   uint8_t pin;
   
+  //CS SPI
+  HAL_GPIO_WritePin(PW_CS_GPIO_Port, PW_CS_Pin, 0);
+  
   switch(channel)
   {
   case 1: pin = PCA9555_PIN_CS1; break;
@@ -293,7 +299,7 @@ HAL_StatusTypeDef V9203_data_cmd_flash(uint8_t channel, uint8_t cmd, uint16_t da
   txBuf[0] = (0x3f & cmd) | 0x80;
   txBuf[1] = HI(dataTx);
   txBuf[2] = LO(dataTx);
-  txBuf[3] = ~(LO(dataTx) + HI(dataTx) + txBuf[0]);
+  txBuf[3] = ~((dataTx&0x00ff) + (dataTx>>8) + txBuf[0]);//~(LO(dataTx) + HI(dataTx) + txBuf[0]);
   
   if ((state = V9203_set_CS(channel, LOW_LEVEL)) != HAL_OK)
     return state;
@@ -315,10 +321,10 @@ HAL_StatusTypeDef V9203_wr_flash(uint8_t channel, uint16_t addrReg, uint32_t dat
 {
   HAL_StatusTypeDef state;
   
-  if ((state = V9203_data_cmd_flash(channel, V9203_CMD_WRITE_LO_WORD, LO16(data), NULL)) != HAL_OK)
+  if ((state = V9203_data_cmd_flash(channel, V9203_CMD_WRITE_LO_WORD, data & 0x0000FFFF, NULL)) != HAL_OK)
     return state;
   
-  if ((state = V9203_data_cmd_flash(channel, V9203_CMD_WRITE_HI_WORD, HI16(data), NULL)) != HAL_OK)
+  if ((state = V9203_data_cmd_flash(channel, V9203_CMD_WRITE_HI_WORD, data >> 16, NULL)) != HAL_OK)
     return state;
   
   if ((state = V9203_data_cmd_flash(channel, V9203_CMD_WRITE_TO_REG, addrReg, NULL)) != HAL_OK)
@@ -336,10 +342,10 @@ HAL_StatusTypeDef V9203_rd_flash(uint8_t channel, uint16_t addrReg, uint32_t* da
   if ((state = V9203_data_cmd_flash(channel, V9203_CMD_READ_REG, addrReg, NULL)) != HAL_OK)
     return state;
   
-  if ((state = V9203_data_cmd_flash(channel, V9203_CMD_READ_LO_WORD, 0, &word_lo)) != HAL_OK)
+  if ((state = V9203_data_cmd_flash(channel, V9203_CMD_READ_LO_WORD, addrReg, &word_lo)) != HAL_OK)
     return state;
   
-  if ((state = V9203_data_cmd_flash(channel, V9203_CMD_READ_HI_WORD, 0, &word_hi)) != HAL_OK)
+  if ((state = V9203_data_cmd_flash(channel, V9203_CMD_READ_HI_WORD, addrReg, &word_hi)) != HAL_OK)
     return state;
   
   *data = ADD16(word_hi, word_lo);

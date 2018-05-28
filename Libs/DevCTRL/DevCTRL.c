@@ -49,9 +49,12 @@ void DC_init(osMessageQId *eventQueue)
   //PCA9555
   PCA9555_init(&hi2c1);
   
+  
+  HAL_StatusTypeDef stat;
+  
   //Set pin mode
-  if (PCA9555_regSetValue(PCA9555_DEF_ADDR, PCA9555_REG_CONFIG, PCA9555_PIN_MODE_DEF) == HAL_OK)
-  { 
+  if ((stat = PCA9555_regSetValue(PCA9555_DEF_ADDR, PCA9555_REG_CONFIG, PCA9555_PIN_MODE_DEF)) == HAL_OK)
+  {     
     //Set default out
     if (PCA9555_regSetValue(PCA9555_DEF_ADDR, PCA9555_REG_OUTPUT, PCA9555_PIN_OUT_DEF) == HAL_OK)
     {
@@ -60,11 +63,14 @@ void DC_init(osMessageQId *eventQueue)
       DC_debugOut("# PCA9555 OUT ERROR\r\n"); 
     }
   }else{
-    DC_debugOut("# PCA9555 MODE ERROR\r\n");
+    
+    if (stat == HAL_ERROR)
+      DC_debugOut("# PCA9555 ERROR\r\n");
+    
+    if (stat == HAL_TIMEOUT)
+      DC_debugOut("# PCA9555 TIMEOUT\r\n");
   }
-  
-  
-  
+
     
 }
 //--------------------------------------------------------------------------------------------------
@@ -100,18 +106,18 @@ void DC_debug_ipAdrrOut(char *text, uint8_t* ip)
 void DC_debug_settingsOut()
 {
   DC_debugOut("# --Network Settings--\r\n");
-  DC_debug_ipAdrrOut("# -NET DEV IP: ", DC_set.net_dev_ip_addr);
-  DC_debug_ipAdrrOut("# -NET GATEWAY IP: ", DC_set.net_gw_ip_addr);
-  DC_debug_ipAdrrOut("# -NET MASK: ", DC_set.net_mask);
+  DC_debug_ipAdrrOut("# NET DEV IP: ", DC_set.net_dev_ip_addr);
+  DC_debug_ipAdrrOut("# NET GATEWAY IP: ", DC_set.net_gw_ip_addr);
+  DC_debug_ipAdrrOut("# NET MASK: ", DC_set.net_mask);
   DC_debugOut("# --MQTT Settings--\r\n");
-  DC_debug_ipAdrrOut("# -MQTT BROCKER IP: ", DC_set.MQTT_broc_ip);
-  DC_debugOut("# --MQTT PORT %d\r\n", DC_set.MQTT_port);
-  DC_debugOut("# --MQTT CLINET ID %s\r\n", DC_set.MQTT_clintID);
-  DC_debugOut("# --MQTT USER %s\r\n", DC_set.MQTT_user);
-  DC_debugOut("# --MQTT PASS %s\r\n", DC_set.MQTT_pass);
-  DC_debugOut("# --MQTT QOS %d\r\n", DC_set.MQTT_qos);
-  DC_debugOut("# --MQTT CMD TOPIC %s\r\n", DC_set.MQTT_cmd_topic);
-  DC_debugOut("# --MQTT DATA TOPIC %s\r\n", DC_set.MQTT_data_topic);
+  DC_debug_ipAdrrOut("# MQTT BROCKER IP: ", DC_set.MQTT_broc_ip);
+  DC_debugOut("# MQTT PORT %d\r\n", DC_set.MQTT_port);
+  DC_debugOut("# MQTT CLINET ID %s\r\n", DC_set.MQTT_clintID);
+  DC_debugOut("# MQTT USER %s\r\n", DC_set.MQTT_user);
+  DC_debugOut("# MQTT PASS %s\r\n", DC_set.MQTT_pass);
+  DC_debugOut("# MQTT QOS %d\r\n", DC_set.MQTT_qos);
+  DC_debugOut("# MQTT CMD TOPIC %s\r\n", DC_set.MQTT_cmd_topic);
+  DC_debugOut("# MQTT DATA TOPIC %s\r\n", DC_set.MQTT_data_topic);
 }
 //--------------------------------------------------------------------------------------------------
 //Load settings
@@ -166,7 +172,7 @@ HAL_StatusTypeDef DC_load_settings()
     return stat;
   }
   
-  DC_debugOut("# Settings set default");
+  DC_debugOut("# Settings set default\r\n");
   DC_debug_settingsOut();
   
   return HAL_OK;

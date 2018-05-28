@@ -61,6 +61,8 @@
 
 #define nPW_INT_Pin GPIO_PIN_6
 #define nPW_INT_GPIO_Port GPIOE
+#define PW_CS_Pin GPIO_PIN_15
+#define PW_CS_GPIO_Port GPIOA
 #define ADC_VBAT_Pin GPIO_PIN_6
 #define ADC_VBAT_GPIO_Port GPIOF
 #define ADC_DET5V_Pin GPIO_PIN_7

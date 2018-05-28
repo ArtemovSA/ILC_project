@@ -97,11 +97,12 @@ HAL_StatusTypeDef PCA9555_digitalWrite(uint8_t address, uint8_t pin, uint8_t sta
 //Get reg val
 HAL_StatusTypeDef PCA9555_regGetValue(uint8_t address, uint8_t regAddr, uint16_t *regVal) 
 { 
-  return HAL_I2C_Mem_Read(p_PCA9555_i2cH, address, regAddr, I2C_MEMADD_SIZE_16BIT, (uint8_t*)regVal, 2,PCA9555_I2C_TIMEOUT);
+  address |= 0x01;
+  return HAL_I2C_Mem_Read(p_PCA9555_i2cH, address , regAddr, I2C_MEMADD_SIZE_8BIT, (uint8_t*)regVal, 2, PCA9555_I2C_TIMEOUT);
 }
 //--------------------------------------------------------------------------------------------------
 //Set reg val
 HAL_StatusTypeDef PCA9555_regSetValue(uint8_t address, uint8_t regAddr, uint16_t regVal)
-{
-  return HAL_I2C_Mem_Write(p_PCA9555_i2cH, address, regAddr, I2C_MEMADD_SIZE_16BIT, (uint8_t*)&regVal, 2,PCA9555_I2C_TIMEOUT);
+{ 
+  return HAL_I2C_Mem_Write(p_PCA9555_i2cH, address , regAddr, I2C_MEMADD_SIZE_8BIT, (uint8_t*)&regVal, 2, PCA9555_I2C_TIMEOUT);
 }

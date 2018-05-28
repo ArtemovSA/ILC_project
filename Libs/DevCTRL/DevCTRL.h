@@ -7,7 +7,7 @@
 //***********************************Device data****************************************************
 
 //PCA9555
-#define PCA9555_DEF_ADDR           0x20    //Address
+#define PCA9555_DEF_ADDR           0x40    //Address
 
 //Init mode mask 1-input mode
 #define PCA9555_PIN_MODE_DEF      0x000F
