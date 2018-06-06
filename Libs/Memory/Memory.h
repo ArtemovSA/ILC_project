@@ -4,9 +4,9 @@
 #include "stm32f4xx_hal.h"
 
 #define MEM_EN_SRAM1_ON    HAL_GPIO_WritePin(SRAM_CE2_1_GPIO_Port, SRAM_CE2_1_Pin, GPIO_PIN_SET)
-#define MEM_EN_SRAM1_OFF   HAL_GPIO_WritePin(SRAM_CE2_1_GPIO_Port, SRAM_CE2_1_Pin, GPIO_PIN_SET)
+#define MEM_EN_SRAM1_OFF   HAL_GPIO_WritePin(SRAM_CE2_1_GPIO_Port, SRAM_CE2_1_Pin, GPIO_PIN_RESET)
 #define MEM_EN_SRAM2_ON    HAL_GPIO_WritePin(SRAM_CE2_2_GPIO_Port, SRAM_CE2_2_Pin, GPIO_PIN_SET)
-#define MEM_EN_SRAM2_OFF   HAL_GPIO_WritePin(SRAM_CE2_2_GPIO_Port, SRAM_CE2_2_Pin, GPIO_PIN_SET)
+#define MEM_EN_SRAM2_OFF   HAL_GPIO_WritePin(SRAM_CE2_2_GPIO_Port, SRAM_CE2_2_Pin, GPIO_PIN_RESET)
 
 //***************************************Memory work************************************************
 typedef enum{
@@ -15,14 +15,15 @@ typedef enum{
   MEM_ID_SRAM2
 }MEM_ID_t;
 
-
+//Init memory
+void MEM_init(SRAM_HandleTypeDef *sram1, SRAM_HandleTypeDef *sram2, NAND_HandleTypeDef *nand);
 
 //***************************************NAND mem map***********************************************
 #define MEM_NAND_PAGE_SIZE      0x800
 #define MEM_NAND_BLOCK_SIZE     0x1000
 #define MEM_NAND_PLANE_SIZE     0x400000
 #define MEM_NAND_MEMORY_SIZE    0x400000
-#define MEM_NAND_DEV_ID         0xF1
+#define MEM_NAND_DEV_ID         0xDA
 
                                  //plane, block, page
 #define MEM_NAND_ADDR_SETTINGS  (NAND_AddressTypeDef) {0, 0, 0}

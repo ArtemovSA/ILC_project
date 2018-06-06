@@ -129,6 +129,7 @@ void sampleTimerCall(void const * argument);
 
 /* USER CODE END 0 */
 
+
 /**
   * @brief  The application entry point.
   *
@@ -484,7 +485,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_HIGH;
   hspi1.Init.CLKPhase = SPI_PHASE_2EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -752,12 +753,12 @@ static void MX_FSMC_Init(void)
   hnand1.Init.Waitfeature = FSMC_NAND_PCC_WAIT_FEATURE_ENABLE;
   hnand1.Init.MemoryDataWidth = FSMC_NAND_PCC_MEM_BUS_WIDTH_8;
   hnand1.Init.EccComputation = FSMC_NAND_ECC_DISABLE;
-  hnand1.Init.ECCPageSize = FSMC_NAND_ECC_PAGE_SIZE_256BYTE;
+  hnand1.Init.ECCPageSize = FSMC_NAND_ECC_PAGE_SIZE_2048BYTE;
   hnand1.Init.TCLRSetupTime = 0;
   hnand1.Init.TARSetupTime = 0;
   /* hnand1.Config */
   hnand1.Config.PageSize = 2048;
-  hnand1.Config.SpareAreaSize = 125000000;
+  hnand1.Config.SpareAreaSize = 128;
   hnand1.Config.BlockSize = 64;
   hnand1.Config.BlockNbr = 1024;
   hnand1.Config.PlaneNbr = 1;
@@ -769,10 +770,10 @@ static void MX_FSMC_Init(void)
   ComSpaceTiming.HoldSetupTime = 252;
   ComSpaceTiming.HiZSetupTime = 252;
   /* AttSpaceTiming */
-  AttSpaceTiming.SetupTime = 252;
-  AttSpaceTiming.WaitSetupTime = 252;
-  AttSpaceTiming.HoldSetupTime = 252;
-  AttSpaceTiming.HiZSetupTime = 252;
+  AttSpaceTiming.SetupTime = 1;
+  AttSpaceTiming.WaitSetupTime = 3;
+  AttSpaceTiming.HoldSetupTime = 2;
+  AttSpaceTiming.HiZSetupTime = 1;
 
   if (HAL_NAND_Init(&hnand1, &ComSpaceTiming, &AttSpaceTiming) != HAL_OK)
   {
@@ -809,6 +810,7 @@ void startDebugTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
+
     for (int i=1; i < 5; i++)
     {
       float freqLineA = V9203_getFreq(i, LINE_A);//Get frequency
@@ -817,6 +819,7 @@ void startDebugTask(void const * argument)
       
       DC_debugOut("@ ch %d FREQ A: %2f | FREQ B: %2f | FREQ C: %2f\r\n", i, freqLineA, freqLineB, freqLineC);
     }
+    
     osDelay(1000);
   }
   

@@ -3,11 +3,14 @@
 #include "stm32f4xx_hal_nand.h"
 #include "stm32f4xx_hal_sram.h"
 #include "math.h"
+#include "string.h"
 
 //Handles
 SRAM_HandleTypeDef *MEM_hSRAM1;
 SRAM_HandleTypeDef *MEM_hSRAM2;
 NAND_HandleTypeDef *MEM_hNAND1;
+
+uint8_t MEM_dataBuf[2048];
 
 //--------------------------------------------------------------------------------------------------
 //Init memory
@@ -63,12 +66,14 @@ HAL_StatusTypeDef MEM_NAND_writeData(NAND_AddressTypeDef address, uint8_t *data,
 {
   HAL_StatusTypeDef stat;
   MEM_selectMem(MEM_ID_NAND); //Select memory
+
+  if ((stat = HAL_NAND_Erase_Block(MEM_hNAND1, &address)) != HAL_OK)
+    return stat;
   
-  stat = HAL_NAND_Erase_Block(MEM_hNAND1, &address);
+  memset(MEM_dataBuf, 0, sizeof(MEM_dataBuf));
+  memcpy(MEM_dataBuf, data, len);
   
-  stat = HAL_NAND_Write_Page_8b(MEM_hNAND1, &address, data, len);
-  
-  if (stat != HAL_OK)
+  if ((stat = HAL_NAND_Write_Page_8b(MEM_hNAND1, &address, MEM_dataBuf, 1)) != HAL_OK)
     return stat;
   
   return stat; 
@@ -80,12 +85,14 @@ HAL_StatusTypeDef MEM_NAND_readData(NAND_AddressTypeDef address, uint8_t *data, 
   HAL_StatusTypeDef stat;
   MEM_selectMem(MEM_ID_NAND); //Select memory
   
-  stat = HAL_NAND_Read_Page_8b(MEM_hNAND1, &address, data, len);
+  stat = HAL_NAND_Read_Page_8b(MEM_hNAND1, &address, MEM_dataBuf, 1);
   
   if (stat != HAL_OK)
     return stat;
   
-  return stat; 
+  memcpy(data, MEM_dataBuf, len);
+  
+  return HAL_OK; 
 }
 //***************************************SRAM******************************************************
 //Write data SRAM

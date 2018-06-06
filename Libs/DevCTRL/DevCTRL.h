@@ -53,7 +53,7 @@ extern uint32_t DC_unicID[3]; //Unic ID
 
 //**********************************Settings*****************************************************
 
-#define DC_SET_MAGICKEY 0x01
+#define DC_SET_MAGICKEY 0x02
 
 typedef struct
 {

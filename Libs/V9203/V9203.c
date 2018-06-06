@@ -51,11 +51,11 @@ HAL_StatusTypeDef V9203_initDev(uint8_t channel)
     vTaskDelay(1000);
   }
   
-  if (try_count == 0x0)
-  {
-    DC_debugOut(" #V9203 INIT CH:%d  ERROR\r\n", channel);
-    return HAL_ERROR;
-  }
+//  if (try_count == 0x0)
+//  {
+//    DC_debugOut(" #V9203 INIT CH:%d  ERROR\r\n", channel);
+//    return HAL_ERROR;
+//  }
   
   //Clear
   for(unsigned char i=0;i<56;i++)
@@ -274,20 +274,29 @@ void V9203_initRegVal()
 HAL_StatusTypeDef V9203_set_CS(uint8_t channel, uint8_t state)
 {
   uint8_t pin;
+
+  HAL_GPIO_WritePin(PW_CS_GPIO_Port, PW_CS_Pin, GPIO_PIN_RESET); //CS SPI
   
-  //CS SPI
-  HAL_GPIO_WritePin(PW_CS_GPIO_Port, PW_CS_Pin, GPIO_PIN_RESET);
+  PCA9555_digitalWrite(PCA9555_DEF_ADDR, PCA9555_PIN_CS1, HIGH_LEVEL);
+  PCA9555_digitalWrite(PCA9555_DEF_ADDR, PCA9555_PIN_CS2, HIGH_LEVEL);
+  PCA9555_digitalWrite(PCA9555_DEF_ADDR, PCA9555_PIN_CS3, HIGH_LEVEL);
+  PCA9555_digitalWrite(PCA9555_DEF_ADDR, PCA9555_PIN_CS4, HIGH_LEVEL);
   
-  switch(channel)
+  if (state == LOW_LEVEL)
   {
-  case 1: pin = PCA9555_PIN_CS1; break;
-  case 2: pin = PCA9555_PIN_CS2; break;
-  case 3: pin = PCA9555_PIN_CS3; break;
-  case 4: pin = PCA9555_PIN_CS4; break;
-  default: DC_debugOut("# V9203 CS channel num ERROR\r\n"); return HAL_ERROR;
-  };
+    switch(channel)
+    {
+    case 1: pin = PCA9555_PIN_CS1; break;
+    case 2: pin = PCA9555_PIN_CS2; break;
+    case 3: pin = PCA9555_PIN_CS3; break;
+    case 4: pin = PCA9555_PIN_CS4; break;
+    default: DC_debugOut("# V9203 CS channel num ERROR\r\n"); return HAL_ERROR;
+    };
+    
+    PCA9555_digitalWrite(PCA9555_DEF_ADDR, pin, LOW_LEVEL);
+  }
   
-  return PCA9555_digitalWrite(PCA9555_DEF_ADDR, pin, state);
+  return HAL_OK;
 }
 //--------------------------------------------------------------------------------------------------
 //Set data|cmd
@@ -298,15 +307,19 @@ HAL_StatusTypeDef V9203_data_cmd_flash(uint8_t channel, uint8_t cmd, uint16_t da
   uint8_t rxBuf[4];
 
   txBuf[0] = (0x3f & cmd) | 0x80;
-  txBuf[1] = HI(dataTx);
-  txBuf[2] = LO(dataTx);
-  txBuf[3] = ~((dataTx & 0x00ff) + (dataTx >> 8) + txBuf[0]); //~(LO(dataTx) + HI(dataTx) + txBuf[0]);
+  txBuf[1] = dataTx >> 8;
+  txBuf[2] = dataTx & 0x00ff;
+  txBuf[3] = ~((dataTx & 0x00ff) + (dataTx >> 8) + txBuf[0]);
   
   if ((state = V9203_set_CS(channel, LOW_LEVEL)) != HAL_OK)
     return state;
   
+  vTaskDelay(1);
+  
   if ((state = HAL_SPI_TransmitReceive(V9203_hspi, txBuf, rxBuf, 4, V9203_SPI_TIMEOUT)) != HAL_OK)
     return state;
+  
+  vTaskDelay(1);
   
   if ((state = V9203_set_CS(channel, HIGH_LEVEL)) != HAL_OK)
     return state;

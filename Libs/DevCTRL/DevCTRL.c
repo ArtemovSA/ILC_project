@@ -24,6 +24,9 @@ osMessageQId *DC_eventQueue; //Event queue
 
 //Extern
 extern I2C_HandleTypeDef hi2c1;
+extern SRAM_HandleTypeDef hsram1;
+extern SRAM_HandleTypeDef hsram2;
+extern NAND_HandleTypeDef hnand1;
 
 //Func
 HAL_StatusTypeDef DC_load_settings(); //Load settings
@@ -32,12 +35,16 @@ HAL_StatusTypeDef DC_load_settings(); //Load settings
 //Init
 void DC_init(osMessageQId *eventQueue)
 {
+  DC_debugOut("\r\n# Start dev ILC\r\n");
+  
   //Get unic ID
   HAL_GetUID(DC_unicID);
   DC_debugOut("# UNIC ID %ld:%ld:%ld\r\n", DC_unicID[0], DC_unicID[1], DC_unicID[2]);
   
   //Flash
-  if (MEM_NAND_checkID())
+  //Init memory
+  MEM_init(&hsram1, &hsram2, &hnand1);
+  if (MEM_NAND_checkID() == HAL_OK)
   {
     DC_debugOut("# Nand check OK\r\n");
     if (DC_load_settings() == HAL_OK)
@@ -125,8 +132,13 @@ HAL_StatusTypeDef DC_load_settings()
 {
   HAL_StatusTypeDef stat;
   
+  NAND_AddressTypeDef addr;
+  addr.Page = 0;
+  addr.Plane = 0;
+  addr.Block = 0;
+  
   //read
-  if ((stat = MEM_NAND_readData(MEM_NAND_ADDR_SETTINGS, (uint8_t*)&DC_set, sizeof(DC_set))) != HAL_OK)
+  if ((stat = MEM_NAND_readData(addr, (uint8_t*)&DC_set, sizeof(DC_set))) != HAL_OK)
   {
     DC_debugOut("# NAND IO ERROR\r\n");
     return stat;
@@ -166,7 +178,7 @@ HAL_StatusTypeDef DC_load_settings()
   DC_set.magicKey = DC_SET_MAGICKEY;
   
   //Write
-  if ((stat = MEM_NAND_writeData(MEM_NAND_ADDR_SETTINGS, (uint8_t*)&DC_set, sizeof(DC_set))) != HAL_OK)
+  if ((stat = MEM_NAND_writeData(addr, (uint8_t*)&DC_set, sizeof(DC_set))) != HAL_OK)
   {
     DC_debugOut("# NAND IO ERROR\r\n");
     return stat;
