@@ -448,4 +448,39 @@ float V9203_getFreq(uint8_t channel, V9203_line_t line)
     return -1;
   
   return regData*V9203_FREQ_MES_RES;
-}               
+}     
+//----------------------------------------------------------------------------------
+//Get RMS voltage
+float V9203_getRMS_Voltage(uint8_t channel, V9203_line_t line)
+{
+  uint16_t regAddr;
+  uint32_t regData;
+  
+  //Check channel
+  if (channel > V9203_COUNT_CHANNELS)
+  {
+    DC_debugOut("# Channel num ERROR\r\n");
+    return -1;
+  }
+  
+  //Get register address
+  switch(line)
+  {
+  case LINE_A: regAddr = RMSUA; break;
+  case LINE_B: regAddr = RMSUB; break;
+  case LINE_C: regAddr = RMSUC; break;
+  default: DC_debugOut("# Line num ERROR\r\n"); return -1;
+  }
+  
+  if (V9203_rd_flash(channel, regAddr, &regData) != HAL_OK)
+  {
+    DC_debugOut("# Voltage read ERROR\r\n");
+    return -1;
+  }
+  
+  //Check return data
+  if (regData > 0xFFFF)
+    return -1;
+  
+  return regData;
+}

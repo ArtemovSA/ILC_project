@@ -269,7 +269,7 @@ typedef struct
   unsigned int RacZZDCUM;        //Current detection threshold
   unsigned int  RacWAEC0;         //Angle difference 0
   unsigned int RacMTPARA0;
-  unsigned int RacMTPARA1;
+  unsigned int  RacMTPARA1;
   unsigned int RacMTPARA2;
   unsigned int  RacANCtrl0;         //Analog control register0
   unsigned int  RacANCtrl1;         // Analog control register 1
@@ -293,5 +293,7 @@ void V9203_init(SPI_HandleTypeDef *hspi);
 void V9203_setupReg(uint8_t channel);
 //Get frequency
 float V9203_getFreq(uint8_t channel, V9203_line_t line);
+//Get RMS voltage
+float V9203_getRMS_Voltage(uint8_t channel, V9203_line_t line);
 
 #endif

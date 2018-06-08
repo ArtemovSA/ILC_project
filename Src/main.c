@@ -818,6 +818,12 @@ void startDebugTask(void const * argument)
       float freqLineC = V9203_getFreq(i, LINE_C);//Get frequency
       
       DC_debugOut("@ ch %d FREQ A: %2f | FREQ B: %2f | FREQ C: %2f\r\n", i, freqLineA, freqLineB, freqLineC);
+      
+      float RMSULineA = V9203_getRMS_Voltage(i, LINE_A);
+      float RMSULineB = V9203_getRMS_Voltage(i, LINE_B);
+      float RMSULineC = V9203_getRMS_Voltage(i, LINE_C);
+      
+      DC_debugOut("@ ch %d RMSU A: %2f | RMSU B: %2f | RMSU C: %2f\r\n", i, freqLineA, freqLineB, freqLineC);
     }
     
     osDelay(1000);
