@@ -179,7 +179,9 @@
 #define RegMAFC  0xE8E6
 #define RegMAFS   0xE8E7
 
-
+#define BRTUA 0xE883
+#define BRTUB 0xE884
+#define BRTUC 0xE885
 
 
 #define APhy  0x00

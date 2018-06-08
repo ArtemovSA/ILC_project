@@ -485,7 +485,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_HIGH;
   hspi1.Init.CLKPhase = SPI_PHASE_2EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -790,13 +790,13 @@ static void MX_FSMC_Init(void)
 void startDebugTask(void const * argument)
 {
   /* init code for FATFS */
-  MX_FATFS_Init();
+  //MX_FATFS_Init();
 
   /* init code for LWIP */
-  MX_LWIP_Init();
+  //MX_LWIP_Init();
 
   /* init code for USB_DEVICE */
-  MX_USB_DEVICE_Init();
+  //MX_USB_DEVICE_Init();
 
   /* USER CODE BEGIN 5 */
   
@@ -810,21 +810,28 @@ void startDebugTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-
-    for (int i=1; i < 5; i++)
-    {
-      float freqLineA = V9203_getFreq(i, LINE_A);//Get frequency
-      float freqLineB = V9203_getFreq(i, LINE_B);//Get frequency
-      float freqLineC = V9203_getFreq(i, LINE_C);//Get frequency
+    
+    float freqLineA = V9203_getFreq(1, LINE_A);//Get frequency
+    float freqLineB = V9203_getFreq(1, LINE_B);//Get frequency
+    float freqLineC = V9203_getFreq(1, LINE_C);//Get frequency
+    
+    DC_debugOut("@ ch %d FREQ A: %2f | FREQ B: %2f | FREQ C: %2f\r\n", 1, freqLineA, freqLineB, freqLineC);
+    
+    //Get RMS voltage
+    float RMSV_LineA = V9203_getRMS_Voltage(1, LINE_A);
+    float RMSV_LineB = V9203_getRMS_Voltage(1, LINE_B);
+    float RMSV_LineC = V9203_getRMS_Voltage(1, LINE_C);
+    
+    DC_debugOut("@ ch %d RMSV A: %2f | RMSV B: %2f | RMSV C: %2f\r\n", 1, RMSV_LineA, RMSV_LineB, RMSV_LineC);
       
-      DC_debugOut("@ ch %d FREQ A: %2f | FREQ B: %2f | FREQ C: %2f\r\n", i, freqLineA, freqLineB, freqLineC);
-      
-      float RMSULineA = V9203_getRMS_Voltage(i, LINE_A);
-      float RMSULineB = V9203_getRMS_Voltage(i, LINE_B);
-      float RMSULineC = V9203_getRMS_Voltage(i, LINE_C);
-      
-      DC_debugOut("@ ch %d RMSU A: %2f | RMSU B: %2f | RMSU C: %2f\r\n", i, freqLineA, freqLineB, freqLineC);
-    }
+//    for (int i=1; i < 5; i++)
+//    {
+//      float freqLineA = V9203_getFreq(i, LINE_A);//Get frequency
+//      float freqLineB = V9203_getFreq(i, LINE_B);//Get frequency
+//      float freqLineC = V9203_getFreq(i, LINE_C);//Get frequency
+//      
+//      DC_debugOut("@ ch %d FREQ A: %2f | FREQ B: %2f | FREQ C: %2f\r\n", i, freqLineA, freqLineB, freqLineC);
+//    }
     
     osDelay(1000);
   }
