@@ -268,7 +268,7 @@ void V9203_initRegVal()
   JbPm_val.gs_JBC.RacREWWAPT = 0x00000000;  //Full-wave reactive power secondary compensation register 
   
   JbPm_val.ui_Resve2 = 0;
-  JbPm_val.ul_PG = 0x10B;               //Power proportional coefficient
+  JbPm_val.ul_PG = 0x10B;               // Power proportional coefficient
   JbPm_val.ul_URmG = 0x513b;            // Voltage channel proportional coefficient
   JbPm_val.ul_I1RmG = 0x1A2C0;          // Current channel 1 proportional coefficient
   
@@ -471,9 +471,9 @@ float V9203_getRMS_Voltage(uint8_t channel, V9203_line_t line)
   //Get register address
   switch(line)
   {
-  case LINE_A: regAddr = BRTUA; break;
-  case LINE_B: regAddr = BRTUB; break;
-  case LINE_C: regAddr = BRTUC; break;
+  case LINE_A: regAddr = RMSUA; break;
+  case LINE_B: regAddr = RMSUB; break;
+  case LINE_C: regAddr = RMSUC; break;
   default: DC_debugOut("# Line num ERROR\r\n"); return -1;
   }
   
@@ -484,8 +484,113 @@ float V9203_getRMS_Voltage(uint8_t channel, V9203_line_t line)
   }
   
   //Check return data
-  if (regData > 0xFFFF)
-    return -1;
+//  if (regData > 0xFFFFFFF)
+//    return -1;
   
-  return regData;
+  return regData/JbPm_val.ul_URmG/10;
+}
+//----------------------------------------------------------------------------------
+//Get RMS current
+float V9203_getRMS_Current(uint8_t channel, V9203_line_t line)
+{
+  uint16_t regAddr;
+  uint32_t regData;
+  
+  //Check channel
+  if (channel > V9203_COUNT_CHANNELS)
+  {
+    DC_debugOut("# Channel num ERROR\r\n");
+    return -1;
+  }
+  
+  //Get register address
+  switch(line)
+  {
+  case LINE_A: regAddr = RMSI1A; break;
+  case LINE_B: regAddr = RMSI1B; break;
+  case LINE_C: regAddr = RMSI1C; break;
+  default: DC_debugOut("# Line num ERROR\r\n"); return -1;
+  }
+  
+  if (V9203_rd_flash(channel, regAddr, &regData) != HAL_OK)
+  {
+    DC_debugOut("# Current read ERROR\r\n");
+    return -1;
+  }
+  
+  //Check return data
+//  if (regData > 0xFFFFFFF)
+//    return -1;
+  
+  return regData/JbPm_val.ul_I1RmG;
+}
+//----------------------------------------------------------------------------------
+//Get power
+float V9203_getRMS_Power(uint8_t channel, V9203_line_t line)
+{
+  uint16_t regAddr;
+  uint32_t regData;
+  
+  //Check channel
+  if (channel > V9203_COUNT_CHANNELS)
+  {
+    DC_debugOut("# Channel num ERROR\r\n");
+    return -1;
+  }
+  
+  //Get register address
+  switch(line)
+  {
+  case LINE_A: regAddr = DATAPA; break;
+  case LINE_B: regAddr = DATAPB; break;
+  case LINE_C: regAddr = DATAPC; break;
+  default: DC_debugOut("# Line num ERROR\r\n"); return -1;
+  }
+  
+  if (V9203_rd_flash(channel, regAddr, &regData) != HAL_OK)
+  {
+    DC_debugOut("# Active power ERROR\r\n");
+    return -1;
+  }
+  
+  //Check return data
+//  if (regData > 0xFFFFFFF)
+//    return -1;
+  
+  return regData/JbPm_val.ul_PG;
+}
+//----------------------------------------------------------------------------------
+//Get reactive power
+float V9203_getRMS_reactivePower(uint8_t channel, V9203_line_t line)
+{
+  uint16_t regAddr;
+  uint32_t regData;
+  
+  //Check channel
+  if (channel > V9203_COUNT_CHANNELS)
+  {
+    DC_debugOut("# Channel num ERROR\r\n");
+    return -1;
+  }
+  
+  //Get register address
+  switch(line)
+  {
+  case LINE_A: regAddr = DATAQA; break;
+  case LINE_B: regAddr = DATAQB; break;
+  case LINE_C: regAddr = DATAQC; break;
+  default: DC_debugOut("# Line num ERROR\r\n"); return -1;
+  }
+  
+  if (V9203_rd_flash(channel, regAddr, &regData) != HAL_OK)
+  {
+    DC_debugOut("# Reactive power ERROR\r\n");
+    return -1;
+  }
+  
+  //Check return data
+//  if (regData > 0xFFFFFFF)
+//    return -1;
+  
+  return regData/JbPm_val.ul_PG;
 }

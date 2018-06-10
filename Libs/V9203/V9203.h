@@ -297,5 +297,11 @@ void V9203_setupReg(uint8_t channel);
 float V9203_getFreq(uint8_t channel, V9203_line_t line);
 //Get RMS voltage
 float V9203_getRMS_Voltage(uint8_t channel, V9203_line_t line);
+//Get RMS current
+float V9203_getRMS_Current(uint8_t channel, V9203_line_t line);
+//Get power
+float V9203_getRMS_Power(uint8_t channel, V9203_line_t line);
+//Get reactive power
+float V9203_getRMS_reactivePower(uint8_t channel, V9203_line_t line);
 
 #endif
