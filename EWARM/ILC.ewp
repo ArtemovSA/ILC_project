@@ -77,7 +77,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>7.80.3.12143</state>
+          <state>7.80.4.12487</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -347,6 +347,7 @@
           <state>$PROJ_DIR$\..\Libs\CRC8</state>
           <state>$PROJ_DIR$\..\Libs\PCA9555</state>
           <state>$PROJ_DIR$\..\Libs\EXP</state>
+          <state>$PROJ_DIR$\..\Libs\JSON</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1249,6 +1250,15 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\Libs\V9203\V9203.h</name>
+      </file>
+    </group>
+    <group>
+      <name>JSON</name>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\JSON\frozen.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\JSON\frozen.h</name>
       </file>
     </group>
   </group>

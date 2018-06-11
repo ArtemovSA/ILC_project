@@ -60,6 +60,7 @@
 #include "usbd_cdc_if.h"
 #include "PCA9555.h"
 #include "V9203.h"
+#include "frozen.h"
 
 /* USER CODE END Includes */
 
@@ -790,19 +791,19 @@ static void MX_FSMC_Init(void)
 void startDebugTask(void const * argument)
 {
   /* init code for FATFS */
-  //MX_FATFS_Init();
+  MX_FATFS_Init();
 
   /* init code for LWIP */
-  //MX_LWIP_Init();
+  MX_LWIP_Init();
 
   /* init code for USB_DEVICE */
-  //MX_USB_DEVICE_Init();
+  MX_USB_DEVICE_Init();
 
   /* USER CODE BEGIN 5 */
   
   DC_init(&debug_TTqueueHandle);
   
-  //devMQTT_connect(DC_set.MQTT_broc_ip, DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass);
+  devMQTT_connect(DC_set.MQTT_broc_ip, DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass);
   
   V9203_init(&hspi1);
 

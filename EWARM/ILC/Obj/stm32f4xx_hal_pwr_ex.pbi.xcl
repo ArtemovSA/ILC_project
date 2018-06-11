@@ -66,6 +66,8 @@ D:\Sergey\ILC_project\EWARM\..\Libs\PCA9555
 -I
 D:\Sergey\ILC_project\EWARM\..\Libs\EXP
 -I
+D:\Sergey\ILC_project\EWARM\..\Libs\JSON
+-I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\inc
@@ -135,6 +137,8 @@ D:\Sergey\ILC_project\Libs\CRC8
 D:\Sergey\ILC_project\Libs\PCA9555
 -I
 D:\Sergey\ILC_project\Libs\EXP
+-I
+D:\Sergey\ILC_project\Libs\JSON
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -DUSE_HAL_DRIVER=1

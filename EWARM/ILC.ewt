@@ -1412,6 +1412,15 @@
         <name>$PROJ_DIR$\..\Libs\V9203\V9203.h</name>
       </file>
     </group>
+    <group>
+      <name>JSON</name>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\JSON\frozen.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\JSON\frozen.h</name>
+      </file>
+    </group>
   </group>
   <group>
     <name>Middlewares</name>
