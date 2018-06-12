@@ -1353,9 +1353,33 @@
       </file>
     </group>
     <group>
+      <name>EMS_protocol</name>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\EMS_proocol\EMS_protocol.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\EMS_proocol\EMS_protocol.h</name>
+      </file>
+    </group>
+    <group>
       <name>EXP</name>
       <file>
         <name>$PROJ_DIR$\..\Libs\EXP\EXP.h</name>
+      </file>
+    </group>
+    <group>
+      <name>JSON</name>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\JSON\cJSON.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\JSON\cJSON.h</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\JSON\cJSON_Utils.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\JSON\cJSON_Utils.h</name>
       </file>
     </group>
     <group>
@@ -1410,15 +1434,6 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\Libs\V9203\V9203.h</name>
-      </file>
-    </group>
-    <group>
-      <name>JSON</name>
-      <file>
-        <name>$PROJ_DIR$\..\Libs\JSON\frozen.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\Libs\JSON\frozen.h</name>
       </file>
     </group>
   </group>

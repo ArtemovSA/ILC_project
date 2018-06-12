@@ -1,11 +1,26 @@
 
 #include "devMQTT.h"
 #include "DevCTRL.h"
+#include "cJSON.h"
 
 static int inpub_id; //topic ID
-mqtt_client_t *mqttMainClient;
-struct mqtt_connect_client_info_t ci;
+mqtt_client_t *mqttMainClient; //Client
+struct mqtt_connect_client_info_t ci; //Client info
+devMQTT_topic* devMQTT_topics; //Topics list
+uint16_t devMQTT_cntTop; //Count
+void *devMQTT_callBack(uint16_t, uint8_t*, uin16_t); //Func
 
+//--------------------------------------------------------------------------------------------------
+//Init
+// args: topics list
+//       count topics
+//       callBackPointer
+void devMQTT_init(devMQTT_topic* topics, uint16_t count, void *callBackPoint)
+{
+  devMQTT_topics = topics;
+  devMQTT_cntTop = count;
+  devMQTT_callBack = callBackPoint;
+}
 //*******************************************Callback***********************************************
 //Publish cb
 static void mqtt_pub_request_cb(void *arg, err_t result) {
@@ -19,15 +34,12 @@ static void mqtt_incoming_publish_cb(void *arg, const char *topic, u32_t tot_len
   printf("Incoming publish at topic %s with total length %u\n", topic, (unsigned int)tot_len);
   
   // Decode topic string into a user defined reference
-  if( strcmp(topic, DC_set.MQTT_cmd_topic) == 0) {
-    inpub_id = MQTT_CMD_TOPIC;
-  } else if( strcmp(topic, DC_set.MQTT_data_topic) == 0) {
-    inpub_id = MQTT_DATA_TOPIC;
-  } else if( strcmp(topic, DC_DEF_MQTT_DEBUG_TOPIC) == 0) { //Debug topic
-    // For all other topics
-    inpub_id = MQTT_DEBUG_TOPIC;
-  }else{
-    inpub_id = MQTT_OTHER_TOPIC;
+  for (int i=0; i<devMQTT_cntTop; i++)
+  {
+    if (strcmp(topic, devMQTT_topics[i].name))
+    {
+      inpub_id = i;
+    }
   }
 }
 //--------------------------------------------------------------------------------------------------
@@ -39,16 +51,13 @@ static void mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t f
   if (flags & MQTT_DATA_FLAG_LAST) {
     
     // Call function or do action depending on reference, in this case inpub_id
-    if(inpub_id == MQTT_CMD_TOPIC) {
-      DC_debugOut("# MQTT CMD message\r\n");
-    }else if(inpub_id == MQTT_DATA_TOPIC) {
-      DC_debugOut("# MQTT DATA message\r\n");
-    }else if(inpub_id == MQTT_DEBUG_TOPIC) {
-      DC_debugOut("# MQTT Debug message\r\n");
-    } else {
-      DC_debugOut("# MQTT incoming_data_cb: Ignoring payload...\r\n");
+    devMQTT_callBack
+      
+    switch (inpub_id)
+    {
+    case EMS_TOPID_VAR_OUT: DC_debugOut("# MQTT variable topic\r\n");
+    case EMS_TOPID_DEBUG: DC_debugOut("# MQTT variable topic\r\n");
     }
-    
     
   } else {
     // Handle fragmented payload, store in buffer, write to file or whatever
@@ -72,26 +81,18 @@ static void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection
     // Setup callback for incoming publish requests
     mqtt_set_inpub_callback(client, mqtt_incoming_publish_cb, mqtt_incoming_data_cb, arg);
     
-    // Subscribe to CMD topic
-    err = mqtt_subscribe(client, DC_set.MQTT_cmd_topic, DC_set.MQTT_qos, mqtt_sub_request_cb, arg);
-    
-    if(err != ERR_OK) {
-      DC_debugOut("# MQTT subscribe CMD return: %d\n", err);
+    // Subscribe
+    for (int i=0; i<devMQTT_cntTop; i++)
+    {
+      if ((devMQTT_topics[i].sub_pub == MQTT_SUB) || (devMQTT_topics[i].sub_pub == MQTT_PUB_SUB))
+      {
+        err = mqtt_subscribe(client, devMQTT_topics[i].name, DC_set.MQTT_qos, mqtt_sub_request_cb, arg);
+        
+        if(err != ERR_OK) {
+          DC_debugOut("# MQTT subscribe %s return: %d\n", devMQTT_topics[i].name, err);
+        }   
+      }
     }
-    
-    // Subscribe to DATA topic
-    err = mqtt_subscribe(client, DC_set.MQTT_data_topic, DC_set.MQTT_qos, mqtt_sub_request_cb, arg);
-    
-    if(err != ERR_OK) {
-      DC_debugOut("# MQTT subscribe DATA return: %d\n", err);
-    }   
-    
-    // Subscribe to Debug topic
-    err = mqtt_subscribe(client, DC_DEF_MQTT_DEBUG_TOPIC, DC_set.MQTT_qos, mqtt_sub_request_cb, arg);
-    
-    if(err != ERR_OK) {
-      DC_debugOut("# MQTT subscribe Debug return: %d\n", err);
-    } 
     
   } else {
     DC_debugOut("# MQTT connection cb: Disconnected, reason: %d\n", status);

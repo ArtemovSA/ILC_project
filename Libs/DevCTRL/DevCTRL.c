@@ -20,6 +20,7 @@ const uint8_t DC_const_MQTT_ip_broc[] = DC_DEF_MQTT_BROC_IP;
 //Var
 DC_set_t DC_set; //Device settings
 uint32_t DC_unicID[3]; //Unic ID
+char DC_unic_idef[36]; //Unic idef
 osMessageQId *DC_eventQueue; //Event queue
 
 //Extern
@@ -40,6 +41,7 @@ void DC_init(osMessageQId *eventQueue)
   //Get unic ID
   HAL_GetUID(DC_unicID);
   DC_debugOut("# UNIC ID %ld:%ld:%ld\r\n", DC_unicID[0], DC_unicID[1], DC_unicID[2]);
+  DC_unic_idef
   
   //Flash
   //Init memory

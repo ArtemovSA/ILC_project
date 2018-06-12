@@ -30,8 +30,10 @@
 #define PCA9555_PIN_K3             14      //
 #define PCA9555_PIN_K4             15      //
 
+//Unic ID
+#define UNIC_ID_PREFIX  "aaaaaaaa-1234-1234-1234-"
 extern uint32_t DC_unicID[3]; //Unic ID
-
+extern char DC_unic_idef[36]; //Unic idef
 
 //***********************************Default settings***********************************************
 
