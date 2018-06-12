@@ -53,9 +53,13 @@ extern char DC_unic_idef[36]; //Unic idef
 #define DC_DEF_MQTT_DATA_TOPIC          "INS_DATA"
 #define DC_DEF_MQTT_DEBUG_TOPIC         "INS_DEBUG"
 
+//EMS
+#define DC_DEF_EMS_OUT_PERIOD               5 //sec
+
+
 //**********************************Settings*****************************************************
 
-#define DC_SET_MAGICKEY 0x02
+#define DC_SET_MAGICKEY 0x01
 
 typedef struct
 {
@@ -75,6 +79,9 @@ typedef struct
   uint8_t MQTT_qos;
   char MQTT_cmd_topic[20];
   char MQTT_data_topic[20];
+  
+  //EMS
+  uint16_t EMS_out_period;
 
 }DC_set_t;
 

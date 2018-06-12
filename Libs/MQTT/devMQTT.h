@@ -6,20 +6,20 @@
 #include "string.h"
 #include "stm32f4xx_hal_def.h"
 
-#define MQTT_SUB        0
-#define MQTT_PUB_SUB    1
-#define MQTT_PUB        2
+#define MQTT_SUB        1
+#define MQTT_PUB_SUB    2
+#define MQTT_PUB        3
 
 //Topic struct
 typedef struct
 {
   uint8_t sub_pub; //Subscribe - 1
-  char name[50];
+  char name[70];
   /////.....
 }devMQTT_topic;
 
 //Init
-void devMQTT_init(devMQTT_topic* topics, uint16_t count);
+void devMQTT_init(devMQTT_topic* topics, uint16_t count, void (*callBackPoint)(uint16_t, uint8_t*, uint16_t));
 //MQTT connection
 HAL_StatusTypeDef devMQTT_connect(uint8_t* MQTT_IP, uint16_t MQTT_port, char* MQTT_clintID, char* MQTT_user, char* MQTT_pass);
 //Publish

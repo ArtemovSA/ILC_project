@@ -1332,3 +1332,308 @@ WillDestination             :  null
 2018-06-11 11:16:38,589 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Publishing message on topic "master/show_devices". Payload size = "1"
 2018-06-11 11:16:43,857 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Publishing message on topic "master/show_devices". Payload size = "0"
 2018-06-11 11:17:44,700 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Publishing message on topic "master/new_device". Payload size = "144"
+2018-06-12 08:58:38,810 INFO  [JavaFX Application Thread     ] [MqttViewManager               ]  - Default configuration file present (C:\Users\Sergey\mqtt-spy\mqtt-spy-configuration.xml) = true
+2018-06-12 08:58:38,873 INFO  [JavaFX Application Thread     ] [MqttViewManager               ]  - Loading configuration file from C:\Users\Sergey\mqtt-spy\mqtt-spy-configuration.xml
+2018-06-12 08:58:43,723 INFO  [JavaFX Application Thread     ] [MqttConfigurationUtils        ]  - Auto-complete for server URI (ems.insyte.ru:1883 -> tcp://ems.insyte.ru:1883)
+2018-06-12 08:58:44,299 ERROR [JavaFX Application Thread     ] [FileUtils                     ]  - No files in C:\Users\Sergey\mqtt-spy\
+2018-06-12 08:58:44,861 INFO  [mqtt-spy [ConnectionRunnable for Sergey102615521@ems.insyte.ru:1883]] [MqttAsyncConnectionRunnable   ]  - Connecting client ID [Sergey102615521] to server [[tcp://ems.insyte.ru:1883]]; options = 
+============== Connection options ==============
+SocketFactory               :  null
+CleanSession                :  true
+MqttVersion                 :  0
+KeepAliveInterval           :  60
+ConTimeout                  :  30
+UserName                    :  null
+SSLProperties               :  null
+WillDestination             :  null
+==========================================
+
+2018-06-12 08:58:45,070 INFO  [MQTT Call: Sergey102615521    ] [MqttConnectionResultHandler   ]  - Sergey102615521@ems.insyte.ru:1883 connected
+2018-06-12 08:58:45,070 INFO  [JavaFX Application Thread     ] [MqttEventHandler              ]  - About to resubscribe to all requested topics
+2018-06-12 08:59:03,206 INFO  [JavaFX Application Thread     ] [NewSubscriptionController     ]  - Subscribing to varibles/#
+2018-06-12 08:59:03,209 INFO  [JavaFX Application Thread     ] [MqttSubscriptionViewManager   ]  - Creating subscription for varibles/#
+2018-06-12 08:59:03,297 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to varibles/#
+2018-06-12 08:59:06,953 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from varibles/#
+2018-06-12 08:59:06,955 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Subscription varibles/# removed
+2018-06-12 08:59:06,956 ERROR [JavaFX Application Thread     ] [SpyUncaughtExceptionHandler   ]  - Thread Thread[JavaFX Application Thread,5,main] failed with java.lang.NoClassDefFoundError: com/sun/javafx/scene/control/skin/TabPaneSkin
+java.lang.NoClassDefFoundError: com/sun/javafx/scene/control/skin/TabPaneSkin
+	at pl.baczkowicz.spy.ui.utils.TabUtils.getBehavior(TabUtils.java:65)
+	at pl.baczkowicz.spy.ui.utils.TabUtils.requestClose(TabUtils.java:49)
+	at pl.baczkowicz.mqttspy.ui.MqttSubscriptionViewManager.removeSubscription(MqttSubscriptionViewManager.java:248)
+	at pl.baczkowicz.mqttspy.ui.utils.ContextMenuUtils$3.handle(ContextMenuUtils.java:119)
+	at pl.baczkowicz.mqttspy.ui.utils.ContextMenuUtils$3.handle(ContextMenuUtils.java:116)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(Unknown Source)
+	at javafx.base/javafx.event.Event.fireEvent(Unknown Source)
+	at javafx.controls/javafx.scene.control.MenuItem.fire(Unknown Source)
+	at javafx.controls/com.sun.javafx.scene.control.ContextMenuContent$MenuItemContainer.doSelect(Unknown Source)
+	at javafx.controls/com.sun.javafx.scene.control.ContextMenuContent$MenuItemContainer.lambda$createChildren$12(Unknown Source)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler$NormalEventHandlerRecord.handleBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(Unknown Source)
+	at javafx.base/javafx.event.Event.fireEvent(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.access$1300(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(Unknown Source)
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(Unknown Source)
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(Unknown Source)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+Caused by: java.lang.ClassNotFoundException: com.sun.javafx.scene.control.skin.TabPaneSkin
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(Unknown Source)
+	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(Unknown Source)
+	at java.base/java.lang.ClassLoader.loadClass(Unknown Source)
+	... 47 more
+2018-06-12 08:59:11,734 INFO  [JavaFX Application Thread     ] [NewSubscriptionController     ]  - Subscribing to variables/#
+2018-06-12 08:59:11,745 INFO  [JavaFX Application Thread     ] [MqttSubscriptionViewManager   ]  - Creating subscription for variables/#
+2018-06-12 08:59:11,828 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/#
+2018-06-12 08:59:24,597 ERROR [MQTT Rec: Sergey102615521     ] [MqttCallbackHandler           ]  - Connection Sergey102615521@ems.insyte.ru:1883 lost
+Соединение потеряно (32109) - java.net.SocketTimeoutException: Read timed out
+	at org.eclipse.paho.client.mqttv3.internal.CommsReceiver.run(CommsReceiver.java:146)
+	at java.base/java.lang.Thread.run(Unknown Source)
+Caused by: java.net.SocketTimeoutException: Read timed out
+	at java.base/java.net.SocketInputStream.socketRead0(Native Method)
+	at java.base/java.net.SocketInputStream.socketRead(Unknown Source)
+	at java.base/java.net.SocketInputStream.read(Unknown Source)
+	at java.base/java.net.SocketInputStream.read(Unknown Source)
+	at java.base/java.net.SocketInputStream.read(Unknown Source)
+	at java.base/java.io.DataInputStream.readByte(Unknown Source)
+	at org.eclipse.paho.client.mqttv3.internal.wire.MqttInputStream.readMqttWireMessage(MqttInputStream.java:65)
+	at org.eclipse.paho.client.mqttv3.internal.CommsReceiver.run(CommsReceiver.java:107)
+	... 1 more
+2018-06-12 08:59:24,604 WARN  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Client not connected
+2018-06-12 08:59:24,604 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables/#
+2018-06-12 08:59:29,562 INFO  [mqtt-spy [ConnectionRunnable for Sergey102615521@ems.insyte.ru:1883]] [MqttAsyncConnectionRunnable   ]  - Connecting client ID [Sergey102615521] to server [[tcp://ems.insyte.ru:1883]]; options = 
+============== Connection options ==============
+SocketFactory               :  null
+CleanSession                :  true
+MqttVersion                 :  0
+KeepAliveInterval           :  60
+ConTimeout                  :  30
+UserName                    :  null
+SSLProperties               :  null
+WillDestination             :  null
+==========================================
+
+2018-06-12 09:00:11,571 WARN  [MQTT Con: Sergey102615521     ] [MqttConnectionResultHandler   ]  - Connecting to Sergey102615521@ems.insyte.ru:1883 failed
+Не удается подключиться к серверу (32103) - java.net.ConnectException: Connection timed out: connect
+	at org.eclipse.paho.client.mqttv3.internal.TCPNetworkModule.start(TCPNetworkModule.java:79)
+	at org.eclipse.paho.client.mqttv3.internal.ClientComms$ConnectBG.run(ClientComms.java:650)
+	at java.base/java.lang.Thread.run(Unknown Source)
+Caused by: java.net.ConnectException: Connection timed out: connect
+	at java.base/java.net.DualStackPlainSocketImpl.waitForConnect(Native Method)
+	at java.base/java.net.DualStackPlainSocketImpl.socketConnect(Unknown Source)
+	at java.base/java.net.AbstractPlainSocketImpl.doConnect(Unknown Source)
+	at java.base/java.net.AbstractPlainSocketImpl.connectToAddress(Unknown Source)
+	at java.base/java.net.AbstractPlainSocketImpl.connect(Unknown Source)
+	at java.base/java.net.PlainSocketImpl.connect(Unknown Source)
+	at java.base/java.net.SocksSocketImpl.connect(Unknown Source)
+	at java.base/java.net.Socket.connect(Unknown Source)
+	at org.eclipse.paho.client.mqttv3.internal.TCPNetworkModule.start(TCPNetworkModule.java:70)
+	... 2 more
+2018-06-12 09:00:57,456 INFO  [mqtt-spy [ConnectionRunnable for Sergey102615521@ems.insyte.ru:1883]] [MqttAsyncConnectionRunnable   ]  - Connecting client ID [Sergey102615521] to server [[tcp://ems.insyte.ru:1883]]; options = 
+============== Connection options ==============
+SocketFactory               :  null
+CleanSession                :  true
+MqttVersion                 :  0
+KeepAliveInterval           :  60
+ConTimeout                  :  30
+UserName                    :  null
+SSLProperties               :  null
+WillDestination             :  null
+==========================================
+
+2018-06-12 09:00:57,471 INFO  [MQTT Call: Sergey102615521    ] [MqttConnectionResultHandler   ]  - Sergey102615521@ems.insyte.ru:1883 connected
+2018-06-12 09:00:57,471 INFO  [JavaFX Application Thread     ] [MqttEventHandler              ]  - About to resubscribe to all requested topics
+2018-06-12 09:01:02,769 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/#
+2018-06-12 09:01:06,518 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Subscription varibles/# removed
+2018-06-12 09:01:06,518 ERROR [JavaFX Application Thread     ] [SpyUncaughtExceptionHandler   ]  - Thread Thread[JavaFX Application Thread,5,main] failed with java.lang.NoClassDefFoundError: com/sun/javafx/scene/control/skin/TabPaneSkin
+java.lang.NoClassDefFoundError: com/sun/javafx/scene/control/skin/TabPaneSkin
+	at pl.baczkowicz.spy.ui.utils.TabUtils.getBehavior(TabUtils.java:65)
+	at pl.baczkowicz.spy.ui.utils.TabUtils.requestClose(TabUtils.java:49)
+	at pl.baczkowicz.mqttspy.ui.MqttSubscriptionViewManager.removeSubscription(MqttSubscriptionViewManager.java:248)
+	at pl.baczkowicz.mqttspy.ui.utils.ContextMenuUtils$3.handle(ContextMenuUtils.java:119)
+	at pl.baczkowicz.mqttspy.ui.utils.ContextMenuUtils$3.handle(ContextMenuUtils.java:116)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(Unknown Source)
+	at javafx.base/javafx.event.Event.fireEvent(Unknown Source)
+	at javafx.controls/javafx.scene.control.MenuItem.fire(Unknown Source)
+	at javafx.controls/com.sun.javafx.scene.control.ContextMenuContent$MenuItemContainer.doSelect(Unknown Source)
+	at javafx.controls/com.sun.javafx.scene.control.ContextMenuContent$MenuItemContainer.lambda$createChildren$12(Unknown Source)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler$NormalEventHandlerRecord.handleBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(Unknown Source)
+	at javafx.base/javafx.event.Event.fireEvent(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.access$1300(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(Unknown Source)
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(Unknown Source)
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(Unknown Source)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+2018-06-12 09:01:07,009 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Subscription varibles/# removed
+2018-06-12 09:01:07,009 ERROR [JavaFX Application Thread     ] [SpyUncaughtExceptionHandler   ]  - Thread Thread[JavaFX Application Thread,5,main] failed with java.lang.NoClassDefFoundError: com/sun/javafx/scene/control/skin/TabPaneSkin
+java.lang.NoClassDefFoundError: com/sun/javafx/scene/control/skin/TabPaneSkin
+	at pl.baczkowicz.spy.ui.utils.TabUtils.getBehavior(TabUtils.java:65)
+	at pl.baczkowicz.spy.ui.utils.TabUtils.requestClose(TabUtils.java:49)
+	at pl.baczkowicz.mqttspy.ui.MqttSubscriptionViewManager.removeSubscription(MqttSubscriptionViewManager.java:248)
+	at pl.baczkowicz.mqttspy.ui.utils.ContextMenuUtils$3.handle(ContextMenuUtils.java:119)
+	at pl.baczkowicz.mqttspy.ui.utils.ContextMenuUtils$3.handle(ContextMenuUtils.java:116)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(Unknown Source)
+	at javafx.base/javafx.event.Event.fireEvent(Unknown Source)
+	at javafx.controls/javafx.scene.control.MenuItem.fire(Unknown Source)
+	at javafx.controls/com.sun.javafx.scene.control.ContextMenuContent$MenuItemContainer.doSelect(Unknown Source)
+	at javafx.controls/com.sun.javafx.scene.control.ContextMenuContent$MenuItemContainer.lambda$createChildren$12(Unknown Source)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler$NormalEventHandlerRecord.handleBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(Unknown Source)
+	at javafx.base/javafx.event.Event.fireEvent(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.access$1300(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(Unknown Source)
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(Unknown Source)
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(Unknown Source)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+2018-06-12 09:01:07,587 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Subscription varibles/# removed
+2018-06-12 09:01:07,588 ERROR [JavaFX Application Thread     ] [SpyUncaughtExceptionHandler   ]  - Thread Thread[JavaFX Application Thread,5,main] failed with java.lang.NoClassDefFoundError: com/sun/javafx/scene/control/skin/TabPaneSkin
+java.lang.NoClassDefFoundError: com/sun/javafx/scene/control/skin/TabPaneSkin
+	at pl.baczkowicz.spy.ui.utils.TabUtils.getBehavior(TabUtils.java:65)
+	at pl.baczkowicz.spy.ui.utils.TabUtils.requestClose(TabUtils.java:49)
+	at pl.baczkowicz.mqttspy.ui.MqttSubscriptionViewManager.removeSubscription(MqttSubscriptionViewManager.java:248)
+	at pl.baczkowicz.mqttspy.ui.utils.ContextMenuUtils$3.handle(ContextMenuUtils.java:119)
+	at pl.baczkowicz.mqttspy.ui.utils.ContextMenuUtils$3.handle(ContextMenuUtils.java:116)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(Unknown Source)
+	at javafx.base/javafx.event.Event.fireEvent(Unknown Source)
+	at javafx.controls/javafx.scene.control.MenuItem.fire(Unknown Source)
+	at javafx.controls/com.sun.javafx.scene.control.ContextMenuContent$MenuItemContainer.doSelect(Unknown Source)
+	at javafx.controls/com.sun.javafx.scene.control.ContextMenuContent$MenuItemContainer.lambda$createChildren$12(Unknown Source)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler$NormalEventHandlerRecord.handleBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(Unknown Source)
+	at javafx.base/javafx.event.Event.fireEvent(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.process(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene$MouseHandler.access$1300(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene.processMouseEvent(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.mouseEvent(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(Unknown Source)
+	at javafx.graphics/com.sun.glass.ui.View.handleMouseEvent(Unknown Source)
+	at javafx.graphics/com.sun.glass.ui.View.notifyMouse(Unknown Source)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+2018-06-12 09:12:21,675 ERROR [MQTT Rec: Sergey102615521     ] [MqttCallbackHandler           ]  - Connection Sergey102615521@ems.insyte.ru:1883 lost
+Соединение потеряно (32109) - java.net.SocketTimeoutException: Read timed out
+	at org.eclipse.paho.client.mqttv3.internal.CommsReceiver.run(CommsReceiver.java:146)
+	at java.base/java.lang.Thread.run(Unknown Source)
+Caused by: java.net.SocketTimeoutException: Read timed out
+	at java.base/java.net.SocketInputStream.socketRead0(Native Method)
+	at java.base/java.net.SocketInputStream.socketRead(Unknown Source)
+	at java.base/java.net.SocketInputStream.read(Unknown Source)
+	at java.base/java.net.SocketInputStream.read(Unknown Source)
+	at java.base/java.net.SocketInputStream.read(Unknown Source)
+	at java.base/java.io.DataInputStream.readByte(Unknown Source)
+	at org.eclipse.paho.client.mqttv3.internal.wire.MqttInputStream.readMqttWireMessage(MqttInputStream.java:65)
+	at org.eclipse.paho.client.mqttv3.internal.CommsReceiver.run(CommsReceiver.java:107)
+	... 1 more
+2018-06-12 09:12:21,678 WARN  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Client not connected
+2018-06-12 09:12:21,678 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables/#

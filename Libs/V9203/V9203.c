@@ -31,10 +31,10 @@ void V9203_init(SPI_HandleTypeDef *hspi)
 {
   V9203_hspi = hspi;
   
-  V9203_initDev(1);
-  //V9203_initDev(2);
-  //V9203_initDev(3);
-  //V9203_initDev(4);
+  for (int i=0; i<V9203_COUNT_CHANNELS; i++)
+  {
+    V9203_initDev(i);
+  }
 }
 //--------------------------------------------------------------------------------------------------
 //Init dev
@@ -291,10 +291,10 @@ HAL_StatusTypeDef V9203_set_CS(uint8_t channel, uint8_t state)
   {
     switch(channel)
     {
-    case 1: pin = PCA9555_PIN_CS1; break;
-    case 2: pin = PCA9555_PIN_CS2; break;
-    case 3: pin = PCA9555_PIN_CS3; break;
-    case 4: pin = PCA9555_PIN_CS4; break;
+    case 0: pin = PCA9555_PIN_CS1; break;
+    case 1: pin = PCA9555_PIN_CS2; break;
+    case 2: pin = PCA9555_PIN_CS3; break;
+    case 3: pin = PCA9555_PIN_CS4; break;
     default: DC_debugOut("# V9203 CS channel num ERROR\r\n"); return HAL_ERROR;
     };
     

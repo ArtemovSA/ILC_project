@@ -8,14 +8,14 @@ mqtt_client_t *mqttMainClient; //Client
 struct mqtt_connect_client_info_t ci; //Client info
 devMQTT_topic* devMQTT_topics; //Topics list
 uint16_t devMQTT_cntTop; //Count
-void *devMQTT_callBack(uint16_t, uint8_t*, uin16_t); //Func
+void (*devMQTT_callBack)(uint16_t, uint8_t*, uint16_t); //Func id, data, len
 
 //--------------------------------------------------------------------------------------------------
 //Init
 // args: topics list
 //       count topics
 //       callBackPointer
-void devMQTT_init(devMQTT_topic* topics, uint16_t count, void *callBackPoint)
+void devMQTT_init(devMQTT_topic* topics, uint16_t count, void (*callBackPoint)(uint16_t, uint8_t*, uint16_t))
 {
   devMQTT_topics = topics;
   devMQTT_cntTop = count;
@@ -51,13 +51,7 @@ static void mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t f
   if (flags & MQTT_DATA_FLAG_LAST) {
     
     // Call function or do action depending on reference, in this case inpub_id
-    devMQTT_callBack
-      
-    switch (inpub_id)
-    {
-    case EMS_TOPID_VAR_OUT: DC_debugOut("# MQTT variable topic\r\n");
-    case EMS_TOPID_DEBUG: DC_debugOut("# MQTT variable topic\r\n");
-    }
+    devMQTT_callBack(inpub_id, (uint8_t*)data, len);
     
   } else {
     // Handle fragmented payload, store in buffer, write to file or whatever

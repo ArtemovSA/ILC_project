@@ -22,6 +22,7 @@ DC_set_t DC_set; //Device settings
 uint32_t DC_unicID[3]; //Unic ID
 char DC_unic_idef[36]; //Unic idef
 osMessageQId *DC_eventQueue; //Event queue
+char DC_unic_idef[36]; //Unic idef
 
 //Extern
 extern I2C_HandleTypeDef hi2c1;
@@ -31,6 +32,8 @@ extern NAND_HandleTypeDef hnand1;
 
 //Func
 HAL_StatusTypeDef DC_load_settings(); //Load settings
+//Get unic ID
+void DC_getUnicID();
 
 //--------------------------------------------------------------------------------------------------
 //Init
@@ -39,9 +42,7 @@ void DC_init(osMessageQId *eventQueue)
   DC_debugOut("\r\n# Start dev ILC\r\n");
   
   //Get unic ID
-  HAL_GetUID(DC_unicID);
-  DC_debugOut("# UNIC ID %ld:%ld:%ld\r\n", DC_unicID[0], DC_unicID[1], DC_unicID[2]);
-  DC_unic_idef
+  DC_getUnicID();
   
   //Flash
   //Init memory
@@ -81,6 +82,17 @@ void DC_init(osMessageQId *eventQueue)
   }
 
     
+}
+//--------------------------------------------------------------------------------------------------
+//Get unic ID
+void DC_getUnicID()
+{
+  HAL_GetUID(DC_unicID);
+ // char uinicID[12];
+//  memcpy(uinicID, DC_unicID, 12);
+  sprintf(DC_unic_idef, "%s%ld%ld%ld", UNIC_ID_PREFIX, DC_unicID[0], DC_unicID[1], DC_unicID[2]);
+  
+  DC_debugOut("# UNIC ID: %s\r\n", DC_unic_idef);
 }
 //--------------------------------------------------------------------------------------------------
 //Out debug data
@@ -175,6 +187,9 @@ HAL_StatusTypeDef DC_load_settings()
   DC_set.MQTT_qos = DC_DEF_MQTT_QOS;
   memcpy(DC_set.MQTT_cmd_topic, DC_DEF_MQTT_PASS, sizeof(DC_DEF_MQTT_CMD_TOPIC));
   memcpy(DC_set.MQTT_data_topic, DC_DEF_MQTT_PASS, sizeof(DC_DEF_MQTT_DATA_TOPIC));
+  
+  //EMS
+  DC_set.EMS_out_period = DC_DEF_EMS_OUT_PERIOD;
   
   //Set magic key
   DC_set.magicKey = DC_SET_MAGICKEY;

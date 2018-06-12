@@ -16,7 +16,7 @@ stlinkfoundProbes=
 stlinkResetStyle=0
 stlinkResetStrategy=1
 [DebugChecksum]
-Checksum=-128543166
+Checksum=184049038
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -119,7 +119,9 @@ ShowTiming=1
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Count=0
+Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\EMS_proocol\EMS_protocol.c}.171.5" 0 0 1 "" 0 "" 0
+Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\EMS_proocol\EMS_protocol.c}.120.3" 0 0 1 "" 0 "" 0
+Count=2
 [Aliases]
 A0=_ "C:\Users\Sergey\Desktop\INS\ILC\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c" ""
 A1=_ "C:\Users\Sergey\Desktop\INS\ILC\Middlewares\Third_Party\FreeRTOS\Source\tasks.c" ""

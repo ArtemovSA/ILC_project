@@ -348,6 +348,7 @@
           <state>$PROJ_DIR$\..\Libs\PCA9555</state>
           <state>$PROJ_DIR$\..\Libs\EXP</state>
           <state>$PROJ_DIR$\..\Libs\JSON</state>
+          <state>$PROJ_DIR$\..\Libs\EMS_proocol</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>

@@ -8,7 +8,7 @@
 
 #define V9203_SPI_TIMEOUT       500
 #define V9203_TRY_COUNT         3      //1000 ms
-#define V9203_COUNT_CHANNELS    4      //Count channels
+#define V9203_COUNT_CHANNELS    1      //Count channels
 
 //****************************************Parametrs*************************************************
 

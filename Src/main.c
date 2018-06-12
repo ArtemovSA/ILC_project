@@ -60,6 +60,7 @@
 #include "usbd_cdc_if.h"
 #include "PCA9555.h"
 #include "V9203.h"
+#include "EMS_protocol.h"
 
 /* USER CODE END Includes */
 
@@ -208,6 +209,10 @@ int main(void)
   osThreadDef(CL_task, startCL_task, osPriorityIdle, 0, 128);
   CL_taskHandle = osThreadCreate(osThread(CL_task), NULL);
 
+  /* definition and creation of EMS_task */
+  osThreadDef(EMS_task, startEMS_task, osPriorityIdle, 0, 128);
+  EMS_taskHandle = osThreadCreate(osThread(EMS_task), NULL);
+  
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -229,6 +234,11 @@ int main(void)
   osMessageQDef(CL_TTqueue, 5, uint16_t);
   CL_TTqueueHandle = osMessageCreate(osMessageQ(CL_TTqueue), NULL);
 
+   /* definition and creation of EMS_TTqueue */
+  osMessageQDef(EMS_TTqueue, 5, uint16_t);
+  EMS_TTqueueHandle = osMessageCreate(osMessageQ(EMS_TTqueue), NULL);
+  
+  
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
@@ -800,50 +810,13 @@ void startDebugTask(void const * argument)
 
   /* USER CODE BEGIN 5 */
   
-  DC_init(&debug_TTqueueHandle);
-
-  V9203_init(&hspi1);
+  DC_init(&debug_TTqueueHandle);  
 
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for(;;)
   {
-    
-    float freqLineA = V9203_getFreq(1, LINE_A);//Get frequency
-    float freqLineB = V9203_getFreq(1, LINE_B);//Get frequency
-    float freqLineC = V9203_getFreq(1, LINE_C);//Get frequency
-    
-    DC_debugOut("@ ch %d FREQ A: %2f | FREQ B: %2f | FREQ C: %2f\r\n", 1, freqLineA, freqLineB, freqLineC);
-    
-    //Get RMS voltage
-    float RMSV_LineA = V9203_getRMS_Voltage(1, LINE_A);
-    float RMSV_LineB = V9203_getRMS_Voltage(1, LINE_B);
-    float RMSV_LineC = V9203_getRMS_Voltage(1, LINE_C);
-    
-    DC_debugOut("@ ch %d RMSV A: %2f | RMSV B: %2f | RMSV C: %2f\r\n", 1, RMSV_LineA, RMSV_LineB, RMSV_LineC);
-    
-    //Get RMS current
-    float RMSI_LineA = V9203_getRMS_Current(1, LINE_A);
-    float RMSI_LineB = V9203_getRMS_Current(1, LINE_B);
-    float RMSI_LineC = V9203_getRMS_Current(1, LINE_C);
-    
-    DC_debugOut("@ ch %d RMSI A: %2f | RMSI B: %2f | RMSI C: %2f\r\n", 1, RMSI_LineA, RMSI_LineB, RMSI_LineC);    
 
-    //Get RMS power
-    float RMSP_LineA = V9203_getRMS_Power(1, LINE_A);
-    float RMSP_LineB = V9203_getRMS_Power(1, LINE_B);
-    float RMSP_LineC = V9203_getRMS_Power(1, LINE_C);
-    
-    DC_debugOut("@ ch %d RMSP A: %2f | RMSP B: %2f | RMSP C: %2f\r\n", 1, RMSP_LineA, RMSP_LineB, RMSP_LineC);    
-
-    //Get RMS rectivepower
-    float RMSRP_LineA = V9203_getRMS_reactivePower(1, LINE_A);
-    float RMSRP_LineB = V9203_getRMS_reactivePower(1, LINE_B);
-    float RMSRP_LineC = V9203_getRMS_reactivePower(1, LINE_C);
-    
-    DC_debugOut("@ ch %d RMSRP A: %2f | RMSRP B: %2f | RMSRP C: %2f\r\n", 1, RMSRP_LineA, RMSRP_LineB, RMSRP_LineC);   
-
-    
 //    for (int i=1; i < 5; i++)
 //    {
 //      float freqLineA = V9203_getFreq(i, LINE_A);//Get frequency

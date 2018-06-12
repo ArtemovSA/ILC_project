@@ -7,7 +7,7 @@
 #define PCA9555_REG_INVERT     4
 #define PCA9555_REG_CONFIG     6
 
-#define PCA9555_I2C_TIMEOUT 500
+#define PCA9555_I2C_TIMEOUT  500
 
 #define PCA9555_IO_INPUT      0
 #define PCA9555_IO_OUTPUT     1
