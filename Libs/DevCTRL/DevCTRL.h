@@ -43,7 +43,7 @@ extern char DC_unic_idef[36]; //Unic idef
 #define DC_DEF_NET_MASK                 {255,255,255,0}
 
 //MQTT
-#define DC_DEF_MQTT_BROC_IP             {192,168,1,1}
+#define DC_DEF_MQTT_BROC_IP             {35,157,158,75}
 #define DC_DEF_MQTT_PORT                1883
 #define DC_DEF_MQTT_CLINETID_PFX        "INS_C1"
 #define DC_DEF_MQTT_USER                "user"
@@ -59,7 +59,7 @@ extern char DC_unic_idef[36]; //Unic idef
 
 //**********************************Settings*****************************************************
 
-#define DC_SET_MAGICKEY 0x01
+#define DC_SET_MAGICKEY 0x02
 
 typedef struct
 {

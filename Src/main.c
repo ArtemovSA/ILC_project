@@ -206,12 +206,13 @@ int main(void)
   PW_taskHandle = osThreadCreate(osThread(PW_task), NULL);
 
   /* definition and creation of CL_task */
-  osThreadDef(CL_task, startCL_task, osPriorityIdle, 0, 128);
+  osThreadDef(CL_task, startCL_task, osPriorityIdle, 0, 256);
   CL_taskHandle = osThreadCreate(osThread(CL_task), NULL);
 
   /* definition and creation of EMS_task */
-  osThreadDef(EMS_task, startEMS_task, osPriorityIdle, 0, 128);
+  osThreadDef(EMS_task, startEMS_task, osPriorityIdle, 0, 256);
   EMS_taskHandle = osThreadCreate(osThread(EMS_task), NULL);
+  vTaskSuspend(EMS_taskHandle);
   
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -812,6 +813,8 @@ void startDebugTask(void const * argument)
   
   DC_init(&debug_TTqueueHandle);  
 
+  vTaskResume(EMS_taskHandle);
+  
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for(;;)

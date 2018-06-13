@@ -22,7 +22,7 @@ void EMS_callBack(uint16_t topic_ID, uint8_t* data, uint16_t len);
 //------------------------------------------------------------------------------
 //Init EMS
 void EMS_init()
-{  
+{   
   // topic: varibles/id/FREQ
   emsTopics[EMS_TOPID_VAR_FREQ].sub_pub = MQTT_PUB;
   sprintf(emsTopics[EMS_TOPID_VAR_FREQ].name, "%s/%s/%s", EMS_TOPIC_VAR_PREFIX, DC_unic_idef, "FREQ");
@@ -53,6 +53,11 @@ void EMS_init()
   
   devMQTT_init(emsTopics, EMS_TOPID_COUNT, &EMS_callBack); //Init MQTT
   devMQTT_connect(DC_set.MQTT_broc_ip, DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
+
+  cJSON_Hooks hooks;
+  hooks.malloc_fn = pvPortMalloc;
+  hooks.free_fn = vPortFree;
+  cJSON_InitHooks(&hooks);
 }
 //------------------------------------------------------------------------------
 //Callback
@@ -64,66 +69,62 @@ void EMS_callBack(uint16_t topic_ID, uint8_t* data, uint16_t len)
     case EMS_TOPID_DEBUG: DC_debugOut("# CALL DEBUG\r\n");
     }
 }
+
 //------------------------------------------------------------------------------
 //Send vars
-void EMS_sendVars()
+void EMS_sendVars(uint8_t channel_num)
 {
   char *out;
   char strBuf[15];
   cJSON *root = cJSON_CreateObject();
-  cJSON *vars = cJSON_CreateArray();
-  cJSON *channels = cJSON_CreateArray();
+  cJSON *vars = cJSON_CreateObject();
+  cJSON *phaseA = NULL;
+  cJSON *phaseB = NULL;
+  cJSON *phaseC = NULL;
+  cJSON *channel = NULL;
   
+  phaseA = cJSON_CreateObject();
+  cJSON_AddNumberToObject(phaseA, "freq", meshChan[channel_num].phaseA.freq);
+  cJSON_AddNumberToObject(phaseA, "RMSV", meshChan[channel_num].phaseA.RMSV);
+  cJSON_AddNumberToObject(phaseA, "RMSI", meshChan[channel_num].phaseA.RMSI);
+  cJSON_AddNumberToObject(phaseA, "RMSP", meshChan[channel_num].phaseA.RMSP);
+  cJSON_AddNumberToObject(phaseA, "RMSRP", meshChan[channel_num].phaseA.RMSRP);
+  
+  phaseB = cJSON_CreateObject();
+  cJSON_AddNumberToObject(phaseB, "freq", meshChan[channel_num].phaseB.freq);
+  cJSON_AddNumberToObject(phaseB, "RMSV", meshChan[channel_num].phaseB.RMSV);
+  cJSON_AddNumberToObject(phaseB, "RMSI", meshChan[channel_num].phaseB.RMSI);
+  cJSON_AddNumberToObject(phaseB, "RMSP", meshChan[channel_num].phaseB.RMSP);
+  cJSON_AddNumberToObject(phaseB, "RMSRP", meshChan[channel_num].phaseB.RMSRP);
+  
+  phaseC = cJSON_CreateObject();
+  cJSON_AddNumberToObject(phaseC, "freq", meshChan[channel_num].phaseC.freq);
+  cJSON_AddNumberToObject(phaseC, "RMSV", meshChan[channel_num].phaseC.RMSV);
+  cJSON_AddNumberToObject(phaseC, "RMSI", meshChan[channel_num].phaseC.RMSI);
+  cJSON_AddNumberToObject(phaseC, "RMSP", meshChan[channel_num].phaseC.RMSP);
+  cJSON_AddNumberToObject(phaseC, "RMSRP", meshChan[channel_num].phaseC.RMSRP);
+  
+  channel = cJSON_CreateObject();
+  cJSON_AddItemToObject(channel, "phaseA", phaseA);
+  cJSON_AddItemToObject(channel, "phaseB", phaseB);
+  cJSON_AddItemToObject(channel, "phaseC", phaseC);
+  sprintf(strBuf, "channel_%d", channel_num);
+  
+  cJSON_AddItemToObject(vars, strBuf, channel);
   cJSON_AddItemToObject(root, "varibles", vars);
-  cJSON_AddItemToObject(vars, "channels", channels);
   cJSON_AddNumberToObject(root, "time", 111111111);
   
-  for (int i=0; i < V9203_COUNT_CHANNELS; i++)
-  {
-
-    cJSON *phaseA = NULL;
-    cJSON *phaseB = NULL;
-    cJSON *phaseC = NULL;
-    cJSON *channel = NULL;
-    
-    phaseA = cJSON_CreateArray();
-    cJSON_AddNumberToObject(phaseA, "freq", meshChan[i].phaseA.freq);
-    cJSON_AddNumberToObject(phaseA, "RMSV", meshChan[i].phaseA.RMSV);
-    cJSON_AddNumberToObject(phaseA, "RMSI", meshChan[i].phaseA.RMSI);
-    cJSON_AddNumberToObject(phaseA, "RMSP", meshChan[i].phaseA.RMSP);
-    cJSON_AddNumberToObject(phaseA, "RMSRP", meshChan[i].phaseA.RMSRP);
-    
-    phaseB = cJSON_CreateArray();
-    cJSON_AddNumberToObject(phaseB, "freq", meshChan[i].phaseB.freq);
-    cJSON_AddNumberToObject(phaseB, "RMSV", meshChan[i].phaseB.RMSV);
-    cJSON_AddNumberToObject(phaseB, "RMSI", meshChan[i].phaseB.RMSI);
-    cJSON_AddNumberToObject(phaseB, "RMSP", meshChan[i].phaseB.RMSP);
-    cJSON_AddNumberToObject(phaseB, "RMSRP", meshChan[i].phaseB.RMSRP);
-    
-    phaseC = cJSON_CreateArray();
-    cJSON_AddNumberToObject(phaseC, "freq", meshChan[i].phaseC.freq);
-    cJSON_AddNumberToObject(phaseC, "RMSV", meshChan[i].phaseC.RMSV);
-    cJSON_AddNumberToObject(phaseC, "RMSI", meshChan[i].phaseC.RMSI);
-    cJSON_AddNumberToObject(phaseC, "RMSP", meshChan[i].phaseC.RMSP);
-    cJSON_AddNumberToObject(phaseC, "RMSRP", meshChan[i].phaseC.RMSRP);
-    
-    channel = cJSON_CreateArray();
-    cJSON_AddItemToObject(channel, "phaseA", phaseA);
-    cJSON_AddItemToObject(channel, "phaseB", phaseB);
-    cJSON_AddItemToObject(channel, "phaseC", phaseC);
-    sprintf(strBuf, "channel_%d", i);
-    
-    cJSON_AddItemToObject(channels, strBuf, channel);
-  }
-  
   out = cJSON_Print(root);
+  cJSON_Delete(root);
   DC_debugOut(out);
+  
+  devMQTT_publish("qq", (uint8_t*)out, sizeof(out));
+  vPortFree(out);
 }
 //******************************************************************************
 // startEMS_task function
 void startEMS_task(void const * argument)
-{
-  vTaskDelay(2000);
+{ 
   V9203_init(&hspi1);
   EMS_init();
   
@@ -165,11 +166,11 @@ void startEMS_task(void const * argument)
       meshChan[i].phaseC.RMSRP = V9203_getRMS_reactivePower(i, LINE_C);
       
       DC_debugOut("@ ch %d RMSRP A: %2f | RMSRP B: %2f | RMSRP C: %2f\r\n", i, meshChan[i].phaseA.RMSRP, meshChan[i].phaseB.RMSRP, meshChan[i].phaseC.RMSRP);
+      
+      //Send vars
+      EMS_sendVars(i);
     }
-    
-    //Send vars
-    EMS_sendVars();
 
-    osDelay(DC_set.EMS_out_period);
+    vTaskDelay(DC_set.EMS_out_period);
   }
 }

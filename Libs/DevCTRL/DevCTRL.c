@@ -23,6 +23,7 @@ uint32_t DC_unicID[3]; //Unic ID
 char DC_unic_idef[36]; //Unic idef
 osMessageQId *DC_eventQueue; //Event queue
 char DC_unic_idef[36]; //Unic idef
+char strBuffer[1024];
 
 //Extern
 extern I2C_HandleTypeDef hi2c1;
@@ -90,7 +91,7 @@ void DC_getUnicID()
   HAL_GetUID(DC_unicID);
  // char uinicID[12];
 //  memcpy(uinicID, DC_unicID, 12);
-  sprintf(DC_unic_idef, "%s%ld%ld%ld", UNIC_ID_PREFIX, DC_unicID[0], DC_unicID[1], DC_unicID[2]);
+  sprintf(DC_unic_idef, "%s%02x%02x%02x", UNIC_ID_PREFIX, DC_unicID[0], DC_unicID[1], DC_unicID[2]);
   
   DC_debugOut("# UNIC ID: %s\r\n", DC_unic_idef);
 }
@@ -98,9 +99,7 @@ void DC_getUnicID()
 //Out debug data
 //arg: str - string for out
 void DC_debugOut(char *str, ...)
-{
-  char strBuffer[120];
-  
+{  
   va_list args;
   va_start(args, str);
   va_end(args);

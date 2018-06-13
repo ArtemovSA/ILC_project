@@ -319,13 +319,9 @@ HAL_StatusTypeDef V9203_data_cmd_flash(uint8_t channel, uint8_t cmd, uint16_t da
   if ((state = V9203_set_CS(channel, LOW_LEVEL)) != HAL_OK)
     return state;
   
-  vTaskDelay(1);
-  
   if ((state = HAL_SPI_TransmitReceive(V9203_hspi, txBuf, rxBuf, 4, V9203_SPI_TIMEOUT)) != HAL_OK)
     return state;
-  
-  vTaskDelay(1);
-  
+
   if ((state = V9203_set_CS(channel, HIGH_LEVEL)) != HAL_OK)
     return state;
   

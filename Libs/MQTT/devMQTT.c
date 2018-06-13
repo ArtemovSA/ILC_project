@@ -105,9 +105,9 @@ HAL_StatusTypeDef devMQTT_connect(uint8_t* MQTT_IP, uint16_t MQTT_port, char* MQ
   IP4_ADDR(&mqttIPaddr, *MQTT_IP, *(MQTT_IP+1), *(MQTT_IP+2), *(MQTT_IP+3));
   
   //Settings
-  strcpy((char*)ci.client_id, MQTT_clintID);
-  strcpy((char*)ci.client_user, MQTT_user);
-  strcpy((char*)ci.client_pass, MQTT_pass);
+  ci.client_id = MQTT_clintID;
+  ci.client_user = MQTT_user;
+  ci.client_pass = MQTT_pass;
 
   if (ERR_OK == mqtt_client_connect(mqttMainClient, &mqttIPaddr, MQTT_port, mqtt_connection_cb, 0, &ci))
   {
