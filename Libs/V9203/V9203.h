@@ -8,7 +8,7 @@
 
 #define V9203_SPI_TIMEOUT       500
 #define V9203_TRY_COUNT         3      //1000 ms
-#define V9203_COUNT_CHANNELS    2      //Count channels
+#define V9203_COUNT_CHANNELS    1      //Count channels
 
 //****************************************Parametrs*************************************************
 
@@ -56,11 +56,11 @@
 //DC component register  
 //=============================================================
 #define   RegDCAU       0xF02C
-#define   RegDCAI       0xF02D
+#define   RegDCAI        0xF02D
 #define   RegDCBU       0xF02E
-#define   RegDCBI       0xF02F
+#define   RegDCBI        0xF02F
 #define   RegDCCU       0xF030
-#define   RegDCCI       0xF031
+#define   RegDCCI        0xF031
 
 //=============================================================
 //Frequency phase register  
@@ -72,20 +72,20 @@
 
 #define   RegBUPHA      0xC00B
 #define   RegCUPHA      0xC00C
-#define   RegAIPHA      0xC00D
-#define   RegBIPHA      0xC00E
-#define   RegCIPHA      0xC00F
+#define   RegAIPHA       0xC00D
+#define   RegBIPHA       0xC00E
+#define   RegCIPHA       0xC00F
 
 
 //=============================================================
 //Voltage / current instantaneous rms register  
 //=============================================================
 #define   RegARTIA     0xE83E
-#define   RegARTIB     0xE83F
+#define   RegARTIB    0xE83F
 #define   RegARTIC     0xE840
 
 #define   RegARTUA     0xE842
-#define   RegARTUB     0xE843
+#define   RegARTUB    0xE843
 #define   RegARTUC     0xE844
 
 
@@ -104,15 +104,9 @@
 //=============================================================
 //Voltage / current rms correction register  
 //=============================================================
-//Gain correction current
 #define   RegWARTIA     0xE968
 #define   RegWARTIB     0xE969
 #define   RegWARTIC     0xE96A
-
-//Offcet correction current
-#define   RegWWARTIA    0xE994
-#define   RegWWARTIB    0xE995
-#define   RegWWARTIC    0xE996
 
 #define   RegWARTUA     0xE96C
 #define   RegWARTUB     0xE96D
@@ -122,15 +116,15 @@
 //=============================================================
 //Full wave active / reactive power correction register 
 //=============================================================
-#define   RegWAPTA0     0xE95A
-#define   RegWAPTB0     0xE95E
-#define   RegWAPTC0     0xE962
+#define   RegWAPTA0      0xE95A
+#define   RegWAPTB0      0xE95E
+#define   RegWAPTC0      0xE962
 
 #define   RegWAQTA      0xE965
 #define   RegWAQTB      0xE966
 #define   RegWAQTC      0xE967
 
-#define  RegWAEC0       0XE954       // Angle difference
+#define  RegWAEC0      0XE954       // Angle difference
 
 
 //=============================================================
@@ -152,16 +146,16 @@
 #define   RegWWAPTB     0xE98F
 #define   RegWWAPTC     0xE990
 
-#define   RegWWAQTA     0xE991
-#define   RegWWAQTB     0xE992
-#define   RegWWAQTC     0xE993
+#define   RegWWAQTA      0xE991
+#define   RegWWAQTB      0xE992
+#define   RegWWAQTC      0xE993
 
 
 //=============================================================
 //Threshold register  
 //=============================================================
-#define   RegZZEGYTHH   0xEC1E
-#define   RegZZEGYTHL   0xEC1F
+#define   RegZZEGYTHH     0xEC1E
+#define   RegZZEGYTHL     0xEC1F
 
 #define   RegCTHH       0xE8AA
 #define   RegCTHL       0xE8AB
@@ -174,7 +168,7 @@
 //=============================================================
 //Current sense threshold register  
 //=============================================================
-#define  RegZZDCUM     0xEC1D
+#define  RegZZDCUM    0xEC1D
 
 
 //=============================================================
@@ -183,16 +177,16 @@
 #define RegMAFA  0xE8E4
 #define RegMAFB  0xE8E5
 #define RegMAFC  0xE8E6
-#define RegMAFS  0xE8E7
+#define RegMAFS   0xE8E7
 
 #define BRTUA 0xE883
 #define BRTUB 0xE884
 #define BRTUC 0xE885
 
 
-#define APhy   0x00
-#define BPhy   0x01
-#define CPhy   0x02
+#define APhy  0x00
+#define BPhy  0x01
+#define CPhy  0x02
 #define ABCPhy 0x03
 
 
@@ -205,14 +199,14 @@
 #define RMSI1C       0xE910
 
 #define DATAPA       0xE8E8
-#define DATAPB       0xE8E9
+#define DATAPB      0xE8E9
 #define DATAPC       0xE8EA
-#define DATAPABC     0xE8EE
+#define DATAPABC       0xE8EE
 
-#define DATAQA       0xE8F0
-#define DATAQB       0xE8F1
-#define DATAQC       0xE8F2
-#define DATAQABC     0xE8F3
+#define DATAQA        0xE8F0
+#define DATAQB        0xE8F1
+#define DATAQC        0xE8F2
+#define DATAQABC       0xE8F3
 
 #define DATAFREQA    0xC008
 #define DATAFREQB    0xC009

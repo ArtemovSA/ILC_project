@@ -51,8 +51,8 @@ void EMS_init()
   emsTopics[EMS_TOPID_DEBUG].sub_pub = MQTT_PUB_SUB;
   sprintf(emsTopics[EMS_TOPID_DEBUG].name, "%s/%s" ,EMS_TOPIC_DEB_PREFIX, DC_unic_idef);
   
-  //devMQTT_init(emsTopics, EMS_TOPID_COUNT, &EMS_callBack); //Init MQTT
-  //devMQTT_connect(DC_set.MQTT_broc_ip, DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
+  devMQTT_init(emsTopics, EMS_TOPID_COUNT, &EMS_callBack); //Init MQTT
+  devMQTT_connect(DC_set.MQTT_broc_ip, DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
 
   cJSON_Hooks hooks;
   hooks.malloc_fn = pvPortMalloc;
@@ -117,9 +117,8 @@ void EMS_sendVars(uint8_t channel_num)
   out = cJSON_Print(root);
   cJSON_Delete(root);
   DC_debugOut(out);
-  DC_debugOut("out len:%d", strlen(out));
-
-  devMQTT_publish("qq", (uint8_t*)out, strlen(out));
+  
+  devMQTT_publish("qq", (uint8_t*)out, sizeof(out));
   vPortFree(out);
 }
 //******************************************************************************
@@ -138,38 +137,38 @@ void startEMS_task(void const * argument)
       meshChan[i].phaseB.freq = V9203_getFreq(i, LINE_B);
       meshChan[i].phaseC.freq = V9203_getFreq(i, LINE_C);
       
-      DC_debugOut("@ ch %d FREQ A: %.3f | FREQ B: %.3f | FREQ C: %.3f\r\n", i, meshChan[i].phaseA.freq, meshChan[i].phaseB.freq, meshChan[i].phaseC.freq);
+      DC_debugOut("@ ch %d FREQ A: %2f | FREQ B: %2f | FREQ C: %2f\r\n", i, meshChan[i].phaseA.freq, meshChan[i].phaseB.freq, meshChan[i].phaseC.freq);
       
       //Get RMS voltage
       meshChan[i].phaseA.RMSV = V9203_getRMS_Voltage(i, LINE_A);
       meshChan[i].phaseB.RMSV = V9203_getRMS_Voltage(i, LINE_B);
       meshChan[i].phaseC.RMSV = V9203_getRMS_Voltage(i, LINE_C);
       
-      DC_debugOut("@ ch %d RMSU A: %.3f | RMSU B: %.3f | RMSU C: %.3f\r\n", i, meshChan[i].phaseA.RMSV, meshChan[i].phaseB.RMSV, meshChan[i].phaseC.RMSV);
+      DC_debugOut("@ ch %d RMSU A: %2f | RMSU B: %2f | RMSU C: %2f\r\n", i, meshChan[i].phaseA.RMSV, meshChan[i].phaseB.RMSV, meshChan[i].phaseC.RMSV);
       
       //Get RMS current
       meshChan[i].phaseA.RMSI = V9203_getRMS_Current(i, LINE_A);
       meshChan[i].phaseB.RMSI = V9203_getRMS_Current(i, LINE_B);
       meshChan[i].phaseC.RMSI = V9203_getRMS_Current(i, LINE_C);
       
-      DC_debugOut("@ ch %d RMSI A: %.3f | RMSI B: %.3f | RMSI C: %.3f\r\n", i, meshChan[i].phaseA.RMSI, meshChan[i].phaseB.RMSI, meshChan[i].phaseC.RMSI);
+      DC_debugOut("@ ch %d RMSI A: %2f | RMSI B: %2f | RMSI C: %2f\r\n", i, meshChan[i].phaseA.RMSI, meshChan[i].phaseB.RMSI, meshChan[i].phaseC.RMSI);
       
       //Get RMS power
       meshChan[i].phaseA.RMSP = V9203_getRMS_Power(i, LINE_A);
       meshChan[i].phaseB.RMSP = V9203_getRMS_Power(i, LINE_B);
       meshChan[i].phaseC.RMSP = V9203_getRMS_Power(i, LINE_C);
       
-      DC_debugOut("@ ch %d RMSP A: %.3f | RMSP B: %.3f | RMSP C: %.3f\r\n", i, meshChan[i].phaseA.RMSP, meshChan[i].phaseB.RMSP, meshChan[i].phaseC.RMSP);
+      DC_debugOut("@ ch %d RMSP A: %2f | RMSP B: %2f | RMSP C: %2f\r\n", i, meshChan[i].phaseA.RMSP, meshChan[i].phaseB.RMSP, meshChan[i].phaseC.RMSP);
       
       //Get RMSRP power
       meshChan[i].phaseA.RMSRP = V9203_getRMS_reactivePower(i, LINE_A);
       meshChan[i].phaseB.RMSRP = V9203_getRMS_reactivePower(i, LINE_B);
       meshChan[i].phaseC.RMSRP = V9203_getRMS_reactivePower(i, LINE_C);
       
-      DC_debugOut("@ ch %d RMSRP A: %.3f | RMSRP B: %.3f | RMSRP C: %.3f\r\n\r\n", i, meshChan[i].phaseA.RMSRP, meshChan[i].phaseB.RMSRP, meshChan[i].phaseC.RMSRP);
+      DC_debugOut("@ ch %d RMSRP A: %2f | RMSRP B: %2f | RMSRP C: %2f\r\n", i, meshChan[i].phaseA.RMSRP, meshChan[i].phaseB.RMSRP, meshChan[i].phaseC.RMSRP);
       
       //Send vars
-      //EMS_sendVars(i);
+      EMS_sendVars(i);
     }
 
     vTaskDelay(DC_set.EMS_out_period);
