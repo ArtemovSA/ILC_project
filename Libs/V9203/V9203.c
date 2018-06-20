@@ -119,8 +119,8 @@ void V9203_setupReg(uint8_t channel)
   checkSum += JbPm_val.RacEGYTH;
   
   // High threshold
-  V9203_wr_flash(channel, RegZZEGYTHH, 0x00000000);
-  checkSum += 0x00000000;
+  V9203_wr_flash(channel, RegZZEGYTHH, 0x8E532);
+  checkSum += 0x8E532;
    
   // enable threshold limit
   V9203_wr_flash(channel, RegCTHH, JbPm_val.RacCTHH);
@@ -141,6 +141,10 @@ void V9203_setupReg(uint8_t channel)
   // Active C difference ratio 0	
   V9203_wr_flash(channel, RegWAPTC0, JbPm_val.gs_JBC.RacWAPT);
   checkSum += JbPm_val.gs_JBC.RacWAPT;  
+  
+  // Active A offset power  !!!!!!!!!!!!!!!!!!!
+  V9203_wr_flash(channel, RegWWAPTA, JbPm_val.gs_JBA.RacWWAPT);
+  checkSum += JbPm_val.gs_JBA.RacWWAPT;
   
   // Reactive A difference ratio
   V9203_wr_flash(channel, RegWAQTA, JbPm_val.gs_JBA.RacWAPT);
@@ -165,6 +169,10 @@ void V9203_setupReg(uint8_t channel)
   //C Current rms difference
   V9203_wr_flash(channel, RegWARTIC, JbPm_val.gs_JBC.RacWARTI);
   checkSum += JbPm_val.gs_JBC.RacWARTI;  
+  
+  //A Current rms offset !!!!!!!!!!!!!!
+  V9203_wr_flash(channel, RegWWARTIA, 0);
+  checkSum += 0;  
   
   //A RMS voltage difference
   V9203_wr_flash(channel, RegWARTUA, JbPm_val.gs_JBA.RacWARTU);
@@ -250,13 +258,13 @@ void V9203_initRegVal()
   JbPm_val.RacANCtrl3 = 0x00000406;      //0x00000406; 
   
   JbPm_val.gs_JBA.RacWARTU = 1;//0xFC9A0D98;  // Full-wave voltage rms ratio difference register 0xFC9A0D98
-  JbPm_val.gs_JBA.RacWARTI = 0x21A8301B;  // Full-wave current rms ratio difference register
-  JbPm_val.gs_JBA.RacWAPT = 0x21E51894;   // Full-wave active power ratio difference register 0xEBA74B27
-  JbPm_val.gs_JBA.RacWWAPT = 0x00000000;  // Full-wave active power secondary compensation register
+  JbPm_val.gs_JBA.RacWARTI = 0; //0xE4913EB;  // Full-wave current rms ratio difference register
+  JbPm_val.gs_JBA.RacWAPT = 0; //0x21E51894;   // Full-wave active power ratio difference register 0xEBA74B27
+  JbPm_val.gs_JBA.RacWWAPT = 0xFFFFF945;  // Full-wave active power secondary compensation register
   JbPm_val.gs_JBA.RacREWWAPT = 0x00000000;  // Full-wave reactive power secondary compensation register
   
   JbPm_val.gs_JBB.RacWARTU = 1;//0xFD6F2E2F;  // Full-wave voltage rms ratio difference register
-  JbPm_val.gs_JBB.RacWARTI = 0xE4913EB;  // Full-wave current rms ratio difference register
+  JbPm_val.gs_JBB.RacWARTI = 1; //0xE4913EB;  // Full-wave current rms ratio difference register
   JbPm_val.gs_JBB.RacWAPT = 0xF5DC2F3;   // Full-wave active power ratio difference register 0xECC04599
   JbPm_val.gs_JBB.RacWWAPT = 0x00000000;  // Full-wave active power secondary compensation register
   JbPm_val.gs_JBB.RacREWWAPT = 0x00000000;  // Full-wave reactive power secondary compensation register
@@ -268,9 +276,9 @@ void V9203_initRegVal()
   JbPm_val.gs_JBC.RacREWWAPT = 0x00000000;  //Full-wave reactive power secondary compensation register 
   
   JbPm_val.ui_Resve2 = 0;
-  JbPm_val.ul_PG = 0x10B;               // Power proportional coefficient
-  JbPm_val.ul_URmG = 0x513b;            // Voltage channel proportional coefficient
-  JbPm_val.ul_I1RmG = 0x1A2C0;          // Current channel 1 proportional coefficient
+  JbPm_val.ul_PG = 35304;                               // Power proportional coefficient
+  JbPm_val.ul_URmG = 207900; //0x513b;            // Voltage channel proportional coefficient
+  JbPm_val.ul_I1RmG = 1487500000; //0x1A2C0;          // Current channel 1 proportional coefficient
   
   JbPm_val.ui_JbCRC = V9203_crc16((uint8_t*)&JbPm_val, sizeof(JBPM_t)-2);   // The CRC result of the calibration parameter
 }
@@ -448,7 +456,7 @@ float V9203_getFreq(uint8_t channel, V9203_line_t line)
   if (regData > 0xFFFF)
     return -1;
   
-  return regData*V9203_FREQ_MES_RES;
+  return (float)regData*V9203_FREQ_MES_RES;
 }   
 //----------------------------------------------------------------------------------
 //Get RMS voltage
@@ -478,12 +486,8 @@ float V9203_getRMS_Voltage(uint8_t channel, V9203_line_t line)
     DC_debugOut("# Voltage read ERROR\r\n");
     return -1;
   }
-  
-  //Check return data
-//  if (regData > 0xFFFFFFF)
-//    return -1;
-  
-  return regData/JbPm_val.ul_URmG/10;
+
+  return (float)regData/JbPm_val.ul_URmG;
 }
 //----------------------------------------------------------------------------------
 //Get RMS current
@@ -513,12 +517,8 @@ float V9203_getRMS_Current(uint8_t channel, V9203_line_t line)
     DC_debugOut("# Current read ERROR\r\n");
     return -1;
   }
-  
-  //Check return data
-//  if (regData > 0xFFFFFFF)
-//    return -1;
-  
-  return regData/JbPm_val.ul_I1RmG;
+    
+  return (float)regData/JbPm_val.ul_I1RmG;
 }
 //----------------------------------------------------------------------------------
 //Get power
@@ -549,11 +549,10 @@ float V9203_getRMS_Power(uint8_t channel, V9203_line_t line)
     return -1;
   }
   
-  //Check return data
-//  if (regData > 0xFFFFFFF)
-//    return -1;
-  
-  return regData/JbPm_val.ul_PG;
+  if ((float)regData < 0)
+    return 0;
+
+  return (float)regData/JbPm_val.ul_PG;
 }
 //----------------------------------------------------------------------------------
 //Get reactive power
@@ -583,10 +582,6 @@ float V9203_getRMS_reactivePower(uint8_t channel, V9203_line_t line)
     DC_debugOut("# Reactive power ERROR\r\n");
     return -1;
   }
-  
-  //Check return data
-//  if (regData > 0xFFFFFFF)
-//    return -1;
-  
-  return regData/JbPm_val.ul_PG;
+
+  return (float)regData/JbPm_val.ul_PG;
 }

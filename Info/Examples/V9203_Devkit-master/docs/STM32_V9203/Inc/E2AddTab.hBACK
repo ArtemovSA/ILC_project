@@ -1,0 +1,155 @@
+#ifndef _E2ADDRTAB_H_
+#define _E2ADDRTAB_H_
+
+
+/***********************************E2地址排布定义**************************************/
+//以下宏定义数据都为对于的数据在E2中的存储地址,实际数据长度可以从相邻两项的地址差得到,
+//或可以查看本表E2排布定义的详细设计文档
+/****************************************************************************************/
+#define EEP_BAK_LEN     0x02C0
+
+//下面是第0页地址
+#define EEP_COMADD      0x0000  //通讯地址,6Bytes
+#define EEP_METERNO     0x0006  //表号 ,6Bytes
+#define EEP_ASSETNO     0x000C  //资产管理编码（ASCII码）
+#define EEP_STANDUN     0x002C  //额定电压（ASCII码）
+#define EEP_STANDIN     0x0032  //额定电流/基本电流（ASCII码）
+#define EEP_MAXIN       0x0038  //最大电流（ASCII码）
+                                
+//下面是第1页地址                                
+#define EEP_YGACCURACY  0x0040  //有功准确度等级（ASCII码）
+#define EEP_DBWZXX      0x0044  //电表位置信息
+#define EEP_METERMODEL  0x004F  //电表型号（ASCII码）
+#define EEP_PDATE       0x0059  //生产日期（ASCII码）
+#define EEP_PROTOCOLNO  0x0063  //协议版本号（ASCII码）
+#define EEP_KHBH        0x0073  //客户编号（6byte）
+#define EEP_YGCALC      0x0079  //有功组合方式特征字
+#define EEP_IARBDM      0x007A  //调制型红外光口通信速率特征字
+#define EEP_UARTBDM     0x007B  //通信口1通信速率特征字
+#define EEP_PROTIME     0x007C  //编程有效时间(自扩)
+
+//下面是第3页地址
+
+#define EEP_645PASSWD1  0x00C0  //第一级密码
+#define EEP_645PASSWD2  0x00C3  //第二级密码
+#define EEP_645PASSWD3  0x00C6  //第三级密码
+#define EEP_645PASSWD4  0x00C9  //第四级密码
+#define EEP_645PASSWD5  0x00CC  //第五级密码
+#define EEP_645PASSWD6  0x00CF  //第六级密码
+#define EEP_645PASSWD7  0x00D2  //第七级密码
+#define EEP_645PASSWD8  0x00D5  //第八级密码
+#define EEP_645PASSWD9  0x00D8  //第九级密码
+#define EEP_CBR1        0x00DB  //每月第一结算日
+#define EEP_CBR2        0x00DD  //每月第二结算日
+#define EEP_CBR3        0x00DF  //每月第三结算日
+#define EEP_MAX_LX_NUM  0x00E1  //自动循环显示屏数
+#define EEP_LXTM        0x00E2  //每屏显示时间
+#define EEP_EDEC        0x00E3  //显示电能小数位数
+#define EEP_PDEC        0x00E4  //显示功率(最大需量显示位数)
+#define EEP_MAX_JX_NUM  0x00E5  //按键循环显示屏数
+#define EEP_SHOWERRPOS  0x00E6  //ERR错误字显示位置
+#define EEP_POWUPJXTM   0x00E7  //有电下键显显示时间(自扩)
+#define EEP_POWDWJXTM   0x00E8  //停电下键显显示时间(自扩)
+#define EEP_POWOFFXSTM  0x00E9  //停电显示时间(自扩)
+#define EEP_FULLSHOWTM  0x00EB  //全屏显示时间(自扩)
+#define EEP_POWUPBGTM   0x00EC  //上电背光亮时间(自扩)
+#define EEP_IRBGTM      0x00ED  //红外触发背光亮时间(自扩)
+#define EEP_KEYBGTM     0x00EE  //按键触发背光亮时间(自扩)
+#define EEP_ESAMERRBGTM 0x00EF  //ESAM错误背光亮时间(自扩)
+#define EEP_LEDSFCKTM   0x00F0  //LED自检时间(自扩)
+#define EEP_ZDFREEZTM   0x00F1  //整点冻结起始时间
+#define EEP_ZDTMJG      0x00F6  //整点冻结时间间隔
+#define EEP_DSFRZ       0x00F7  //定时冻结时间
+#define EEP_RFREEZTM    0x00FB  //日冻结时间
+#define EEP_DBYXTZZ     0x00FD  //电表运行特征字1
+
+ 
+//下面是第5页地址 
+//校表参数 
+#define EEP_JBTOTAL     0x0140  //校表参数首地址
+#define EEP_JBBCS       0x0140  //表常数
+#define EEP_JBBCDY      0x0142  //标称电压
+#define EEP_JBBCDL      0x0144  //标称电流
+
+//下面是第6页地址 
+//实时时钟备份
+#define EEP_DATETIME    0x01C0  //当前时钟备份(自扩)
+//#define EEP_AUTOCAL     0x01D0  //自动校表比对数据
+
+//下面是第7页地址
+#define EEP_SQCNT           0x0200  //年时区数
+#define EEP_RSDCNT          0x0201  //日时段表数
+#define EEP_FSDCNT          0x0202  //费率时段数(每日切换数)
+#define EEP_FEECNT          0x0203  //费率数
+#define EEP_SZX             0x0204  //周休日状态字
+#define EEP_ZXSD            0x0205  //周休日时段表
+#define EEP_SFRZTIME        0x0206  //身份认证时效
+#define EEP_JRCNT           0x0208  //公共假日数(不带年/带年)
+#define EEP_SQQHTM          0x020A  //两套时区表切换时间
+#define EEP_RSDQHTM         0x020F  //两套日时段表切换时间
+#define EEP_PDIRTIME        0x0214  //功率反向事件判定延时时间
+#define EEP_PDIRGATE        0x0215  //功率反向事件有功功率触发下限
+                                    //0x0218保留  
+#define EEP_CFSAVECFG       0x0219  //CF保存配置项（自扩）
+#define EEP_CBRCFG          0x021A  //抄表日补冻配置项（自扩）
+#define EEP_DJCFG           0x021B  //冻结补冻配置项（自扩）
+#define EEP_PWLCFG          0x021C  //密码等级有效配置项（自扩）
+#define EEP_SQSDCFG         0x021E  //时区和时段切换时间设置判别配置项（自扩）
+#define EEP_ENSHOWCFG       0x021F  //电量显示格式配置项（自扩）
+#define EEP_TMSHOWCFG       0x0220  //时间显示格式配置项（自扩）
+#define EEP_PWOFFSHOWMDCFG  0x0221  //停电显示模式配置项（自扩）
+#define EEP_JDQCKCFG        0x0222  //继电器检测方式配置项（自扩）
+#define EEP_METERCLRCNT     0x0223  //电表清零次数（自扩）
+#define EEP_METERCLFENGVAL  0x0224  //电表清零电量阀值（自扩）
+#define EEP_PRODUCE         0x0228  //生产模式状态(自扩)
+#define EEP_PRODUCETM       0x0229  //生产模式退出时间(自扩
+#define EEP_MYZTS           0x022B  //密钥总条数
+#define EEP_SWBAKNUM        0x022C  //软件备案号
+#define EEP_MYZTZ           0x0234  //密钥状态字
+#define EEP_ZDSBMSZ         0x0238  //主动上报模式字
+
+
+//下面是第38页地址
+#define EEP_CJRJBB      0x0A00  //厂家软件版本号(ASCII码)
+//下面是第38页地址
+#define EEP_CJYJBB      0x0A20  //厂家硬件版本号(ASCII码)
+//下面是第39页地址                                
+//下面是轮显表,键显表等
+#define EEP_LXTABLE     0x0A40  //轮显表
+//下面是第47页地址  
+#define EEP_JXTABLE     0x0C40  //键显表                                
+//下面是第55页地址                                  
+/*#define EEP_JRS         0x0E40  //公共假日日期表首地址
+//下面是第59页地址 
+#define EEP_POWDWENERGY     0x0F40      //掉电保存电量增量
+#define EEP_POWDWCURFEE     0x0F56      //掉电时费率
+#define EEP_POWDWCURTIME    0x0F57      //掉电时时间
+#define EEP_POWDWCFCNT      0x0F5D      //掉电时CF数
+#define EEP_POWDWCFENERGY   0x0F67      //掉电时CF对应能量数
+#define EEP_PRGLEFTTM       0x0F71      //编程剩余时间(计时使用)(自扩)
+#define EEP_PRODUCELEFTTM   0x0F73      //厂内时间（计时使用）(自扩)
+#define EEP_PW2BSTM         0x0F75      //2级密码闭锁时间
+#define EEP_PW4BSTM         0x0F77      //4级密码闭锁时间
+#define EEP_POWERDWTM       0x0F79      //停电时间
+#define EEP_STRELAY         0x0F7D      //拉合闸状态（自扩）
+//#define EEP_ESAMKEYST       0x0EFF      //Esam密钥状态*/
+
+//月度组合有功有功累计用电量
+/*#define EEP_SYZHLYDL_PT     0x1100
+#define EEP_SYZHLYDLADDR    0x1101
+
+//下面是第61页空闲
+#define EEP_DDLXZ     0x1140        //大电流修正值*/
+
+//以下是当前电量部分
+#define EEP_EPS             0x11c0  //当前有功电量数据
+#define EEP_NEPS          0x1216  //当前无功电量数据
+//下面是第62页地址
+//历史电量,修改
+//#define EEP_EPHIS_PT    0x11C0      //历史有功电量存储指针
+//#define EEP_EPHIS       0x11C1      //历史有功电量在E2的起始地址
+#define EEP_EPHIS_PT    0x16C0      //历史有功电量存储指针
+#define EEP_EPHIS       0x16C1      //历史有功电量在E2的起始地址
+
+#endif
+

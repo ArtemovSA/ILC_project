@@ -801,10 +801,10 @@ static void MX_FSMC_Init(void)
 void startDebugTask(void const * argument)
 {
   /* init code for FATFS */
-  MX_FATFS_Init();
+  //MX_FATFS_Init();
 
   /* init code for LWIP */
-  MX_LWIP_Init();
+  //MX_LWIP_Init();
 
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
