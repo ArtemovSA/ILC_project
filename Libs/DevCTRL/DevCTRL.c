@@ -15,7 +15,12 @@
 const uint8_t DC_const_dev_ip_addr[] = DC_DEF_DEV_IP_ADDR;
 const uint8_t DC_const_gw_ip_addr[] = DC_DEF_GW_IP_ADDR;
 const uint8_t DC_const_net_mask[] = DC_DEF_NET_MASK;
-const uint8_t DC_const_MQTT_ip_broc[] = DC_DEF_MQTT_BROC_IP;
+const uint8_t DC_const_MQTT_ip_broc_1[] = DC_DEF_MQTT_BROC_IP_1;
+const uint8_t DC_const_MQTT_ip_broc_2[] = DC_DEF_MQTT_BROC_IP_2;
+const uint8_t DC_const_MQTT_ip_broc_3[] = DC_DEF_MQTT_BROC_IP_3;
+const char DC_const_MQTT_name_broc_1[] = DC_DEF_MQTT_BROC_NAME_1;
+const char DC_const_MQTT_name_broc_2[] = DC_DEF_MQTT_BROC_NAME_2;
+const char DC_const_MQTT_name_broc_3[] = DC_DEF_MQTT_BROC_NAME_2;
 
 //Var
 DC_set_t DC_set; //Device settings
@@ -115,12 +120,26 @@ void DC_debugOut(char *str, ...)
   va_end(args);
 }
 //--------------------------------------------------------------------------------------------------
-//IP addr out
-void DC_debug_ipAdrrOut(char *text, uint8_t* ip)
+//IP out
+void DC_debug_ipAdrrOut(char *text, uint8_t *ip)
 {
-  DC_debugOut(text);
-  DC_debugOut(" %d:%d:%d:%d\r\n", *ip, *(ip+1), *(ip+2), *(ip+3));
+  DC_debugOut("%s %d:%d:%d:%d\r\n", text, *ip, *(ip+1), *(ip+2), *(ip+3));
 }
+//--------------------------------------------------------------------------------------------------
+//IP active out
+void DC_debug_ipActiveAdrrOut(char *text, uint8_t activeBrock)
+{
+  if (activeBrock < 3)
+  {
+    DC_debug_ipAdrrOut(text, DC_set.MQTT_broc_ip[activeBrock]);
+  }
+  
+  if ((activeBrock > 3) && (activeBrock < 7))
+  {
+    DC_debugOut("%s %s", text, DC_set.MQTT_broc_name[activeBrock-3]);
+  }
+}
+
 //--------------------------------------------------------------------------------------------------
 //Out settings
 void DC_debug_settingsOut()
@@ -130,14 +149,12 @@ void DC_debug_settingsOut()
   DC_debug_ipAdrrOut("# NET GATEWAY IP: ", DC_set.net_gw_ip_addr);
   DC_debug_ipAdrrOut("# NET MASK: ", DC_set.net_mask);
   DC_debugOut("# --MQTT Settings--\r\n");
-  DC_debug_ipAdrrOut("# MQTT BROCKER IP: ", DC_set.MQTT_broc_ip);
+  DC_debug_ipActiveAdrrOut("# MQTT ACTIVE BROCKER: ", DC_set.MQTT_activeBrock);
   DC_debugOut("# MQTT PORT %d\r\n", DC_set.MQTT_port);
   DC_debugOut("# MQTT CLINET ID %s\r\n", DC_set.MQTT_clintID);
   DC_debugOut("# MQTT USER %s\r\n", DC_set.MQTT_user);
   DC_debugOut("# MQTT PASS %s\r\n", DC_set.MQTT_pass);
   DC_debugOut("# MQTT QOS %d\r\n", DC_set.MQTT_qos);
-  DC_debugOut("# MQTT CMD TOPIC %s\r\n", DC_set.MQTT_cmd_topic);
-  DC_debugOut("# MQTT DATA TOPIC %s\r\n", DC_set.MQTT_data_topic);
 }
 //--------------------------------------------------------------------------------------------------
 //Load settings
@@ -174,7 +191,12 @@ HAL_StatusTypeDef DC_load_settings()
   memcpy(DC_set.net_mask, DC_const_net_mask, 4);
   
   //MQTT
-  memcpy(DC_set.MQTT_broc_ip, DC_const_MQTT_ip_broc, 4);
+  memcpy(DC_set.MQTT_broc_ip[0], DC_const_MQTT_ip_broc_1, 4);
+  memcpy(DC_set.MQTT_broc_ip[1], DC_const_MQTT_ip_broc_2, 4);
+  memcpy(DC_set.MQTT_broc_ip[2], DC_const_MQTT_ip_broc_3, 4);
+  memcpy(DC_set.MQTT_broc_name[0], DC_const_MQTT_name_broc_1, strlen(DC_const_MQTT_name_broc_1));
+  memcpy(DC_set.MQTT_broc_name[1], DC_const_MQTT_name_broc_2, strlen(DC_const_MQTT_name_broc_2));
+  memcpy(DC_set.MQTT_broc_name[2], DC_const_MQTT_name_broc_3, strlen(DC_const_MQTT_name_broc_3));
   DC_set.MQTT_port = DC_DEF_MQTT_PORT;
   
   //Client frefix plus unic ID number 
@@ -184,8 +206,6 @@ HAL_StatusTypeDef DC_load_settings()
   memcpy(DC_set.MQTT_user, DC_DEF_MQTT_USER, sizeof(DC_DEF_MQTT_USER));
   memcpy(DC_set.MQTT_pass, DC_DEF_MQTT_PASS, sizeof(DC_DEF_MQTT_PASS));
   DC_set.MQTT_qos = DC_DEF_MQTT_QOS;
-  memcpy(DC_set.MQTT_cmd_topic, DC_DEF_MQTT_PASS, sizeof(DC_DEF_MQTT_CMD_TOPIC));
-  memcpy(DC_set.MQTT_data_topic, DC_DEF_MQTT_PASS, sizeof(DC_DEF_MQTT_DATA_TOPIC));
   
   //EMS
   DC_set.EMS_out_period = DC_DEF_EMS_OUT_PERIOD;

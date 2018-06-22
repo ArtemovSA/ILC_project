@@ -23,29 +23,17 @@ void EMS_callBack(uint16_t topic_ID, uint8_t* data, uint16_t len);
 //Init EMS
 void EMS_init()
 {   
-  // topic: varibles/id/FREQ
-  emsTopics[EMS_TOPID_VAR_FREQ].sub_pub = MQTT_PUB;
-  sprintf(emsTopics[EMS_TOPID_VAR_FREQ].name, "%s/%s/%s", EMS_TOPIC_VAR_PREFIX, DC_unic_idef, "FREQ");
+  // topic: varibles/id/channel
+  emsTopics[EMS_TOPID_VAR_CHAN].sub_pub = MQTT_PUB;
+  sprintf(emsTopics[EMS_TOPID_VAR_CHAN].name, "%s/%s/%s", EMS_TOPIC_VAR_PREFIX, DC_unic_idef, "channel");
   
-  // topic: varibles/id/RMSU
-  emsTopics[EMS_TOPID_VAR_RMSU].sub_pub = MQTT_PUB;
-  sprintf(emsTopics[EMS_TOPID_VAR_RMSU].name, "%s/%s/%s", EMS_TOPIC_VAR_PREFIX, DC_unic_idef, "RMSU");
-  
-  // topic: varibles/id/RMSI
-  emsTopics[EMS_TOPID_VAR_RMSI].sub_pub = MQTT_PUB;
-  sprintf(emsTopics[EMS_TOPID_VAR_RMSI].name, "%s/%s/%s", EMS_TOPIC_VAR_PREFIX, DC_unic_idef, "RMSI");
-  
-  // topic: varibles/id/RMSP
-  emsTopics[EMS_TOPID_VAR_RMSP].sub_pub = MQTT_PUB;
-  sprintf(emsTopics[EMS_TOPID_VAR_RMSP].name, "%s/%s/%s", EMS_TOPIC_VAR_PREFIX, DC_unic_idef, "RMSP");
-  
-  // topic: varibles/id/RMSRP
-  emsTopics[EMS_TOPID_VAR_RMSRP].sub_pub = MQTT_PUB;
-  sprintf(emsTopics[EMS_TOPID_VAR_RMSRP].name, "%s/%s/%s", EMS_TOPIC_VAR_PREFIX, DC_unic_idef, "RMSRP");
-
-  // topic: attributes/id/OUT_PERIOD
-  emsTopics[EMS_TOPID_ATTR_PERIOD].sub_pub = MQTT_SUB;
-  sprintf(emsTopics[EMS_TOPID_ATTR_PERIOD].name, "%s/%s/%s", EMS_TOPIC_ATR_PREFIX, DC_unic_idef, "OUT_PERIOD");
+  // topic: attributes/id/main_set
+  emsTopics[EMS_TOPID_ATTR_MAIN_SET].sub_pub = MQTT_PUB_SUB;
+  sprintf(emsTopics[EMS_TOPID_ATTR_MAIN_SET].name, "%s/%s/%s", EMS_TOPIC_ATR_PREFIX, DC_unic_idef, "main_set");
+    
+  // topic: attributes/id/calibrate
+  emsTopics[EMS_TOPID_ATTR_CALIBR].sub_pub = MQTT_PUB_SUB;
+  sprintf(emsTopics[EMS_TOPID_ATTR_CALIBR].name, "%s/%s/%s", EMS_TOPIC_ATR_PREFIX, DC_unic_idef, "calibrate");
   
   // topic: debug/id
   emsTopics[EMS_TOPID_DEBUG].sub_pub = MQTT_PUB_SUB;

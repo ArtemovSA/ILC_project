@@ -44,18 +44,20 @@ extern char DC_unic_idef[36]; //Unic idef
 #define DC_DEF_NET_MASK                 {255,255,255,0}
 
 //MQTT
-#define DC_DEF_MQTT_BROC_IP             {35,157,158,75}
+#define DC_DEF_MQTT_BROC_IP_1           {35,157,158,75}
+#define DC_DEF_MQTT_BROC_IP_2           {35,157,158,75}
+#define DC_DEF_MQTT_BROC_IP_3           {35,157,158,75}
+#define DC_DEF_MQTT_BROC_NAME_1         "ems.insyte.ru"
+#define DC_DEF_MQTT_BROC_NAME_2         "broker.mqtt-dashboard.com"
+#define DC_DEF_MQTT_BROC_NAME_3         "test.mosquitto.org"
 #define DC_DEF_MQTT_PORT                1883
 #define DC_DEF_MQTT_CLINETID_PFX        "INS_C1"
 #define DC_DEF_MQTT_USER                "user"
 #define DC_DEF_MQTT_PASS                "123"
 #define DC_DEF_MQTT_QOS                 1
-#define DC_DEF_MQTT_CMD_TOPIC           "INS_CMD"
-#define DC_DEF_MQTT_DATA_TOPIC          "INS_DATA"
-#define DC_DEF_MQTT_DEBUG_TOPIC         "INS_DEBUG"
 
 //EMS
-#define DC_DEF_EMS_OUT_PERIOD               5 //sec
+#define DC_DEF_EMS_OUT_PERIOD            5 //sec
 
 //Calibration cofficients
 //Channel 1
@@ -105,14 +107,14 @@ typedef struct
   uint8_t net_mask[4];
   
   //MQTT
-  uint8_t MQTT_broc_ip[4];
-  uint16_t MQTT_port;
+  uint8_t MQTT_broc_ip[3][4]; //Brocker ip list
+  char MQTT_broc_name[3][40]; //Brocker net name list
+  uint8_t MQTT_activeBrock; //Active brocker
+  uint16_t MQTT_port; //Port
   char MQTT_clintID[20];
   char MQTT_user[20];
   char MQTT_pass[20];
   uint8_t MQTT_qos;
-  char MQTT_cmd_topic[20];
-  char MQTT_data_topic[20];
   
   //EMS
   uint16_t EMS_out_period;
@@ -147,8 +149,6 @@ typedef struct
 void DC_init();
 //Out debug data
 void DC_debugOut(char *str, ...);
-//IP addr out
-void DC_debug_ipAdrrOut(char *text, uint8_t* ip);
 //Load settings
 HAL_StatusTypeDef DC_load_settings();
 //User function Get Current task ID 
