@@ -249,7 +249,7 @@ void V9203_initRegVal()
   JbPm_val.RacANCtrl2 = 0x77005400;      //0x77005400;  0xF7005400;  
   JbPm_val.RacANCtrl3 = 0x00000406;      //0x00000406; 
   
-  JbPm_val.gs_JBA.RacWARTU = 1;//0xFC9A0D98;  // Full-wave voltage rms ratio difference register 0xFC9A0D98
+  JbPm_val.gs_JBA.RacWARTU = 0;//0xFC9A0D98;  // Full-wave voltage rms ratio difference register 0xFC9A0D98
   JbPm_val.gs_JBA.RacWARTI = 0x21A8301B;  // Full-wave current rms ratio difference register
   JbPm_val.gs_JBA.RacWAPT = 0x21E51894;   // Full-wave active power ratio difference register 0xEBA74B27
   JbPm_val.gs_JBA.RacWWAPT = 0x00000000;  // Full-wave active power secondary compensation register

@@ -3,6 +3,7 @@
 
 #include "stm32f4xx_hal.h"
 #include "EXP.h"
+#include "V9203.h"
 
 //***********************************Device data****************************************************
 
@@ -56,6 +57,39 @@ extern char DC_unic_idef[36]; //Unic idef
 //EMS
 #define DC_DEF_EMS_OUT_PERIOD               5 //sec
 
+//Calibration cofficients
+//Channel 1
+#define DC_CAL_CH1_UOFFSET      0
+#define DC_CAL_CH1_IOFFSET      0x21A8301B
+#define DC_CAL_CH1_P1OFFSET     0x21E51894
+#define DC_CAL_CH1_P2OFFSET     0x00000000
+#define DC_CAL_CH1_R2POFFSET    0x00000000
+
+//Channel 2
+#define DC_CAL_CH2_UOFFSET      0
+#define DC_CAL_CH2_IOFFSET      0x21A8301B
+#define DC_CAL_CH2_P1OFFSET     0x21E51894
+#define DC_CAL_CH2_P2OFFSET     0x00000000
+#define DC_CAL_CH2_R2POFFSET    0x00000000
+
+//Channel 3
+#define DC_CAL_CH3_UOFFSET      0
+#define DC_CAL_CH3_IOFFSET      0x21A8301B
+#define DC_CAL_CH3_P1OFFSET     0x21E51894
+#define DC_CAL_CH3_P2OFFSET     0x00000000
+#define DC_CAL_CH3_R2POFFSET    0x00000000
+
+//Channel 4
+#define DC_CAL_CH4_UOFFSET      0
+#define DC_CAL_CH4_IOFFSET      0x21A8301B
+#define DC_CAL_CH4_P1OFFSET     0x21E51894
+#define DC_CAL_CH4_P2OFFSET     0x00000000
+#define DC_CAL_CH4_R2POFFSET    0x00000000
+
+//Proportiona coefficients
+#define DC_CAL_COEFF_P          0x10B
+#define DC_CAL_COEFF_U          0x513b
+#define DC_CAL_COEFF_I          0x1A2C0
 
 //**********************************Settings*****************************************************
 
@@ -82,6 +116,17 @@ typedef struct
   
   //EMS
   uint16_t EMS_out_period;
+  
+  //Calibration struct
+  JBRE_t V9203_ch1_cal;
+  JBRE_t V9203_ch2_cal;
+  JBRE_t V9203_ch3_cal;
+  JBRE_t V9203_ch4_cal;
+  
+  //Proportional coeff
+  uint32_t V9203_Pcoeff;
+  uint32_t V9203_Ucoeff;
+  uint32_t V9203_Icoeff;
 
 }DC_set_t;
 

@@ -190,6 +190,36 @@ HAL_StatusTypeDef DC_load_settings()
   //EMS
   DC_set.EMS_out_period = DC_DEF_EMS_OUT_PERIOD;
   
+  //Calibration
+  DC_set.V9203_ch1_cal.RacWARTU = DC_CAL_CH1_UOFFSET;
+  DC_set.V9203_ch1_cal.RacWARTI = DC_CAL_CH1_IOFFSET;
+  DC_set.V9203_ch1_cal.RacWAPT = DC_CAL_CH1_P1OFFSET;
+  DC_set.V9203_ch1_cal.RacWWAPT = DC_CAL_CH1_P2OFFSET;
+  DC_set.V9203_ch1_cal.RacREWWAPT = DC_CAL_CH1_R2POFFSET;
+  
+  DC_set.V9203_ch2_cal.RacWARTU = DC_CAL_CH2_UOFFSET;
+  DC_set.V9203_ch2_cal.RacWARTI = DC_CAL_CH2_IOFFSET;
+  DC_set.V9203_ch2_cal.RacWAPT = DC_CAL_CH2_P1OFFSET;
+  DC_set.V9203_ch2_cal.RacWWAPT = DC_CAL_CH2_P2OFFSET;
+  DC_set.V9203_ch2_cal.RacREWWAPT = DC_CAL_CH2_R2POFFSET;
+  
+  DC_set.V9203_ch3_cal.RacWARTU = DC_CAL_CH3_UOFFSET;
+  DC_set.V9203_ch3_cal.RacWARTI = DC_CAL_CH3_IOFFSET;
+  DC_set.V9203_ch3_cal.RacWAPT = DC_CAL_CH3_P1OFFSET;
+  DC_set.V9203_ch3_cal.RacWWAPT = DC_CAL_CH3_P2OFFSET;
+  DC_set.V9203_ch3_cal.RacREWWAPT = DC_CAL_CH3_R2POFFSET;
+  
+  DC_set.V9203_ch4_cal.RacWARTU = DC_CAL_CH4_UOFFSET;
+  DC_set.V9203_ch4_cal.RacWARTI = DC_CAL_CH4_IOFFSET;
+  DC_set.V9203_ch4_cal.RacWAPT = DC_CAL_CH4_P1OFFSET;
+  DC_set.V9203_ch4_cal.RacWWAPT = DC_CAL_CH4_P2OFFSET;
+  DC_set.V9203_ch4_cal.RacREWWAPT = DC_CAL_CH4_R2POFFSET;
+  
+  //Proportiona coefficients
+  DC_set.V9203_Pcoeff = DC_CAL_COEFF_P;
+  DC_set.V9203_Ucoeff = DC_CAL_COEFF_U;
+  DC_set.V9203_Icoeff = DC_CAL_COEFF_I;
+  
   //Set magic key
   DC_set.magicKey = DC_SET_MAGICKEY;
   

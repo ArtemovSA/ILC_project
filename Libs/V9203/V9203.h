@@ -247,7 +247,7 @@ typedef enum
   LINE_N
 }V9203_line_t;
 
-
+//Calibtation struct
 typedef struct
 {
   unsigned int  RacWARTU;           //Full-wave voltage rms ratio difference register
