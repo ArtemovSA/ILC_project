@@ -160,7 +160,7 @@ HAL_StatusTypeDef DC_load_settings()
   if (DC_set.magicKey == DC_SET_MAGICKEY)
   {
     DC_debugOut("# Settings load OK\r\n");
-    DC_debug_settingsOut();
+    //DC_debug_settingsOut();
     return HAL_OK;
   }
   
@@ -201,7 +201,7 @@ HAL_StatusTypeDef DC_load_settings()
   }
   
   DC_debugOut("# Settings set default\r\n");
-  DC_debug_settingsOut();
+  //DC_debug_settingsOut();
   
   return HAL_OK;
 }
