@@ -58,6 +58,9 @@
 /* USER CODE END Includes */
 
 /* Private define ------------------------------------------------------------*/
+//SNTP
+//define SNTP_SERVER_DNS 1
+//#define SNTP_CHECK_RESPONSE 2
 
 #define nPW_INT_Pin GPIO_PIN_6
 #define nPW_INT_GPIO_Port GPIOE

@@ -230,12 +230,12 @@
 
 enum
 {
-  Addr_UA=0,
+  Addr_UA = 0,
   Addr_IA,
   Addr_UB,
   Addr_IB,
   Addr_UC,
-  Addr_IC,
+  Addr_IC
 };
 
 //Line num

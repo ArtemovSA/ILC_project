@@ -1,6 +1,7 @@
 
 #include "devMQTT.h"
 #include "DevCTRL.h"
+#include "Network.h"
 #include "cJSON.h"
 
 static int inpub_id; //topic ID
@@ -63,6 +64,22 @@ static void mqtt_sub_request_cb(void *arg, err_t result) {
   DC_debugOut("# MQTT Subscribe result: %d\n", result);
 }
 //--------------------------------------------------------------------------------------------------
+//get MQTT ip
+static HAL_StatusTypeDef mqtt_getIP(uint8_t brocNum, uint8_t* ip)
+{
+  if (brocNum < DC_COUNT_IP_BROCK_ADDR)
+  {
+    memcpy(ip, DC_set.MQTT_broc_ip[brocNum], 4);
+    return HAL_OK;
+  }else if(brocNum < DC_COUNT_BROCKS)
+  {
+    //Get ip from domen address
+    return  NW_getIP_byDomen(DC_set.MQTT_broc_name[brocNum - 3], ip);
+  }
+
+  return HAL_ERROR;
+}
+//--------------------------------------------------------------------------------------------------
 //Connection cb
 static void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection_status_t status) 
 {
@@ -91,8 +108,42 @@ static void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection
   } else {
     DC_debugOut("# MQTT connection cb: Disconnected, reason: %d\n", status);
     
-    // Its more nice to be connected, so try to reconnect
-    devMQTT_connect(DC_set.MQTT_broc_ip, DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass);
+    uint8_t currentMQTT_ip[4];
+    
+    //Get current active IP address
+    if (mqtt_getIP(DC_set.MQTT_activeBrock, currentMQTT_ip) == HAL_OK)
+    {
+      if (devMQTT_connect(currentMQTT_ip, DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass) == HAL_OK)
+      {
+         DC_debugOut("# MQTT reconnection server#: %d OK\r\n", DC_set.MQTT_activeBrock);
+      }else{
+        
+        //Change brocker
+        if (DC_set.MQTT_activeBrock++ > DC_COUNT_BROCKS)
+        {
+          DC_set.MQTT_activeBrock = 0;
+        }
+        
+        //Try connect
+        if (devMQTT_connect(currentMQTT_ip, DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass) == HAL_OK)
+        {
+          DC_debugOut("# MQTT connection server#: %d OK\r\n", DC_set.MQTT_activeBrock);
+        }
+        
+      }
+    }else{
+      DC_debugOut("# MQTT can't get ip address server#: %d OK\r\n", DC_set.MQTT_activeBrock);
+      
+      //Change to furst brocker
+      DC_set.MQTT_activeBrock = 0;
+      mqtt_getIP(DC_set.MQTT_activeBrock, currentMQTT_ip);
+      
+      if (devMQTT_connect(currentMQTT_ip, DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass) == HAL_OK)
+      {
+        DC_debugOut("# MQTT connection server#: %d OK\r\n", DC_set.MQTT_activeBrock);
+      }
+    }
+    
   }
 }
 //******************************************API*****************************************************

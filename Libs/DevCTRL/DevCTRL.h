@@ -42,9 +42,13 @@ extern char DC_unic_idef[36]; //Unic idef
 #define DC_DEF_DEV_IP_ADDR              {192,168,1,50}
 #define DC_DEF_GW_IP_ADDR               {192,168,1,1}
 #define DC_DEF_NET_MASK                 {255,255,255,0}
+#define DC_DEF_NTP_SERVER               "ntp1.stratum2.ru"
 
 //MQTT
-#define DC_DEF_MQTT_BROC_IP_1           {35,157,158,75}
+#define DC_COUNT_IP_BROCK_ADDR          3
+#define DC_COUNT_NAME_BROCK_ADDR        3
+#define DC_COUNT_BROCKS                 DC_COUNT_NAME_BROCK_ADDR+DC_COUNT_IP_BROCK_ADDR
+#define DC_DEF_MQTT_BROC_IP_1           {37,187,106,16}
 #define DC_DEF_MQTT_BROC_IP_2           {35,157,158,75}
 #define DC_DEF_MQTT_BROC_IP_3           {35,157,158,75}
 #define DC_DEF_MQTT_BROC_NAME_1         "ems.insyte.ru"
@@ -105,10 +109,11 @@ typedef struct
   uint8_t net_dev_ip_addr[4];
   uint8_t net_gw_ip_addr[4];
   uint8_t net_mask[4];
+  char netNTP_server[40];
   
   //MQTT
-  uint8_t MQTT_broc_ip[3][4]; //Brocker ip list
-  char MQTT_broc_name[3][40]; //Brocker net name list
+  uint8_t MQTT_broc_ip[DC_COUNT_IP_BROCK_ADDR][4]; //Brocker ip list
+  char MQTT_broc_name[DC_COUNT_NAME_BROCK_ADDR][40]; //Brocker net name list
   uint8_t MQTT_activeBrock; //Active brocker
   uint16_t MQTT_port; //Port
   char MQTT_clintID[20];
@@ -149,6 +154,8 @@ typedef struct
 void DC_init();
 //Out debug data
 void DC_debugOut(char *str, ...);
+//IP out
+void DC_debug_ipAdrrOut(char *text, uint8_t *ip);
 //Load settings
 HAL_StatusTypeDef DC_load_settings();
 //User function Get Current task ID 

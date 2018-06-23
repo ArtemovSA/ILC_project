@@ -21,6 +21,7 @@ const uint8_t DC_const_MQTT_ip_broc_3[] = DC_DEF_MQTT_BROC_IP_3;
 const char DC_const_MQTT_name_broc_1[] = DC_DEF_MQTT_BROC_NAME_1;
 const char DC_const_MQTT_name_broc_2[] = DC_DEF_MQTT_BROC_NAME_2;
 const char DC_const_MQTT_name_broc_3[] = DC_DEF_MQTT_BROC_NAME_2;
+const char DC_const_NTP_server_name[] = DC_DEF_NTP_SERVER;
 
 //Var
 DC_set_t DC_set; //Device settings
@@ -189,6 +190,7 @@ HAL_StatusTypeDef DC_load_settings()
   memcpy(DC_set.net_dev_ip_addr, DC_const_dev_ip_addr, 4);
   memcpy(DC_set.net_gw_ip_addr, DC_const_gw_ip_addr, 4);
   memcpy(DC_set.net_mask, DC_const_net_mask, 4);
+  memcpy(DC_set.netNTP_server, DC_const_NTP_server_name, strlen(DC_const_NTP_server_name));
   
   //MQTT
   memcpy(DC_set.MQTT_broc_ip[0], DC_const_MQTT_ip_broc_1, 4);

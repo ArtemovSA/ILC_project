@@ -349,6 +349,8 @@
           <state>$PROJ_DIR$\..\Libs\EXP</state>
           <state>$PROJ_DIR$\..\Libs\JSON</state>
           <state>$PROJ_DIR$\..\Libs\EMS_proocol</state>
+          <state>$PROJ_DIR$\..\Libs\Clock</state>
+          <state>$PROJ_DIR$\..\Libs\Network</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1025,6 +1027,9 @@
         <name>$PROJ_DIR$\..\Src\lwip.c</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\Src\lwipopts.h</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\Src\main.c</name>
       </file>
       <file>
@@ -1167,6 +1172,15 @@
   <group>
     <name>Libs</name>
     <group>
+      <name>Clock</name>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\Clock\Clock.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\Clock\Clock.h</name>
+      </file>
+    </group>
+    <group>
       <name>CRC16</name>
       <file>
         <name>$PROJ_DIR$\..\Libs\CRC16\CRC16.c</name>
@@ -1239,6 +1253,15 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\Libs\MQTT\devMQTT.h</name>
+      </file>
+    </group>
+    <group>
+      <name>Network</name>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\Network\Network.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\Network\Network.h</name>
       </file>
     </group>
     <group>

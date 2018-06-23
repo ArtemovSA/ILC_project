@@ -70,6 +70,10 @@ D:\Sergey\ILC_project\EWARM\..\Libs\JSON
 -I
 D:\Sergey\ILC_project\EWARM\..\Libs\EMS_proocol
 -I
+D:\Sergey\ILC_project\EWARM\..\Libs\Clock
+-I
+D:\Sergey\ILC_project\EWARM\..\Libs\Network
+-I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\inc
@@ -143,6 +147,10 @@ D:\Sergey\ILC_project\Libs\EXP
 D:\Sergey\ILC_project\Libs\JSON
 -I
 D:\Sergey\ILC_project\Libs\EMS_proocol
+-I
+D:\Sergey\ILC_project\Libs\Clock
+-I
+D:\Sergey\ILC_project\Libs\Network
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -DUSE_HAL_DRIVER=1

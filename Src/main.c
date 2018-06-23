@@ -60,6 +60,7 @@
 #include "usbd_cdc_if.h"
 #include "PCA9555.h"
 #include "V9203.h"
+#include "Clock.h"
 #include "EMS_protocol.h"
 
 /* USER CODE END Includes */
@@ -802,16 +803,18 @@ void startDebugTask(void const * argument)
 {
   /* init code for FATFS */
   MX_FATFS_Init();
-
-  /* init code for LWIP */
-  MX_LWIP_Init();
-
+  
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
 
   /* USER CODE BEGIN 5 */
   
-  DC_init(&debug_TTqueueHandle);  
+  DC_init(&debug_TTqueueHandle);
+  
+  /* init code for LWIP */
+  MX_LWIP_Init(DC_set.net_dev_ip_addr, DC_set.net_mask, DC_set.net_gw_ip_addr);
+  
+  //CL_init();
 
   vTaskResume(EMS_taskHandle);
   
