@@ -162,6 +162,9 @@ void startEMS_task(void const * argument)
 //      EMS_sendChannelVars(i);
 //    }
 
+    char strBuf[] = "Hello";
+    devMQTT_publish("qqq", (uint8_t*) strBuf, sizeof(strBuf));
+    
     vTaskDelay(DC_set.EMS_out_period);
   }
 }

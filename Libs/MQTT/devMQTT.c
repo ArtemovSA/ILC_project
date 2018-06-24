@@ -6,7 +6,6 @@
 
 static int inpub_id; //topic ID
 mqtt_client_t *mqttMainClient; //Client
-struct mqtt_connect_client_info_t ci; //Client info
 devMQTT_topic* devMQTT_topics; //Topics list
 uint16_t devMQTT_cntTop; //Count
 void (*devMQTT_callBack)(uint16_t, uint8_t*, uint16_t); //Func id, data, len
@@ -151,16 +150,24 @@ static void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection
 HAL_StatusTypeDef devMQTT_connect(uint8_t* MQTT_IP, uint16_t MQTT_port, char* MQTT_clintID, char* MQTT_user, char* MQTT_pass)
 {
   ip4_addr_t mqttIPaddr;
+  struct mqtt_connect_client_info_t ci; //Client info
   
   mqttMainClient = mqtt_client_new();
+  if (mqttMainClient == NULL)
+  {
+    DC_debugOut("# MQTT Client create error");
+    return HAL_ERROR;
+  }
+  
   IP4_ADDR(&mqttIPaddr, *MQTT_IP, *(MQTT_IP+1), *(MQTT_IP+2), *(MQTT_IP+3));
   
   //Settings
+  memset(&ci, 0, sizeof(ci));
   ci.client_id = MQTT_clintID;
   ci.client_user = MQTT_user;
   ci.client_pass = MQTT_pass;
 
-  if (ERR_OK == mqtt_client_connect(mqttMainClient, &mqttIPaddr, MQTT_port, mqtt_connection_cb, 0, &ci))
+  if (ERR_OK == mqtt_client_connect(mqttMainClient, &mqttIPaddr, MQTT_port, mqtt_connection_cb, NULL, &ci))
   {
     DC_debug_ipAdrrOut("# MQTT connection OK: ", MQTT_IP);
     return HAL_OK;    

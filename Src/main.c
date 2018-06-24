@@ -211,7 +211,7 @@ int main(void)
   CL_taskHandle = osThreadCreate(osThread(CL_task), NULL);
 
   /* definition and creation of EMS_task */
-  osThreadDef(EMS_task, startEMS_task, osPriorityIdle, 0, 256);
+  osThreadDef(EMS_task, startEMS_task, osPriorityIdle, 0, 512);
   EMS_taskHandle = osThreadCreate(osThread(EMS_task), NULL);
   vTaskSuspend(EMS_taskHandle);
   
@@ -812,16 +812,21 @@ void startDebugTask(void const * argument)
   DC_init(&debug_TTqueueHandle);
   
   /* init code for LWIP */
-  MX_LWIP_Init(DC_set.net_dev_ip_addr, DC_set.net_mask, DC_set.net_gw_ip_addr);
+ // MX_LWIP_Init(DC_set.net_dev_ip_addr, DC_set.net_mask, DC_set.net_gw_ip_addr);
   
   //CL_init();
 
   vTaskResume(EMS_taskHandle);
   
+  MX_LWIP_Init();
+  //devMQTT_connect(DC_set.MQTT_broc_ip[DC_set.MQTT_activeBrock], DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
+  
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for(;;)
   {
+    
+    
 
 //    for (int i=1; i < 5; i++)
 //    {

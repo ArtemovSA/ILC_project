@@ -1184,7 +1184,7 @@
         <name>$PROJ_DIR$\..\Src\lwip.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Src\lwipopts.h</name>
+        <name>$PROJ_DIR$\..\Inc\lwipopts.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\Src\main.c</name>
@@ -1327,6 +1327,15 @@
     </group>
   </group>
   <group>
+    <name>EMS_protocol</name>
+    <file>
+      <name>$PROJ_DIR$\..\Libs\EMS_proocol\EMS_protocol.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libs\EMS_proocol\EMS_protocol.h</name>
+    </file>
+  </group>
+  <group>
     <name>Libs</name>
     <group>
       <name>Clock</name>
@@ -1362,15 +1371,6 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\Libs\DevCTRL\DevCTRL.h</name>
-      </file>
-    </group>
-    <group>
-      <name>EMS_protocol</name>
-      <file>
-        <name>$PROJ_DIR$\..\Libs\EMS_proocol\EMS_protocol.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\Libs\EMS_proocol\EMS_protocol.h</name>
       </file>
     </group>
     <group>

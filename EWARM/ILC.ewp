@@ -247,7 +247,7 @@
         <option>
           <name>CCAllowList</name>
           <version>1</version>
-          <state>10010100</state>
+          <state>00000000</state>
         </option>
         <option>
           <name>CCDebugInfo</name>
@@ -370,7 +370,7 @@
         </option>
         <option>
           <name>CCOptLevel</name>
-          <state>2</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCOptStrategy</name>
@@ -379,7 +379,7 @@
         </option>
         <option>
           <name>CCOptLevelSlave</name>
-          <state>2</state>
+          <state>1</state>
         </option>
         <option>
           <name>CompilerMisraRules98</name>
@@ -1027,7 +1027,7 @@
         <name>$PROJ_DIR$\..\Src\lwip.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Src\lwipopts.h</name>
+        <name>$PROJ_DIR$\..\Inc\lwipopts.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\Src\main.c</name>
@@ -1170,6 +1170,15 @@
     </group>
   </group>
   <group>
+    <name>EMS_protocol</name>
+    <file>
+      <name>$PROJ_DIR$\..\Libs\EMS_proocol\EMS_protocol.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libs\EMS_proocol\EMS_protocol.h</name>
+    </file>
+  </group>
+  <group>
     <name>Libs</name>
     <group>
       <name>Clock</name>
@@ -1205,15 +1214,6 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\Libs\DevCTRL\DevCTRL.h</name>
-      </file>
-    </group>
-    <group>
-      <name>EMS_protocol</name>
-      <file>
-        <name>$PROJ_DIR$\..\Libs\EMS_proocol\EMS_protocol.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\Libs\EMS_proocol\EMS_protocol.h</name>
       </file>
     </group>
     <group>

@@ -90,9 +90,9 @@
 /*----- Default Value for TCP_WND: 1840 ---*/
 #define TCP_WND 2048
 /*----- Default Value for TCP_MSS: 536 ---*/
-#define TCP_MSS 460
+#define TCP_MSS 1024//460
 /*----- Default Value for TCP_SND_BUF: 920 ---*/
-#define TCP_SND_BUF 1840
+#define TCP_SND_BUF 2048//1840
 /*----- Value in opt.h for TCPIP_THREAD_STACKSIZE: 0 -----*/
 #define TCPIP_THREAD_STACKSIZE 1024
 /*----- Value in opt.h for TCPIP_THREAD_PRIO: 1 -----*/
@@ -143,6 +143,7 @@
 #define CHECKSUM_CHECK_ICMP 0
 /*----- Value in opt.h for CHECKSUM_CHECK_ICMP6: 1 -----*/
 #define CHECKSUM_CHECK_ICMP6 0
+   
 /*-----------------------------------------------------------------------------*/
 /* USER CODE BEGIN 1 */
 

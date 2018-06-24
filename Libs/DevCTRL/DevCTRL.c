@@ -66,7 +66,6 @@ void DC_init(osMessageQId *eventQueue)
   //PCA9555
   PCA9555_init(&hi2c1);
   
-  
   HAL_StatusTypeDef stat;
   
   //Set pin mode
@@ -87,7 +86,6 @@ void DC_init(osMessageQId *eventQueue)
     if (stat == HAL_TIMEOUT)
       DC_debugOut("# PCA9555 TIMEOUT\r\n");
   }
-
     
 }
 //--------------------------------------------------------------------------------------------------

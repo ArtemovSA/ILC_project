@@ -82,21 +82,21 @@ uint8_t GATEWAY_ADDRESS[4];
 /**
   * LwIP initialization function
   */
-void MX_LWIP_Init(uint8_t* ip, uint8_t* mask, uint8_t* gateWay)
+void MX_LWIP_Init(void)
 {
   /* IP addresses initialization */
-  IP_ADDRESS[0] = *ip;
-  IP_ADDRESS[1] = *(ip+1);
-  IP_ADDRESS[2] = *(ip+2);
-  IP_ADDRESS[3] = *(ip+3);
-  NETMASK_ADDRESS[0] = *mask;
-  NETMASK_ADDRESS[1] = *(mask+1);
-  NETMASK_ADDRESS[2] = *(mask+2);
-  NETMASK_ADDRESS[3] = *(mask+3);
-  GATEWAY_ADDRESS[0] = *gateWay;
-  GATEWAY_ADDRESS[1] = *(gateWay+1);
-  GATEWAY_ADDRESS[2] = *(gateWay+2);
-  GATEWAY_ADDRESS[3] = *(gateWay+3);
+  IP_ADDRESS[0] = 192;
+  IP_ADDRESS[1] = 168;
+  IP_ADDRESS[2] = 1;
+  IP_ADDRESS[3] = 50;
+  NETMASK_ADDRESS[0] = 255;
+  NETMASK_ADDRESS[1] = 255;
+  NETMASK_ADDRESS[2] = 255;
+  NETMASK_ADDRESS[3] = 0;
+  GATEWAY_ADDRESS[0] = 192;
+  GATEWAY_ADDRESS[1] = 168;
+  GATEWAY_ADDRESS[2] = 1;
+  GATEWAY_ADDRESS[3] = 1;
   
   /* Initilialize the LwIP stack with RTOS */
   tcpip_init( NULL, NULL );

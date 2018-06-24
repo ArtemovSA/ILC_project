@@ -48,8 +48,8 @@ extern char DC_unic_idef[36]; //Unic idef
 #define DC_COUNT_IP_BROCK_ADDR          3
 #define DC_COUNT_NAME_BROCK_ADDR        3
 #define DC_COUNT_BROCKS                 DC_COUNT_NAME_BROCK_ADDR+DC_COUNT_IP_BROCK_ADDR
-#define DC_DEF_MQTT_BROC_IP_1           {37,187,106,16}
-#define DC_DEF_MQTT_BROC_IP_2           {35,157,158,75}
+#define DC_DEF_MQTT_BROC_IP_1           {52,58,123,29}
+#define DC_DEF_MQTT_BROC_IP_2           {37,187,106,16}
 #define DC_DEF_MQTT_BROC_IP_3           {35,157,158,75}
 #define DC_DEF_MQTT_BROC_NAME_1         "ems.insyte.ru"
 #define DC_DEF_MQTT_BROC_NAME_2         "broker.mqtt-dashboard.com"
