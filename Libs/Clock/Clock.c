@@ -14,11 +14,12 @@ extern RTC_HandleTypeDef hrtc;
 HAL_StatusTypeDef CL_init()
 {  
 #ifdef CL_USE_NTP 
-  //Init SNTP
-  sntp_init();
   
   //Set server name
   sntp_setservername(0, DC_set.netNTP_server);
+  
+  //Init SNTP
+  sntp_init();
   
   uint8_t try_sec = 3;
   
@@ -33,6 +34,31 @@ HAL_StatusTypeDef CL_init()
 #endif
 
   return HAL_OK;
+}
+//------------------------------------------------------------------------------------------------
+//Set system timestamp
+void CL_setSystem_Timestamp(uint32_t sec)
+{
+  time_t timestamp = (time_t)sec;
+  
+  RTC_TimeTypeDef currentTime;
+  RTC_DateTypeDef currentDate;
+  struct tm time_tm = *(localtime(&timestamp));
+  
+  currentTime.Hours = (uint8_t)time_tm.tm_hour;
+  currentTime.Minutes = (uint8_t)time_tm.tm_min;
+  currentTime.Seconds = (uint8_t)time_tm.tm_sec;
+  
+  if (time_tm.tm_wday == 0) { time_tm.tm_wday = 7; }  // the chip goes mon tue wed thu fri sat sun
+  currentDate.WeekDay = (uint8_t)time_tm.tm_wday;
+  currentDate.Month = (uint8_t)time_tm.tm_mon+1; //momth 1-12. This is why date math is frustrating.
+  currentDate.Date = (uint8_t)time_tm.tm_mday;
+  currentDate.Year = (uint16_t)(time_tm.tm_year+1900-2000);  // time.h is years since 1900, chip is years since 2000
+  
+  HAL_RTC_SetTime(&hrtc, &currentTime, RTC_FORMAT_BIN);
+  HAL_RTC_SetDate(&hrtc, &currentDate, RTC_FORMAT_BIN);
+  
+  HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR0,0x32F2); // lock it in with the backup registers
 }
 //------------------------------------------------------------------------------------------------
 //Get system timestamp

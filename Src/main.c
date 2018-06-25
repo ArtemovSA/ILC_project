@@ -61,6 +61,7 @@
 #include "PCA9555.h"
 #include "V9203.h"
 #include "Clock.h"
+#include "dns.h"
 #include "EMS_protocol.h"
 
 /* USER CODE END Includes */
@@ -812,13 +813,22 @@ void startDebugTask(void const * argument)
   DC_init(&debug_TTqueueHandle);
   
   /* init code for LWIP */
- // MX_LWIP_Init(DC_set.net_dev_ip_addr, DC_set.net_mask, DC_set.net_gw_ip_addr);
+  MX_LWIP_Init(DC_set.net_dev_ip_addr, DC_set.net_mask, DC_set.net_gw_ip_addr);
   
-  //CL_init();
+  //DNS init
+  ip4_addr_t ipaddr;
+  IP4_ADDR(&ipaddr, DC_set.serverDNS1[0], DC_set.serverDNS1[1], DC_set.serverDNS1[2], DC_set.serverDNS1[3]);
+  dns_setserver(0, &ipaddr);
+  IP4_ADDR(&ipaddr, DC_set.serverDNS2[0], DC_set.serverDNS2[1], DC_set.serverDNS2[2], DC_set.serverDNS2[3]);
+  dns_setserver(1, &ipaddr);
+  dns_init();
+  DC_debugOut("DNS init OK\r\n");
+  
+  CL_init();
 
   vTaskResume(EMS_taskHandle);
   
-  MX_LWIP_Init();
+  
   //devMQTT_connect(DC_set.MQTT_broc_ip[DC_set.MQTT_activeBrock], DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
   
   /* USER CODE BEGIN 5 */

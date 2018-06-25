@@ -88,11 +88,11 @@
 /*----- Value in opt.h for LWIP_DNS_SECURE: (LWIP_DNS_SECURE_RAND_XID | LWIP_DNS_SECURE_NO_MULTIPLE_OUTSTANDING | LWIP_DNS_SECURE_RAND_SRC_PORT) -*/
 #define LWIP_DNS_SECURE 7
 /*----- Default Value for TCP_WND: 1840 ---*/
-#define TCP_WND 2048
+#define TCP_WND 1840
 /*----- Default Value for TCP_MSS: 536 ---*/
-#define TCP_MSS 1024//460
+#define TCP_MSS 460
 /*----- Default Value for TCP_SND_BUF: 920 ---*/
-#define TCP_SND_BUF 2048//1840
+#define TCP_SND_BUF 1840
 /*----- Value in opt.h for TCPIP_THREAD_STACKSIZE: 0 -----*/
 #define TCPIP_THREAD_STACKSIZE 1024
 /*----- Value in opt.h for TCPIP_THREAD_PRIO: 1 -----*/

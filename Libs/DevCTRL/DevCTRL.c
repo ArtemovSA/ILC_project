@@ -22,6 +22,8 @@ const char DC_const_MQTT_name_broc_1[] = DC_DEF_MQTT_BROC_NAME_1;
 const char DC_const_MQTT_name_broc_2[] = DC_DEF_MQTT_BROC_NAME_2;
 const char DC_const_MQTT_name_broc_3[] = DC_DEF_MQTT_BROC_NAME_2;
 const char DC_const_NTP_server_name[] = DC_DEF_NTP_SERVER;
+const char DC_const_serverDNS1[] = DC_DEF_DNS1;
+const char DC_const_serverDNS2[] = DC_DEF_DNS2;
 
 //Var
 DC_set_t DC_set; //Device settings
@@ -113,7 +115,9 @@ void DC_debugOut(char *str, ...)
   
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) ? true : false)
   {
+    //taskENTER_CRITICAL();
     printf(strBuffer);
+    //taskEXIT_CRITICAL();
   }
 
   va_end(args);
@@ -189,7 +193,9 @@ HAL_StatusTypeDef DC_load_settings()
   memcpy(DC_set.net_gw_ip_addr, DC_const_gw_ip_addr, 4);
   memcpy(DC_set.net_mask, DC_const_net_mask, 4);
   memcpy(DC_set.netNTP_server, DC_const_NTP_server_name, strlen(DC_const_NTP_server_name));
-  
+  memcpy(DC_set.serverDNS1, DC_const_serverDNS1, 4);
+  memcpy(DC_set.serverDNS1, DC_const_serverDNS2, 4);
+
   //MQTT
   memcpy(DC_set.MQTT_broc_ip[0], DC_const_MQTT_ip_broc_1, 4);
   memcpy(DC_set.MQTT_broc_ip[1], DC_const_MQTT_ip_broc_2, 4);

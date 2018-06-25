@@ -43,6 +43,8 @@ extern char DC_unic_idef[36]; //Unic idef
 #define DC_DEF_GW_IP_ADDR               {192,168,1,1}
 #define DC_DEF_NET_MASK                 {255,255,255,0}
 #define DC_DEF_NTP_SERVER               "ntp1.stratum2.ru"
+#define DC_DEF_DNS1                     {8,8,8,8}
+#define DC_DEF_DNS2                     {77,88,8,8}
 
 //MQTT
 #define DC_COUNT_IP_BROCK_ADDR          3
@@ -61,7 +63,7 @@ extern char DC_unic_idef[36]; //Unic idef
 #define DC_DEF_MQTT_QOS                 1
 
 //EMS
-#define DC_DEF_EMS_OUT_PERIOD            5 //sec
+#define DC_DEF_EMS_OUT_PERIOD           5 //sec
 
 //Calibration cofficients
 //Channel 1
@@ -110,6 +112,8 @@ typedef struct
   uint8_t net_gw_ip_addr[4];
   uint8_t net_mask[4];
   char netNTP_server[40];
+  uint8_t serverDNS1[4];
+  uint8_t serverDNS2[4];
   
   //MQTT
   uint8_t MQTT_broc_ip[DC_COUNT_IP_BROCK_ADDR][4]; //Brocker ip list

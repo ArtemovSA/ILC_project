@@ -39,6 +39,7 @@
 
 #include "lwip/opt.h"
 
+extern void CL_setSystem_Timestamp(uint32_t sec);;
 /**
  * @defgroup sntp_opts Options
  * @ingroup sntp
@@ -50,7 +51,7 @@
  * if you need the additional precision.
  */
 #if !defined SNTP_SET_SYSTEM_TIME || defined __DOXYGEN__
-#define SNTP_SET_SYSTEM_TIME(sec)   LWIP_UNUSED_ARG(sec)
+#define SNTP_SET_SYSTEM_TIME(sec)   CL_setSystem_Timestamp(sec)//LWIP_UNUSED_ARG(sec)
 #endif
 
 /** The maximum number of SNTP servers that can be set */
@@ -69,7 +70,7 @@
  * \#define SNTP_SERVER_ADDRESS "pool.ntp.org"
  */
 #if !defined SNTP_SERVER_DNS || defined __DOXYGEN__
-#define SNTP_SERVER_DNS            0
+#define SNTP_SERVER_DNS            1
 #endif
 
 /**

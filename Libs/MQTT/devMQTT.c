@@ -25,7 +25,9 @@ void devMQTT_init(devMQTT_topic* topics, uint16_t count, void (*callBackPoint)(u
 //Publish cb
 static void mqtt_pub_request_cb(void *arg, err_t result) {
   if(result != ERR_OK) {
-    DC_debugOut("# MQTT Publish result: %d\r\n", result);
+    DC_debugOut("# MQTT Publish cb error result: %d\r\n", result);
+  }else{
+    DC_debugOut("# MQTT Publish cb OK \r\n");
   }
 }
 //--------------------------------------------------------------------------------------------------
@@ -36,7 +38,7 @@ static void mqtt_incoming_publish_cb(void *arg, const char *topic, u32_t tot_len
   // Decode topic string into a user defined reference
   for (int i=0; i<devMQTT_cntTop; i++)
   {
-    if (strcmp(topic, devMQTT_topics[i].name))
+    if (strcmp(topic, devMQTT_topics[i].name) == 0)
     {
       inpub_id = i;
     }
@@ -60,7 +62,7 @@ static void mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t f
 //--------------------------------------------------------------------------------------------------
 //Subscribe result cb
 static void mqtt_sub_request_cb(void *arg, err_t result) {
-  DC_debugOut("# MQTT Subscribe result: %d\n", result);
+  DC_debugOut("# MQTT Subscribe cb result: %d\n", result);
 }
 //--------------------------------------------------------------------------------------------------
 //get MQTT ip
@@ -99,19 +101,25 @@ static void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection
         err = mqtt_subscribe(client, devMQTT_topics[i].name, DC_set.MQTT_qos, mqtt_sub_request_cb, arg);
         
         if(err != ERR_OK) {
-          DC_debugOut("# MQTT subscribe %s return: %d\n", devMQTT_topics[i].name, err);
-        }   
+          DC_debugOut("# MQTT subscribe error %s return: %d\n", devMQTT_topics[i].name, err);
+        }else{
+          DC_debugOut("# MQTT subscribe OK: %s\r\n", devMQTT_topics[i].name);
+        }
+        
       }
     }
     
   } else {
+    
     DC_debugOut("# MQTT connection cb: Disconnected, reason: %d\n", status);
     
+    mqttMainClient = mqtt_client_new();
     uint8_t currentMQTT_ip[4];
     
     //Get current active IP address
     if (mqtt_getIP(DC_set.MQTT_activeBrock, currentMQTT_ip) == HAL_OK)
     {
+      
       if (devMQTT_connect(currentMQTT_ip, DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass) == HAL_OK)
       {
          DC_debugOut("# MQTT reconnection server#: %d OK\r\n", DC_set.MQTT_activeBrock);
@@ -130,7 +138,9 @@ static void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection
         }
         
       }
+      
     }else{
+      
       DC_debugOut("# MQTT can't get ip address server#: %d OK\r\n", DC_set.MQTT_activeBrock);
       
       //Change to furst brocker
@@ -141,6 +151,7 @@ static void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection
       {
         DC_debugOut("# MQTT connection server#: %d OK\r\n", DC_set.MQTT_activeBrock);
       }
+      
     }
     
   }
@@ -166,6 +177,7 @@ HAL_StatusTypeDef devMQTT_connect(uint8_t* MQTT_IP, uint16_t MQTT_port, char* MQ
   ci.client_id = MQTT_clintID;
   ci.client_user = MQTT_user;
   ci.client_pass = MQTT_pass;
+  ci.keep_alive = 100;
 
   if (ERR_OK == mqtt_client_connect(mqttMainClient, &mqttIPaddr, MQTT_port, mqtt_connection_cb, NULL, &ci))
   {
@@ -177,16 +189,16 @@ HAL_StatusTypeDef devMQTT_connect(uint8_t* MQTT_IP, uint16_t MQTT_port, char* MQ
 }
 //--------------------------------------------------------------------------------------------------
 //Public message
-HAL_StatusTypeDef devMQTT_publish(char *topicName, uint8_t *payload, uint16_t len) {
+HAL_StatusTypeDef devMQTT_publish(char *topicName, uint8_t *payload, uint16_t len, uint8_t qos) {
 
   err_t err;
-  u8_t qos = DC_set.MQTT_qos; /* 0 1 or 2, see MQTT specification */
   u8_t retain = 0; // No don't retain such crappy payload
   
   err = mqtt_publish(mqttMainClient, topicName, (const char *)payload, len, qos, retain, mqtt_pub_request_cb, 0);
+  DC_debugOut("# MQTT Publish: %s\r\n", topicName);
   
   if(err != ERR_OK) {
-    DC_debugOut("# MQTT Publish err: %d\n", err);
+    DC_debugOut("# MQTT Publish err: %d\r\n", err);
     return HAL_ERROR;
   }
   
