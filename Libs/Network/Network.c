@@ -3,6 +3,7 @@
 #include "lwip.h"
 #include "dns.h"
 
+//--------------------------------------------------------------------------------------------------
 //Get ip from domen address
 HAL_StatusTypeDef NW_getIP_byDomen(char* domen, uint8_t* ip)
 {
@@ -20,4 +21,13 @@ HAL_StatusTypeDef NW_getIP_byDomen(char* domen, uint8_t* ip)
   }
   
   return HAL_ERROR;
+}
+//--------------------------------------------------------------------------------------------------
+//Convert int ip ti array
+void NW_convIntIPtoArray(uint8_t* arrIP, uint32_t intIP)
+{
+  *(arrIP) = (intIP & 0x000000FF);
+  *(arrIP+1) = (intIP & 0x0000FF00) >> 8;
+  *(arrIP+2) = (intIP & 0x00FF0000) >> 16;
+  *(arrIP+3) = (intIP & 0xFF000000) >> 24;
 }

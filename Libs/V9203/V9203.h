@@ -277,9 +277,9 @@ typedef struct
   unsigned int  RacANCtrl1;         // Analog control register 1
   unsigned int  RacANCtrl2;         // Analog control register 2
   unsigned int  RacANCtrl3;         // Analog control register 2
-  JBRE_t  gs_JBA;             //A Compared to the difference group
-  JBRE_t  gs_JBB;             //B Compared to the difference group
-  JBRE_t  gs_JBC;             //C Compared to the difference group
+  JBRE_t  gs_JBA;                   //A Compared to the difference group
+  JBRE_t  gs_JBB;                   //B Compared to the difference group
+  JBRE_t  gs_JBC;                   //C Compared to the difference group
   unsigned int ul_PG;               //Power proportional coefficient
   unsigned int ul_URmG;             //Voltage channel proportional coefficient
   unsigned int ul_I1RmG;            //Current channel 1 proportional coefficient
@@ -287,6 +287,21 @@ typedef struct
   unsigned short ui_Resve2;           // Retention
   unsigned short ui_JbCRC;            // Calibration table parameters CRC results
 }JBPM_t;
+
+//Calibration channel coefficients
+typedef struct
+{
+  //Phase values
+  JBRE_t  calPhaseA;
+  JBRE_t  calPhaseB;
+  JBRE_t  calPhaseC;
+  
+  //Gaint coeff
+  uint32_t gainKoef_P;
+  uint32_t gainKoef_U;
+  uint32_t gainKoef_I;
+  
+}V9203_calChannel_t;
 
 //***********************************************API************************************************
 //Init

@@ -29,8 +29,8 @@ const char DC_const_serverDNS2[] = DC_DEF_DNS2;
 DC_set_t DC_set; //Device settings
 uint32_t DC_unicID[3]; //Unic ID
 char DC_unic_idef[36]; //Unic idef
+char DC_unic_idStr[13]; //Unic id str
 osMessageQId *DC_eventQueue; //Event queue
-char DC_unic_idef[36]; //Unic idef
 char strBuffer[1024];
 
 //Extern
@@ -97,7 +97,9 @@ void DC_getUnicID()
   HAL_GetUID(DC_unicID);
  // char uinicID[12];
 //  memcpy(uinicID, DC_unicID, 12);
-  sprintf(DC_unic_idef, "%s%02x%02x%02x", UNIC_ID_PREFIX, DC_unicID[0], DC_unicID[1], DC_unicID[2]);
+  sprintf(DC_unic_idStr, "%02x%02x%02x", DC_unicID[0], DC_unicID[1], DC_unicID[2]);
+  DC_unic_idStr[12] = 0;
+  sprintf(DC_unic_idef, "%s%s", UNIC_ID_PREFIX, DC_unic_idStr);
   
   DC_debugOut("# UNIC ID: %s\r\n", DC_unic_idef);
 }
@@ -142,7 +144,6 @@ void DC_debug_ipActiveAdrrOut(char *text, uint8_t activeBrock)
     DC_debugOut("%s %s", text, DC_set.MQTT_broc_name[activeBrock-3]);
   }
 }
-
 //--------------------------------------------------------------------------------------------------
 //Out settings
 void DC_debug_settingsOut()
@@ -154,10 +155,23 @@ void DC_debug_settingsOut()
   DC_debugOut("# --MQTT Settings--\r\n");
   DC_debug_ipActiveAdrrOut("# MQTT ACTIVE BROCKER: ", DC_set.MQTT_activeBrock);
   DC_debugOut("# MQTT PORT %d\r\n", DC_set.MQTT_port);
-  DC_debugOut("# MQTT CLINET ID %s\r\n", DC_set.MQTT_clintID);
   DC_debugOut("# MQTT USER %s\r\n", DC_set.MQTT_user);
   DC_debugOut("# MQTT PASS %s\r\n", DC_set.MQTT_pass);
   DC_debugOut("# MQTT QOS %d\r\n", DC_set.MQTT_qos);
+}
+//--------------------------------------------------------------------------------------------------
+//Write settings
+HAL_StatusTypeDef DC_writeSet(DC_set_t *settings, NAND_AddressTypeDef addr)
+{
+  HAL_StatusTypeDef stat;
+  
+  //Write
+  if ((stat = MEM_NAND_writeData(addr, (uint8_t*)settings, sizeof(DC_set_t))) != HAL_OK)
+  {
+    DC_debugOut("# Write settings ERROR\r\n");
+  }
+  
+  return stat;
 }
 //--------------------------------------------------------------------------------------------------
 //Load settings
@@ -165,10 +179,7 @@ HAL_StatusTypeDef DC_load_settings()
 {
   HAL_StatusTypeDef stat;
   
-  NAND_AddressTypeDef addr;
-  addr.Page = 0;
-  addr.Plane = 0;
-  addr.Block = 0;
+  NAND_AddressTypeDef addr = MEM_NAND_ADDR_SETTINGS;
   
   //read
   if ((stat = MEM_NAND_readData(addr, (uint8_t*)&DC_set, sizeof(DC_set))) != HAL_OK)
@@ -204,10 +215,6 @@ HAL_StatusTypeDef DC_load_settings()
   memcpy(DC_set.MQTT_broc_name[1], DC_const_MQTT_name_broc_2, strlen(DC_const_MQTT_name_broc_2));
   memcpy(DC_set.MQTT_broc_name[2], DC_const_MQTT_name_broc_3, strlen(DC_const_MQTT_name_broc_3));
   DC_set.MQTT_port = DC_DEF_MQTT_PORT;
-  
-  //Client frefix plus unic ID number 
-  memcpy(DC_set.MQTT_clintID, DC_DEF_MQTT_CLINETID_PFX, sizeof(DC_DEF_MQTT_CLINETID_PFX));
-  memcpy(DC_set.MQTT_clintID+sizeof(DC_DEF_MQTT_CLINETID_PFX), (uint8_t*)DC_unicID, 12);
 
   memcpy(DC_set.MQTT_user, DC_DEF_MQTT_USER, sizeof(DC_DEF_MQTT_USER));
   memcpy(DC_set.MQTT_pass, DC_DEF_MQTT_PASS, sizeof(DC_DEF_MQTT_PASS));
@@ -217,44 +224,24 @@ HAL_StatusTypeDef DC_load_settings()
   DC_set.EMS_out_period = DC_DEF_EMS_OUT_PERIOD;
   
   //Calibration
-  DC_set.V9203_ch1_cal.RacWARTU = DC_CAL_CH1_UOFFSET;
-  DC_set.V9203_ch1_cal.RacWARTI = DC_CAL_CH1_IOFFSET;
-  DC_set.V9203_ch1_cal.RacWAPT = DC_CAL_CH1_P1OFFSET;
-  DC_set.V9203_ch1_cal.RacWWAPT = DC_CAL_CH1_P2OFFSET;
-  DC_set.V9203_ch1_cal.RacREWWAPT = DC_CAL_CH1_R2POFFSET;
+  DC_set.V9203_ch1_cal.calPhaseA.RacWARTU = DC_CAL_CH1_UOFFSET;
+  DC_set.V9203_ch1_cal.calPhaseA.RacWARTI= DC_CAL_CH1_IOFFSET;
+  DC_set.V9203_ch1_cal.calPhaseA.RacWAPT = DC_CAL_CH1_P1OFFSET;
+  DC_set.V9203_ch1_cal.calPhaseA.RacWWAPT = DC_CAL_CH1_P2OFFSET;
+  DC_set.V9203_ch1_cal.calPhaseA.RacREWWAPT = DC_CAL_CH1_R2POFFSET;
   
-  DC_set.V9203_ch2_cal.RacWARTU = DC_CAL_CH2_UOFFSET;
-  DC_set.V9203_ch2_cal.RacWARTI = DC_CAL_CH2_IOFFSET;
-  DC_set.V9203_ch2_cal.RacWAPT = DC_CAL_CH2_P1OFFSET;
-  DC_set.V9203_ch2_cal.RacWWAPT = DC_CAL_CH2_P2OFFSET;
-  DC_set.V9203_ch2_cal.RacREWWAPT = DC_CAL_CH2_R2POFFSET;
+  DC_set.V9203_ch1_cal.calPhaseB = DC_set.V9203_ch1_cal.calPhaseA;
+  DC_set.V9203_ch1_cal.calPhaseC = DC_set.V9203_ch1_cal.calPhaseA;
   
-  DC_set.V9203_ch3_cal.RacWARTU = DC_CAL_CH3_UOFFSET;
-  DC_set.V9203_ch3_cal.RacWARTI = DC_CAL_CH3_IOFFSET;
-  DC_set.V9203_ch3_cal.RacWAPT = DC_CAL_CH3_P1OFFSET;
-  DC_set.V9203_ch3_cal.RacWWAPT = DC_CAL_CH3_P2OFFSET;
-  DC_set.V9203_ch3_cal.RacREWWAPT = DC_CAL_CH3_R2POFFSET;
-  
-  DC_set.V9203_ch4_cal.RacWARTU = DC_CAL_CH4_UOFFSET;
-  DC_set.V9203_ch4_cal.RacWARTI = DC_CAL_CH4_IOFFSET;
-  DC_set.V9203_ch4_cal.RacWAPT = DC_CAL_CH4_P1OFFSET;
-  DC_set.V9203_ch4_cal.RacWWAPT = DC_CAL_CH4_P2OFFSET;
-  DC_set.V9203_ch4_cal.RacREWWAPT = DC_CAL_CH4_R2POFFSET;
-  
-  //Proportiona coefficients
-  DC_set.V9203_Pcoeff = DC_CAL_COEFF_P;
-  DC_set.V9203_Ucoeff = DC_CAL_COEFF_U;
-  DC_set.V9203_Icoeff = DC_CAL_COEFF_I;
+  DC_set.V9203_ch1_cal.gainKoef_U = DC_CAL_COEFF_U;
+  DC_set.V9203_ch1_cal.gainKoef_I = DC_CAL_COEFF_I;
+  DC_set.V9203_ch1_cal.gainKoef_P = DC_CAL_COEFF_P;
   
   //Set magic key
   DC_set.magicKey = DC_SET_MAGICKEY;
   
-  //Write
-  if ((stat = MEM_NAND_writeData(addr, (uint8_t*)&DC_set, sizeof(DC_set))) != HAL_OK)
-  {
-    DC_debugOut("# NAND IO ERROR\r\n");
-    return stat;
-  }
+  //Write settings
+  DC_writeSet(&DC_set ,addr);
   
   DC_debugOut("# Settings set default\r\n");
   //DC_debug_settingsOut();

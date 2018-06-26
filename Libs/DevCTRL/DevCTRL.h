@@ -8,7 +8,7 @@
 //***********************************Device data****************************************************
 
 //PCA9555
-#define PCA9555_DEF_ADDR           0x40    //Address
+#define PCA9555_DEF_ADDR          0x40    //Address
 
 //Init mode mask 1-input mode
 #define PCA9555_PIN_MODE_DEF      0x000F
@@ -34,7 +34,8 @@
 //Unic ID
 #define UNIC_ID_PREFIX  "aaaaaaaa-1234-1234-1234-"
 extern uint32_t DC_unicID[3]; //Unic ID
-extern char DC_unic_idef[36]; //Unic idef
+extern char DC_unic_idef[36]; //Unic idef + prefix
+extern char DC_unic_idStr[13]; //Unic id str
 
 //***********************************Default settings***********************************************
 
@@ -57,7 +58,6 @@ extern char DC_unic_idef[36]; //Unic idef
 #define DC_DEF_MQTT_BROC_NAME_2         "broker.mqtt-dashboard.com"
 #define DC_DEF_MQTT_BROC_NAME_3         "test.mosquitto.org"
 #define DC_DEF_MQTT_PORT                1883
-#define DC_DEF_MQTT_CLINETID_PFX        "INS_C1"
 #define DC_DEF_MQTT_USER                "user"
 #define DC_DEF_MQTT_PASS                "123"
 #define DC_DEF_MQTT_QOS                 1
@@ -68,40 +68,19 @@ extern char DC_unic_idef[36]; //Unic idef
 //Calibration cofficients
 //Channel 1
 #define DC_CAL_CH1_UOFFSET      0
-#define DC_CAL_CH1_IOFFSET      0x21A8301B
-#define DC_CAL_CH1_P1OFFSET     0x21E51894
-#define DC_CAL_CH1_P2OFFSET     0x00000000
-#define DC_CAL_CH1_R2POFFSET    0x00000000
-
-//Channel 2
-#define DC_CAL_CH2_UOFFSET      0
-#define DC_CAL_CH2_IOFFSET      0x21A8301B
-#define DC_CAL_CH2_P1OFFSET     0x21E51894
-#define DC_CAL_CH2_P2OFFSET     0x00000000
-#define DC_CAL_CH2_R2POFFSET    0x00000000
-
-//Channel 3
-#define DC_CAL_CH3_UOFFSET      0
-#define DC_CAL_CH3_IOFFSET      0x21A8301B
-#define DC_CAL_CH3_P1OFFSET     0x21E51894
-#define DC_CAL_CH3_P2OFFSET     0x00000000
-#define DC_CAL_CH3_R2POFFSET    0x00000000
-
-//Channel 4
-#define DC_CAL_CH4_UOFFSET      0
-#define DC_CAL_CH4_IOFFSET      0x21A8301B
-#define DC_CAL_CH4_P1OFFSET     0x21E51894
-#define DC_CAL_CH4_P2OFFSET     0x00000000
-#define DC_CAL_CH4_R2POFFSET    0x00000000
+#define DC_CAL_CH1_IOFFSET      0x21A8301BUL
+#define DC_CAL_CH1_P1OFFSET     0x21E51894UL
+#define DC_CAL_CH1_P2OFFSET     0x00000000UL
+#define DC_CAL_CH1_R2POFFSET    0x00000000UL
 
 //Proportiona coefficients
-#define DC_CAL_COEFF_P          0x10B
-#define DC_CAL_COEFF_U          0x513b
-#define DC_CAL_COEFF_I          0x1A2C0
+#define DC_CAL_COEFF_P          0x10BUL
+#define DC_CAL_COEFF_U          0x513bUL
+#define DC_CAL_COEFF_I          0x1A2C0UL
 
 //**********************************Settings*****************************************************
 
-#define DC_SET_MAGICKEY 0x02
+#define DC_SET_MAGICKEY 0x01
 
 typedef struct
 {
@@ -120,7 +99,6 @@ typedef struct
   char MQTT_broc_name[DC_COUNT_NAME_BROCK_ADDR][40]; //Brocker net name list
   uint8_t MQTT_activeBrock; //Active brocker
   uint16_t MQTT_port; //Port
-  char MQTT_clintID[20];
   char MQTT_user[20];
   char MQTT_pass[20];
   uint8_t MQTT_qos;
@@ -129,19 +107,16 @@ typedef struct
   uint16_t EMS_out_period;
   
   //Calibration struct
-  JBRE_t V9203_ch1_cal;
-  JBRE_t V9203_ch2_cal;
-  JBRE_t V9203_ch3_cal;
-  JBRE_t V9203_ch4_cal;
+  V9203_calChannel_t V9203_ch1_cal;
+  V9203_calChannel_t V9203_ch2_cal;
+  V9203_calChannel_t V9203_ch3_cal;
+  V9203_calChannel_t V9203_ch4_cal;
   
-  //Proportional coeff
-  uint32_t V9203_Pcoeff;
-  uint32_t V9203_Ucoeff;
-  uint32_t V9203_Icoeff;
-
 }DC_set_t;
 
 extern DC_set_t DC_set; //Device settings
+//Write settings
+HAL_StatusTypeDef DC_writeSet(DC_set_t *settings, NAND_AddressTypeDef addr);
 
 //**********************************Flash log*******************************************************
 

@@ -120,7 +120,7 @@ static void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection
     if (mqtt_getIP(DC_set.MQTT_activeBrock, currentMQTT_ip) == HAL_OK)
     {
       
-      if (devMQTT_connect(currentMQTT_ip, DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass) == HAL_OK)
+      if (devMQTT_connect(currentMQTT_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass) == HAL_OK)
       {
          DC_debugOut("# MQTT reconnection server#: %d OK\r\n", DC_set.MQTT_activeBrock);
       }else{
@@ -132,7 +132,7 @@ static void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection
         }
         
         //Try connect
-        if (devMQTT_connect(currentMQTT_ip, DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass) == HAL_OK)
+        if (devMQTT_connect(currentMQTT_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass) == HAL_OK)
         {
           DC_debugOut("# MQTT connection server#: %d OK\r\n", DC_set.MQTT_activeBrock);
         }
@@ -147,7 +147,7 @@ static void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection
       DC_set.MQTT_activeBrock = 0;
       mqtt_getIP(DC_set.MQTT_activeBrock, currentMQTT_ip);
       
-      if (devMQTT_connect(currentMQTT_ip, DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass) == HAL_OK)
+      if (devMQTT_connect(currentMQTT_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass) == HAL_OK)
       {
         DC_debugOut("# MQTT connection server#: %d OK\r\n", DC_set.MQTT_activeBrock);
       }
