@@ -9,6 +9,8 @@ mqtt_client_t *mqttMainClient; //Client
 devMQTT_topic* devMQTT_topics; //Topics list
 uint16_t devMQTT_cntTop; //Count
 void (*devMQTT_callBack)(uint16_t, uint8_t*, uint16_t); //Func id, data, len
+static uint8_t incMessage[MQTT_INC_BUF_SIZE];
+static uint16_t incMessageLen;
 
 //--------------------------------------------------------------------------------------------------
 //Init
@@ -50,10 +52,20 @@ static void mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t f
   
   DC_debugOut("# Incoming message len: %d, flags %u\n", len, (unsigned int)flags);
   
+  //Check buf len
+  if ((incMessageLen+len) < MQTT_INC_BUF_SIZE)
+  {
+    memcpy(incMessage+incMessageLen, data, len);
+    incMessageLen += len;
+  }else{
+    incMessageLen = 0;
+  }
+  
   if (flags & MQTT_DATA_FLAG_LAST) {
     
     // Call function or do action depending on reference, in this case inpub_id
-    devMQTT_callBack(inpub_id, (uint8_t*)data, len);
+    devMQTT_callBack(inpub_id, incMessage, incMessageLen);
+    incMessageLen = 0;
     
   } else {
     // Handle fragmented payload, store in buffer, write to file or whatever

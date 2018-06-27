@@ -6,6 +6,8 @@
 #include "string.h"
 #include "stm32f4xx_hal_def.h"
 
+#define MQTT_INC_BUF_SIZE 512
+
 #define MQTT_SUB        1
 #define MQTT_PUB_SUB    2
 #define MQTT_PUB        3

@@ -7,6 +7,7 @@
 //Topic heads
 #define EMS_TOPIC_VAR_PREFIX "variables"
 #define EMS_TOPIC_ATR_PREFIX "attributes"
+#define EMS_TOPIC_CTRL_PREFIX "ctrl"
 #define EMS_TOPIC_DEB_PREFIX "debug"
 
 //Topics names
@@ -58,6 +59,7 @@ enum {
   EMS_TOPID_VAR_CHAN=0, // channel topic
   EMS_TOPID_ATTR_MAIN_SET, //Main settings
   EMS_TOPID_ATTR_CALIBR, //Calibrate values
+  EMS_TOPID_CTRL, //Control
   EMS_TOPID_DEBUG,
   EMS_TOPID_COUNT
 };

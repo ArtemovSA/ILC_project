@@ -13,7 +13,7 @@ devMQTT_topic emsTopics[EMS_TOPID_COUNT];
 extern SPI_HandleTypeDef hspi1;
 
 //Measure
-EMC_chan_mesh_t meshChan[V9203_COUNT_CHANNELS];
+EMC_chan_mesh_t meshChan[DC_V9203_COUNT_CHANNELS];
 
 //Task
 osThreadId EMS_taskHandle;
@@ -37,6 +37,10 @@ void EMS_init()
   // topic: attributes/id/calibrate
   emsTopics[EMS_TOPID_ATTR_CALIBR].sub_pub = MQTT_PUB_SUB;
   sprintf(emsTopics[EMS_TOPID_ATTR_CALIBR].name, "%s/%s/%s", EMS_TOPIC_ATR_PREFIX, DC_unic_idef, EMS_TOPIC_CALIBRATE);
+  
+  // topic: ctrl/id/
+  emsTopics[EMS_TOPID_CTRL].sub_pub = MQTT_PUB_SUB;
+  sprintf(emsTopics[EMS_TOPID_CTRL].name, "%s/%s", EMS_TOPIC_CTRL_PREFIX, DC_unic_idef);
   
   // topic: debug/id
   emsTopics[EMS_TOPID_DEBUG].sub_pub = MQTT_PUB_SUB;
@@ -210,12 +214,25 @@ HAL_StatusTypeDef EMS_setMain_set(uint8_t* data, uint16_t len)
   return HAL_OK;
 }
 //------------------------------------------------------------------------------
+//Set phase calibrate
+HAL_StatusTypeDef EMS_setPahseCalibrate(cJSON* cal_json, char* jsonName, JBRE_t* phaseCalVal)
+{
+  cJSON *phase_cal_json = cJSON_GetObjectItemCaseSensitive(cal_json, jsonName);
+  uint16_t calVal;
+  
+  if (phase_cal_json != NULL)
+  {
+    //Get WARTU
+    EMS_JSON_getInt(phase_cal_json, EMS_JSON_CAL_WARTU, &calVal);
+    phaseCalVal->RacWARTU = calVal;
+  }
+  
+  return HAL_OK;
+}
+//------------------------------------------------------------------------------
 //Set calibrate coefficients
 HAL_StatusTypeDef EMS_setCalibrate(uint8_t* data, uint16_t len)
-{
-  //Create and copy settings
-  DC_set_t settings = DC_set;
-  
+{  
   //Calibrate struct
   cJSON *cal_json = cJSON_Parse((char*)data);
   
@@ -234,31 +251,63 @@ HAL_StatusTypeDef EMS_setCalibrate(uint8_t* data, uint16_t len)
   {
     DC_debugOut("# JSON message empty\r\n");
     return HAL_ERROR;
-  }    
-  
-  //***********************************Network struct********************************************
-  //Get cJSON net set section
-  cJSON *set_net_json = cJSON_GetObjectItemCaseSensitive(set_json, EMS_JSON_SET_NET_SET);
-  
-  if (set_net_json != NULL)
-  {
-    //SET NET IP
-    EMS_JSON_getIPAdrr(set_net_json, EMS_JSON_SET_NET_IP, settings.net_dev_ip_addr);
-    
-    //SET NET GATEWAY
-    EMS_JSON_getIPAdrr(set_net_json, EMS_JSON_SET_NET_GATEIP, settings.net_gw_ip_addr);
-    
-    //SET NET MASK
-    EMS_JSON_getIPAdrr(set_net_json, EMS_JSON_SET_NET_MASK, settings.net_mask);
-    
-    //SET_NTP_NAME
-    EMS_JSON_getStr(set_net_json, EMS_JSON_SET_NTP_NAME, settings.netNTP_server, sizeof(settings.netNTP_server));
-    
-    //SET_DNS_IP
-    EMS_JSON_getIPAdrr(set_net_json, EMS_JSON_SET_DNS_IP(1), settings.serverDNS1);
-    EMS_JSON_getIPAdrr(set_net_json, EMS_JSON_SET_DNS_IP(2), settings.serverDNS2);
   }
   
+  //Get channel num
+  uint16_t channelNum;
+  V9203_calChannel_t channelCal;
+  
+  EMS_JSON_getInt(cal_json, EMS_JSON_CAL_CHANNEL, &channelNum);
+  
+  //Check channel num
+  if ((channelNum > DC_V9203_COUNT_CHANNELS) || (channelNum == 0))
+  {
+    DC_debugOut("# Channel number out of range\r\n");
+    return HAL_ERROR;
+  }
+
+  //***********************************Calibrate phase********************************************
+  
+  //Set phaseA calibrate
+  if (EMS_setPahseCalibrate(cal_json, EMS_JSON_CAL_PHASE(A), &channelCal.calPhaseA) != HAL_OK)
+  {
+    DC_debugOut("# Phase A calibrate error\r\n");
+    return HAL_ERROR;
+  }
+  
+  //Set phaseB calibrate
+  if (EMS_setPahseCalibrate(cal_json, EMS_JSON_CAL_PHASE(B), &channelCal.calPhaseB) != HAL_OK)
+  {
+    DC_debugOut("# Phase B calibrate error\r\n");
+    return HAL_ERROR;
+  }
+  
+  //Set phaseC calibrate
+  if (EMS_setPahseCalibrate(cal_json, EMS_JSON_CAL_PHASE(C), &channelCal.calPhaseC) != HAL_OK)
+  {
+    DC_debugOut("# Phase C calibrate error\r\n");
+    return HAL_ERROR;
+  }
+  
+  //Get phase gains
+  uint16_t gainCal;
+  EMS_JSON_getInt(cal_json, EMS_JSON_CAL_GAIN_U, &gainCal);
+  channelCal.gainKoef_U = gainCal;
+  EMS_JSON_getInt(cal_json, EMS_JSON_CAL_GAIN_I, &gainCal);
+  channelCal.gainKoef_I = gainCal;
+  EMS_JSON_getInt(cal_json, EMS_JSON_CAL_GAIN_P, &gainCal);
+  channelCal.gainKoef_P = gainCal;
+  
+  //Change params
+  switch(channelNum)
+  {
+  case 1: DC_set.V9203_ch1_cal = channelCal; DC_debugOut(" # Getted calir for ch: %d\r\n", channelNum); break;
+  case 2: DC_set.V9203_ch2_cal = channelCal; DC_debugOut(" # Getted calir for ch: %d\r\n", channelNum); break;
+  case 3: DC_set.V9203_ch3_cal = channelCal; DC_debugOut(" # Getted calir for ch: %d\r\n", channelNum); break;
+  case 4: DC_set.V9203_ch4_cal = channelCal; DC_debugOut(" # Getted calir for ch: %d\r\n", channelNum); break;
+  default: DC_debugOut("# Channel number out of range\r\n");
+  }
+    
   return HAL_OK;
 }
 //------------------------------------------------------------------------------
@@ -269,6 +318,7 @@ void EMS_callBack(uint16_t topic_ID, uint8_t* data, uint16_t len)
     {
     case EMS_TOPID_ATTR_MAIN_SET: DC_debugOut("# CALL ATTR MAIN\r\n"); taskENTER_CRITICAL(); EMS_setMain_set(data, len); taskEXIT_CRITICAL(); break;
     case EMS_TOPID_ATTR_CALIBR: DC_debugOut("# CALL ATTR CALIBRATE\r\n"); taskENTER_CRITICAL(); EMS_setCalibrate(data, len); taskEXIT_CRITICAL(); break;
+    case EMS_TOPID_CTRL: DC_debugOut("# CALL CTRL\r\n"); break;
     case EMS_TOPID_DEBUG: DC_debugOut("# CALL DEBUG\r\n"); break;
     default: DC_debugOut("# CALL NON TOPIC\r\n");
     }
@@ -349,7 +399,7 @@ void startEMS_task(void const * argument)
   
   while(1)
   {
-    for (int i=0; i < V9203_COUNT_CHANNELS; i++)
+    for (int i=0; i < DC_V9203_COUNT_CHANNELS; i++)
     {
       //Get frequency
       meshChan[i].phaseA.freq = V9203_getFreq(i, LINE_A);

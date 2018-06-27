@@ -31,6 +31,8 @@
 #define PCA9555_PIN_K3             14      //
 #define PCA9555_PIN_K4             15      //
 
+#define DC_V9203_COUNT_CHANNELS    1      //Count channels
+
 //Unic ID
 #define UNIC_ID_PREFIX  "aaaaaaaa-1234-1234-1234-"
 extern uint32_t DC_unicID[3]; //Unic ID
@@ -78,12 +80,27 @@ extern char DC_unic_idStr[13]; //Unic id str
 #define DC_CAL_COEFF_U          0x513bUL
 #define DC_CAL_COEFF_I          0x1A2C0UL
 
+//**********************************FW metadata**************************************************
+
+#define DC_FW_FREE_FW           0x00
+#define DC_FW_NEW_FW            0x01
+#define DC_FW_CHECK_FW          0x02
+
+typedef struct
+{
+  uint8_t FW_mKey; //FW magic key
+  uint16_t FW_version; //FW version
+  uint64_t FW_size; //SizeFW in bytes
+  uint16_t FW_CRC16; //Firmware CRC
+  
+}DC_FW_metadata_t;
+
 //**********************************Settings*****************************************************
 
 #define DC_SET_MAGICKEY 0x01
 
-typedef struct
-{
+typedef struct {
+  
   uint8_t magicKey;
   
   //TCP/IP Ethernet

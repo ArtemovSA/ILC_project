@@ -31,7 +31,7 @@ void V9203_init(SPI_HandleTypeDef *hspi)
 {
   V9203_hspi = hspi;
   
-  for (int i=0; i<V9203_COUNT_CHANNELS; i++)
+  for (int i=0; i<DC_V9203_COUNT_CHANNELS; i++)
   {
     V9203_initDev(i);
   }
@@ -423,7 +423,7 @@ float V9203_getFreq(uint8_t channel, V9203_line_t line)
   uint32_t regData;
   
   //Check channel
-  if (channel > V9203_COUNT_CHANNELS)
+  if (channel > DC_V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
     return -1;
@@ -458,7 +458,7 @@ float V9203_getRMS_Voltage(uint8_t channel, V9203_line_t line)
   uint32_t regData;
   
   //Check channel
-  if (channel > V9203_COUNT_CHANNELS)
+  if (channel > DC_V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
     return -1;
@@ -493,7 +493,7 @@ float V9203_getRMS_Current(uint8_t channel, V9203_line_t line)
   uint32_t regData;
   
   //Check channel
-  if (channel > V9203_COUNT_CHANNELS)
+  if (channel > DC_V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
     return -1;
@@ -528,7 +528,7 @@ float V9203_getRMS_Power(uint8_t channel, V9203_line_t line)
   uint32_t regData;
   
   //Check channel
-  if (channel > V9203_COUNT_CHANNELS)
+  if (channel > DC_V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
     return -1;
@@ -563,7 +563,7 @@ float V9203_getRMS_reactivePower(uint8_t channel, V9203_line_t line)
   uint32_t regData;
   
   //Check channel
-  if (channel > V9203_COUNT_CHANNELS)
+  if (channel > DC_V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
     return -1;
