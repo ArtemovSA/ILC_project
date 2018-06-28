@@ -2,7 +2,7 @@
 
 "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\bin\armstlink2.dll" 
 
-"C:\Users\user\Desktop\ILC\Bootloader\EWARM\Bootloader\Exe\Bootloader.out" 
+"C:\Users\user\Desktop\ILC\ILC_project\Bootloader\EWARM\Bootloader\Exe\Bootloader.out" 
 
 --plugin "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\bin\armbat.dll" 
 

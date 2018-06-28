@@ -28,7 +28,7 @@ static const uint8_t dscrc_table[] = {
 // compared to all those delayMicrosecond() calls.  But I got
 // confused, so I use this table from the examples.)
 //
-uint8_t crc8(const uint8_t *addr, uint8_t len, uint8_t crc_init)
+uint8_t crc8(const uint8_t *addr, uint16_t len, uint8_t crc_init)
 {
   uint8_t crc = crc_init;
   

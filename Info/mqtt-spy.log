@@ -2213,3 +2213,5 @@ WillDestination             :  null
 2018-06-27 12:30:19,305 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Publishing message on topic "attributes/aaaaaaaa-1234-1234-1234-33004c343651/calibrate". Payload size = "360"
 2018-06-27 12:31:51,946 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Publishing message on topic "attributes/aaaaaaaa-1234-1234-1234-33004c343651/calibrate". Payload size = "360"
 2018-06-27 12:33:28,850 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Publishing message on topic "attributes/aaaaaaaa-1234-1234-1234-33004c343651/calibrate". Payload size = "360"
+2018-06-27 13:24:33,629 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables/aaaaaaaa-1234-1234-1234-33004c343651/channel
+2018-06-27 13:24:33,630 INFO  [JavaFX Application Thread     ] [MqttConnectionWithReconnection]  - Disconnecting  from [tcp://broker.mqtt-dashboard.com]

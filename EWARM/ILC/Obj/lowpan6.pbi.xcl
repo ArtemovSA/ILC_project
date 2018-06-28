@@ -74,6 +74,8 @@ C:\Users\user\Desktop\ILC\ILC_project\EWARM\..\Libs\Clock
 -I
 C:\Users\user\Desktop\ILC\ILC_project\EWARM\..\Libs\Network
 -I
+C:\Users\user\Desktop\ILC\ILC_project\EWARM\..\Libs\FW_update
+-I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\inc
@@ -151,6 +153,8 @@ C:\Users\user\Desktop\ILC\ILC_project\Libs\EMS_proocol
 C:\Users\user\Desktop\ILC\ILC_project\Libs\Clock
 -I
 C:\Users\user\Desktop\ILC\ILC_project\Libs\Network
+-I
+C:\Users\user\Desktop\ILC\ILC_project\Libs\FW_update
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -DUSE_HAL_DRIVER=1

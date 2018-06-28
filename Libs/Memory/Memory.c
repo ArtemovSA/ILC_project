@@ -10,7 +10,7 @@ SRAM_HandleTypeDef *MEM_hSRAM1;
 SRAM_HandleTypeDef *MEM_hSRAM2;
 NAND_HandleTypeDef *MEM_hNAND1;
 
-uint8_t MEM_dataBuf[2048];
+uint8_t MEM_dataBuf[MEM_NAND_PAGE_SIZE];
 
 //--------------------------------------------------------------------------------------------------
 //Init memory

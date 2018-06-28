@@ -77,7 +77,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>7.80.4.12487</state>
+          <state>7.80.3.12143</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -351,6 +351,7 @@
           <state>$PROJ_DIR$\..\Libs\EMS_proocol</state>
           <state>$PROJ_DIR$\..\Libs\Clock</state>
           <state>$PROJ_DIR$\..\Libs\Network</state>
+          <state>$PROJ_DIR$\..\Libs\FW_update</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1220,6 +1221,12 @@
       <name>EXP</name>
       <file>
         <name>$PROJ_DIR$\..\Libs\EXP\EXP.h</name>
+      </file>
+    </group>
+    <group>
+      <name>FW_update</name>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\FW_update\FW_update.h</name>
       </file>
     </group>
     <group>

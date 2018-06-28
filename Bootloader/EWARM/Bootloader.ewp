@@ -37,7 +37,7 @@
         </option>
         <option>
           <name>Input description</name>
-          <state />
+          <state>Full formatting.</state>
         </option>
         <option>
           <name>Output variant</name>
@@ -46,7 +46,7 @@
         </option>
         <option>
           <name>Output description</name>
-          <state />
+          <state>Full formatting.</state>
         </option>
         <option>
           <name>GOutputBinary</name>
@@ -318,8 +318,16 @@
           <state>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Inc</state>
           <state>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy</state>
           <state>$PROJ_DIR$/../Drivers/CMSIS/Device/ST/STM32F4xx/Include</state>
-          <state />
           <state>$PROJ_DIR$/../Drivers/CMSIS/Include</state>
+          <state>$PROJ_DIR$\..\..\Libs\Memory</state>
+          <state>$PROJ_DIR$\..\..\Libs\FW_update</state>
+          <state>$PROJ_DIR$\..\..\Libs\CRC8</state>
+          <state>$PROJ_DIR$/../Middlewares/Third_Party/FatFs/src</state>
+          <state />
+          <state />
+          <state />
+          <state />
+          <state />
           <state />
           <state />
           <state />
@@ -997,6 +1005,24 @@
       <file>
         <name>$PROJ_DIR$\..\Src\stm32f4xx_it.c</name>
       </file>
+      <file>
+        <name>$PROJ_DIR$/../Src/bsp_driver_sd.c</name>
+        <excluded>
+          <configuration />
+        </excluded>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../Src/sd_diskio.c</name>
+        <excluded>
+          <configuration />
+        </excluded>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../Src/fatfs.c</name>
+        <excluded>
+          <configuration />
+        </excluded>
+      </file>
     </group>
   </group>
   <group>
@@ -1065,6 +1091,87 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_fsmc.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sd.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_sdmmc.c</name>
+      </file>
+    </group>
+  </group>
+  <group>
+    <name>lib</name>
+    <group>
+      <name>CRC8</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\Libs\CRC8\CRC8.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\Libs\CRC8\CRC8.h</name>
+      </file>
+    </group>
+    <group>
+      <name>FM_update</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\Libs\FW_update\FW_update.h</name>
+      </file>
+    </group>
+    <group>
+      <name>Memory</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\Libs\Memory\Memory.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\Libs\Memory\Memory.h</name>
+      </file>
+    </group>
+  </group>
+  <group>
+    <name>Middlewares</name>
+    <excluded>
+      <configuration />
+    </excluded>
+    <file>
+      <name />
+      <excluded>
+        <configuration />
+      </excluded>
+    </file>
+    <group>
+      <name>FatFs</name>
+      <excluded>
+        <configuration />
+      </excluded>
+      <file>
+        <name />
+        <excluded>
+          <configuration />
+        </excluded>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../Middlewares/Third_Party/FatFs/src/option/syscall.c</name>
+        <excluded>
+          <configuration />
+        </excluded>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../Middlewares/Third_Party/FatFs/src/diskio.c</name>
+        <excluded>
+          <configuration />
+        </excluded>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../Middlewares/Third_Party/FatFs/src/ff_gen_drv.c</name>
+        <excluded>
+          <configuration />
+        </excluded>
+      </file>
+      <file>
+        <name>$PROJ_DIR$/../Middlewares/Third_Party/FatFs/src/ff.c</name>
+        <excluded>
+          <configuration />
+        </excluded>
       </file>
     </group>
   </group>

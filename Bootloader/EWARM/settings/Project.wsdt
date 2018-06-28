@@ -16,7 +16,7 @@
           
           
           
-        <Column0>312</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
+        <Column0>311</Column0><Column1>27</Column1><Column2>27</Column2><Column3>27</Column3></ColumnWidths>
       </Workspace>
       <Build>
         
@@ -24,11 +24,11 @@
         
         
       <ColumnWidth0>20</ColumnWidth0><ColumnWidth1>1242</ColumnWidth1><ColumnWidth2>331</ColumnWidth2><ColumnWidth3>82</ColumnWidth3></Build>
-    </Static>
+    <Select-Ambiguous-Definitions><ColumnWidth0>592</ColumnWidth0><ColumnWidth1>84</ColumnWidth1><ColumnWidth2>1015</ColumnWidth2></Select-Ambiguous-Definitions><Find-in-Files><ColumnWidth0>507</ColumnWidth0><ColumnWidth1>84</ColumnWidth1><ColumnWidth2>761</ColumnWidth2><ColumnWidth3>338</ColumnWidth3></Find-in-Files></Static>
     <Windows>
       
       
-    <Wnd2>
+    <Wnd0>
         <Tabs>
           <Tab>
             <Identity>TabID-1644-14147</Identity>
@@ -36,11 +36,11 @@
             <Factory>Workspace</Factory>
             <Session>
               
-            <NodeDict><ExpandedNode>Bootloader</ExpandedNode><ExpandedNode>Bootloader/Application</ExpandedNode><ExpandedNode>Bootloader/Application/User</ExpandedNode><ExpandedNode>Bootloader/Output</ExpandedNode></NodeDict></Session>
+            <NodeDict><ExpandedNode>Bootloader</ExpandedNode><ExpandedNode>Bootloader/Drivers</ExpandedNode><ExpandedNode>Bootloader/Drivers/STM32F4xx_HAL_Driver</ExpandedNode><ExpandedNode>Bootloader/Middlewares</ExpandedNode><ExpandedNode>Bootloader/lib</ExpandedNode></NodeDict></Session>
           </Tab>
         </Tabs>
         
-      <SelectedTab>0</SelectedTab></Wnd2><Wnd3>
+      <SelectedTab>0</SelectedTab></Wnd0><Wnd1>
         <Tabs>
           <Tab>
             <Identity>TabID-12392-14150</Identity>
@@ -54,22 +54,22 @@
             <Factory>Build</Factory>
             <Session/>
           </Tab>
-        </Tabs>
+        <Tab><Identity>TabID-3820-26857</Identity><TabName>Ambiguous Definitions</TabName><Factory>Select-Ambiguous-Definitions</Factory><Session/></Tab><Tab><Identity>TabID-9426-1557</Identity><TabName>Find in Files</TabName><Factory>Find-in-Files</Factory><Session/></Tab></Tabs>
         
-      <SelectedTab>1</SelectedTab></Wnd3></Windows>
+      <SelectedTab>1</SelectedTab></Wnd1></Windows>
     <Editor>
       
       
       
       
-    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Src\main.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>28</YPos2><SelStart2>2467</SelStart2><SelEnd2>2467</SelEnd2></Tab><ActiveTab>0</ActiveTab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
+    <Pane><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\Libs\FW_update\FW_update.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>0</YPos2><SelStart2>945</SelStart2><SelEnd2>964</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\Bootloader\List\Bootloader.map</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>441</YPos2><SelStart2>0</SelStart2><SelEnd2>0</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\Libs\Memory\Memory.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>9</YPos2><SelStart2>3023</SelStart2><SelEnd2>3023</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Src\main.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>146</YPos2><SelStart2>5604</SelStart2><SelEnd2>5604</SelEnd2></Tab><ActiveTab>3</ActiveTab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\..\Libs\Memory\Memory.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>19</YPos2><SelStart2>1752</SelStart2><SelEnd2>1752</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_nand.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>454</YPos2><SelStart2>17174</SelStart2><SelEnd2>17174</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>272</YPos2><SelStart2>13865</SelStart2><SelEnd2>13882</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_flash_ex.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>992</YPos2><SelStart2>40988</SelStart2><SelEnd2>40988</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_flash.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>152</YPos2><SelStart2>7338</SelStart2><SelEnd2>7338</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>102</YPos2><SelStart2>4884</SelStart2><SelEnd2>4906</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Middlewares\Third_Party\FatFs\src\ff.c</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>3480</YPos2><SelStart2>124226</SelStart2><SelEnd2>124226</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Middlewares\Third_Party\FatFs\src\ff.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>252</YPos2><SelStart2>11466</SelStart2><SelEnd2>11472</SelEnd2></Tab><Tab><Factory>TextEditor</Factory><Filename>$WS_DIR$\..\Middlewares\Third_Party\FatFs\src\integer.h</Filename><XPos>0</XPos><YPos>0</YPos><SelStart>0</SelStart><SelEnd>0</SelEnd><XPos2>0</XPos2><YPos2>0</YPos2><SelStart2>443</SelStart2><SelEnd2>447</SelEnd2></Tab></Pane><ActivePane>0</ActivePane><Sizes><Pane><X>1000000</X><Y>1000000</Y></Pane></Sizes><SplitMode>1</SplitMode></Editor>
     <Positions>
       
       
       
       
       
-    <Top><Row0><Sizes><Toolbar-002ABF30><key>iaridepm.enu1</key></Toolbar-002ABF30></Sizes></Row0></Top><Left><Row0><Sizes><Wnd2><Rect><Top>-2</Top><Left>-2</Left><Bottom>658</Bottom><Right>386</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>116618</sizeHorzCX><sizeHorzCY>192678</sizeHorzCY><sizeVertCX>226239</sizeVertCX><sizeVertCY>635838</sizeVertCY></Rect></Wnd2></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd3><Rect><Top>-2</Top><Left>-2</Left><Bottom>335</Bottom><Right>1717</Right><x>-2</x><y>-2</y><xscreen>1719</xscreen><yscreen>337</yscreen><sizeHorzCX>1002332</sizeHorzCX><sizeHorzCY>324663</sizeHorzCY><sizeVertCX>116618</sizeVertCX><sizeVertCY>192678</sizeVertCY></Rect></Wnd3></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
+    <Top><Row0><Sizes><Toolbar-003209C0><key>iaridepm.enu1</key></Toolbar-003209C0></Sizes></Row0></Top><Left><Row0><Sizes><Wnd0><Rect><Top>-2</Top><Left>-2</Left><Bottom>658</Bottom><Right>385</Right><x>-2</x><y>-2</y><xscreen>200</xscreen><yscreen>200</yscreen><sizeHorzCX>116618</sizeHorzCX><sizeHorzCY>192678</sizeHorzCY><sizeVertCX>225656</sizeVertCX><sizeVertCY>635838</sizeVertCY></Rect></Wnd0></Sizes></Row0></Left><Right><Row0><Sizes/></Row0></Right><Bottom><Row0><Sizes><Wnd1><Rect><Top>-2</Top><Left>-2</Left><Bottom>335</Bottom><Right>1717</Right><x>-2</x><y>-2</y><xscreen>1719</xscreen><yscreen>337</yscreen><sizeHorzCX>1002332</sizeHorzCX><sizeHorzCY>324663</sizeHorzCY><sizeVertCX>116618</sizeVertCX><sizeVertCY>192678</sizeVertCY></Rect></Wnd1></Sizes></Row0></Bottom><Float><Sizes/></Float></Positions>
   </Desktop>
 </Workspace>
 

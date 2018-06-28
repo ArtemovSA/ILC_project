@@ -9,6 +9,7 @@
 #define MEM_EN_SRAM2_OFF   HAL_GPIO_WritePin(SRAM_CE2_2_GPIO_Port, SRAM_CE2_2_Pin, GPIO_PIN_RESET)
 
 //***************************************Memory work************************************************
+
 typedef enum{
   MEM_ID_NAND = 0,
   MEM_ID_SRAM1,
@@ -19,7 +20,7 @@ typedef enum{
 void MEM_init(SRAM_HandleTypeDef *sram1, SRAM_HandleTypeDef *sram2, NAND_HandleTypeDef *nand);
 
 //***************************************NAND mem map***********************************************
-#define MEM_NAND_PAGE_SIZE      0x800
+#define MEM_NAND_PAGE_SIZE      0x800UL
 #define MEM_NAND_BLOCK_SIZE     0x1000
 #define MEM_NAND_PLANE_SIZE     0x400000
 #define MEM_NAND_MEMORY_SIZE    0x400000

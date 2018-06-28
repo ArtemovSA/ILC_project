@@ -4,50 +4,72 @@
   * @file           : main.c
   * @brief          : Main program body
   ******************************************************************************
-  ** This notice applies to any and all portions of this file
+  * This notice applies to any and all portions of this file
   * that are not between comment pairs USER CODE BEGIN and
   * USER CODE END. Other portions of this file, whether 
   * inserted by the user or by software development tools
   * are owned by their respective copyright owners.
   *
-  * COPYRIGHT(c) 2018 STMicroelectronics
+  * Copyright (c) 2018 STMicroelectronics International N.V. 
+  * All rights reserved.
   *
-  * Redistribution and use in source and binary forms, with or without modification,
-  * are permitted provided that the following conditions are met:
-  *   1. Redistributions of source code must retain the above copyright notice,
-  *      this list of conditions and the following disclaimer.
-  *   2. Redistributions in binary form must reproduce the above copyright notice,
-  *      this list of conditions and the following disclaimer in the documentation
-  *      and/or other materials provided with the distribution.
-  *   3. Neither the name of STMicroelectronics nor the names of its contributors
-  *      may be used to endorse or promote products derived from this software
-  *      without specific prior written permission.
+  * Redistribution and use in source and binary forms, with or without 
+  * modification, are permitted, provided that the following conditions are met:
   *
-  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  * 1. Redistribution of source code must retain the above copyright notice, 
+  *    this list of conditions and the following disclaimer.
+  * 2. Redistributions in binary form must reproduce the above copyright notice,
+  *    this list of conditions and the following disclaimer in the documentation
+  *    and/or other materials provided with the distribution.
+  * 3. Neither the name of STMicroelectronics nor the names of other 
+  *    contributors to this software may be used to endorse or promote products 
+  *    derived from this software without specific written permission.
+  * 4. This software, including modifications and/or derivative works of this 
+  *    software, must execute solely and exclusively on microcontroller or
+  *    microprocessor devices manufactured by or for STMicroelectronics.
+  * 5. Redistribution and use of this software other than as permitted under 
+  *    this license is void and will automatically terminate your rights under 
+  *    this license. 
+  *
+  * THIS SOFTWARE IS PROVIDED BY STMICROELECTRONICS AND CONTRIBUTORS "AS IS" 
+  * AND ANY EXPRESS, IMPLIED OR STATUTORY WARRANTIES, INCLUDING, BUT NOT 
+  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+  * PARTICULAR PURPOSE AND NON-INFRINGEMENT OF THIRD PARTY INTELLECTUAL PROPERTY
+  * RIGHTS ARE DISCLAIMED TO THE FULLEST EXTENT PERMITTED BY LAW. IN NO EVENT 
+  * SHALL STMICROELECTRONICS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+  * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, 
+  * OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
+  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   *
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
+#include "fatfs.h"
 
 /* USER CODE BEGIN Includes */
 
-#define MEM_NAND_ADDR_FW        (NAND_AddressTypeDef) {0, 0, 10}
+#include "stm32f4xx_hal_flash_ex.h"
+#include "FW_update.h"
+#include "Memory.h"
+#include "CRC8.h"
+
+uint8_t FW_buf[MEM_NAND_PAGE_SIZE];
+uint32_t ApplicationAddress = FW_IMAGE_START_ADDRESS;
+uint32_t JumpAddress;
+typedef void ( *pFunction )( void );
+pFunction Jump_To_Application;
 
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
 CRC_HandleTypeDef hcrc;
+
+SD_HandleTypeDef hsd;
 
 SRAM_HandleTypeDef hsram1;
 SRAM_HandleTypeDef hsram2;
@@ -63,6 +85,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_FSMC_Init(void);
 static void MX_CRC_Init(void);
+static void MX_SDIO_SD_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -70,6 +93,20 @@ static void MX_CRC_Init(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
+
+//NAND
+uint16_t pages;
+uint16_t tail;
+uint8_t crc_val = 0;
+uint32_t SectorError = 0;
+FLASH_EraseInitTypeDef EraseInitStruct;
+
+//SD Card
+FATFS filesystem;
+FIL fileInf, fileBin;
+FILINFO fno;
+FRESULT ret;
+uint16_t readLen, fileLen;
 
 /* USER CODE END 0 */
 
@@ -104,9 +141,151 @@ int main(void)
   MX_GPIO_Init();
   MX_FSMC_Init();
   MX_CRC_Init();
+  MX_SDIO_SD_Init();
+  MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
 
+  //Init memory
+  MEM_init(&hsram1, &hsram2, &hnand1);
+
   NAND_AddressTypeDef addr = MEM_NAND_ADDR_FW;
+  FW_metadata_t FW_metadata;
+  
+  //Mount FS
+  if (f_mount(&filesystem, 0, 1) != FR_OK) {
+    printf("@ SD card not found \n\r");
+  }
+  ret = f_open(&fileInf, FW_SD_INF_FILE_NAME, FA_READ);
+  
+  //If inf file exist
+  if (ret == FR_OK) {
+    ret = f_open(&fileBin, FW_SD_INF_FILE_NAME, FA_READ);
+      if (ret == FR_OK) {
+        fileLen = f_size(&fileInf);
+        if (fileLen < sizeof(FW_buf))
+        {
+          f_read(&fileInf, FW_buf, fileLen, (UINT*)&readLen);
+        }
+      }else{
+        printf("@ File FW.bin not found \n\r");
+      }
+  }else{
+    printf("@ File FW.inf not found \n\r");
+  }
+    
+  //read metadata
+  if (MEM_NAND_readData(addr, (uint8_t*)&FW_metadata, sizeof(FW_metadata_t)) != HAL_OK)
+  {
+    printf("@ NAND IO ERROR\r\n");
+    goto jump_to_application;
+  }
+
+  printf("@ Current version SW:%d\r\n", FW_metadata.FW_curent_ver);
+  
+  //All ok jump to main program
+  if (FW_metadata.FW_mKey == FW_GOTO_FW)
+    goto jump_to_application;
+  
+  //New FW
+  if (FW_metadata.FW_mKey != FW_NEW_FW)
+    goto jump_to_application;
+
+  printf("@ New version SW:%d\r\n", FW_metadata.FW_new_ver);
+  
+  pages = (FW_metadata.FW_size/MEM_NAND_PAGE_SIZE);
+  tail = FW_metadata.FW_size- pages*MEM_NAND_PAGE_SIZE;
+    
+  //Full pages
+  for ( int pageNum = 0; pageNum < pages; pageNum++)
+  {
+    if (MEM_NAND_readData(addr, FW_buf, MEM_NAND_PAGE_SIZE) != HAL_OK)
+    {
+      printf("@ NAND IO ERROR\r\n");
+      goto jump_to_application;
+    }
+    
+    crc_val = crc8( FW_buf, MEM_NAND_PAGE_SIZE, crc_val);
+  }
+
+  //Tail
+  if (MEM_NAND_readData(addr, FW_buf, tail) != HAL_OK)
+  {
+    printf("@ NAND IO ERROR\r\n");
+    goto jump_to_application;
+  }
+  
+  crc_val = crc8( FW_buf, tail, crc_val);
+  
+  //Check CRC
+  if (crc_val != FW_metadata.FW_CRC)
+  {
+    printf("@ CRC New FW inccorect\r\n");
+    goto jump_to_application;
+  }
+  
+  HAL_FLASH_Unlock(); //Unlock
+  
+  //Erace flash
+  EraseInitStruct.TypeErase = TYPEERASE_SECTORS;
+  EraseInitStruct.VoltageRange = VOLTAGE_RANGE_3;
+  EraseInitStruct.Sector = FW_IMAGE_START_SECTOR;
+  EraseInitStruct.NbSectors = FW_IMAGE_END_SECTOR;
+  
+  //Try erace sector
+  if (HAL_FLASHEx_Erase(&EraseInitStruct, &SectorError) != HAL_OK)
+  { 
+    printf("@ FLASH erace error\r\n");
+    goto jump_to_application;
+  }
+  
+  //Write FW in memory
+  //Full pages
+  for ( int pageNum = 0; pageNum < pages; pageNum++)
+  {
+    if (MEM_NAND_readData(addr, FW_buf, MEM_NAND_PAGE_SIZE) != HAL_OK)
+    {
+      printf("@ NAND IO ERROR\r\n");
+      goto jump_to_application;
+    }
+    
+    for (int i=0; i<MEM_NAND_PAGE_SIZE/32; i++)
+    {
+      if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, FW_IMAGE_START_ADDRESS+pageNum*MEM_NAND_PAGE_SIZE+i, FW_buf[i]) != HAL_OK)
+      {
+        printf("@ FLASH WRITE ERROR\r\n");
+        goto jump_to_application;
+      }
+    }
+  }
+  
+  //Tail
+  if (MEM_NAND_readData(addr, FW_buf, tail) != HAL_OK)
+  {
+    printf("@ NAND IO ERROR\r\n");
+    goto jump_to_application;
+  }
+  
+  for (int i=0; i<tail; i++)
+  {
+    if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_BYTE, FW_IMAGE_START_ADDRESS+pages*MEM_NAND_PAGE_SIZE+i, FW_buf[i]) != HAL_OK)
+    {
+      printf("@ FLASH WRITE ERROR\r\n");
+      goto jump_to_application;
+    }
+  }
+  
+  printf("@ FLASH WRITE FW OK\r\n");
+  goto jump_to_application;
+  
+  //Jump to main program
+jump_to_application:
+  printf("@ Load FW\r\n");
+  JumpAddress = *( uint32_t* )( ApplicationAddress + 4 );
+  Jump_To_Application = ( pFunction )JumpAddress;
+  uint32_t Stack = *( uint32_t* ) ApplicationAddress;
+  __set_MSP( Stack );
+
+  Jump_To_Application(); 
   
   /* USER CODE END 2 */
 
@@ -120,6 +299,7 @@ int main(void)
   /* USER CODE BEGIN 3 */
 
   }
+  
   /* USER CODE END 3 */
 
 }
@@ -190,6 +370,20 @@ static void MX_CRC_Init(void)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
+
+}
+
+/* SDIO init function */
+static void MX_SDIO_SD_Init(void)
+{
+
+  hsd.Instance = SDIO;
+  hsd.Init.ClockEdge = SDIO_CLOCK_EDGE_RISING;
+  hsd.Init.ClockBypass = SDIO_CLOCK_BYPASS_DISABLE;
+  hsd.Init.ClockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
+  hsd.Init.BusWide = SDIO_BUS_WIDE_1B;
+  hsd.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
+  hsd.Init.ClockDiv = 0;
 
 }
 
