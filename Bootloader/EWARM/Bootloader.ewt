@@ -1169,7 +1169,16 @@
     <group>
       <name>User</name>
       <file>
+        <name>$PROJ_DIR$\..\Src\bsp_driver_sd.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Src\fatfs.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\Src\main.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Src\sd_diskio.c</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\Src\stm32f4xx_hal_msp.c</name>
@@ -1235,6 +1244,9 @@
         <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_rcc_ex.c</name>
       </file>
       <file>
+        <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sd.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_sram.c</name>
       </file>
       <file>
@@ -1245,6 +1257,9 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_fsmc.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_ll_sdmmc.c</name>
       </file>
     </group>
   </group>
@@ -1262,6 +1277,9 @@
     <group>
       <name>FM_update</name>
       <file>
+        <name>$PROJ_DIR$\..\..\Libs\FW_update\FW_update.c</name>
+      </file>
+      <file>
         <name>$PROJ_DIR$\..\..\Libs\FW_update\FW_update.h</name>
       </file>
     </group>
@@ -1272,6 +1290,27 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\Libs\Memory\Memory.h</name>
+      </file>
+    </group>
+    <file>
+      <name>$PROJ_DIR$\..\..\Libs\deviceDefs\deviceDefs.h</name>
+    </file>
+  </group>
+  <group>
+    <name>Middlewares</name>
+    <group>
+      <name>FatFs</name>
+      <file>
+        <name>$PROJ_DIR$\..\Middlewares\Third_Party\FatFs\src\diskio.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Middlewares\Third_Party\FatFs\src\ff.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Middlewares\Third_Party\FatFs\src\ff_gen_drv.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Middlewares\Third_Party\FatFs\src\option\syscall.c</name>
       </file>
     </group>
   </group>

@@ -55,10 +55,10 @@
 
 #include "stm32f4xx_hal_flash_ex.h"
 #include "FW_update.h"
+#include "deviceDefs.h"
 #include "Memory.h"
 #include "CRC8.h"
 
-uint8_t FW_buf[MEM_NAND_PAGE_SIZE];
 uint32_t ApplicationAddress = FW_IMAGE_START_ADDRESS;
 uint32_t JumpAddress;
 typedef void ( *pFunction )( void );
@@ -94,19 +94,17 @@ static void MX_SDIO_SD_Init(void);
 
 /* USER CODE BEGIN 0 */
 
+FW_metadata_t metadataSD; //FW metadata SD
+FW_metadata_t metadataNAND; //FW metadata NAND
+DEV_info_t DEV_info; //dev info struct
+DEV_Status_t retStat; //Return status
+
 //NAND
 uint16_t pages;
 uint16_t tail;
 uint8_t crc_val = 0;
 uint32_t SectorError = 0;
 FLASH_EraseInitTypeDef EraseInitStruct;
-
-//SD Card
-FATFS filesystem;
-FIL fileInf, fileBin;
-FILINFO fno;
-FRESULT ret;
-uint16_t readLen, fileLen;
 
 /* USER CODE END 0 */
 
@@ -147,32 +145,52 @@ int main(void)
 
   //Init memory
   MEM_init(&hsram1, &hsram2, &hnand1);
+  
+  //Read info data
+  if (FW_readInfodata(&DEV_info) != DEV_OK)
+  {
+    printf("@ NAND info read ERROR\r\n");
+    goto jump_to_application;
+  }
+  
+  //Read card metadata
+  retStat = FW_readCardMetadata(&metadataSD);
 
-  NAND_AddressTypeDef addr = MEM_NAND_ADDR_FW;
-  FW_metadata_t FW_metadata;
-  
-  //Mount FS
-  if (f_mount(&filesystem, 0, 1) != FR_OK) {
-    printf("@ SD card not found \n\r");
+  //SD card not found
+  if (retStat == DEV_NEXIST)
+  {
+    printf("@ SD not inserted\r\n");
   }
-  ret = f_open(&fileInf, FW_SD_INF_FILE_NAME, FA_READ);
   
-  //If inf file exist
-  if (ret == FR_OK) {
-    ret = f_open(&fileBin, FW_SD_INF_FILE_NAME, FA_READ);
-      if (ret == FR_OK) {
-        fileLen = f_size(&fileInf);
-        if (fileLen < sizeof(FW_buf))
-        {
-          f_read(&fileInf, FW_buf, fileLen, (UINT*)&readLen);
-        }
-      }else{
-        printf("@ File FW.bin not found \n\r");
-      }
-  }else{
-    printf("@ File FW.inf not found \n\r");
-  }
+  //All ok
+  if (retStat == DEV_OK)
+  {
     
+    //Update FW
+    if (metadataSD.FW_cmd == FW_UDATE_FW)
+    {
+      if (metadataSD.FW_new_ver > DEV_info.SW_version)
+      {
+        printf("@ SD new FW\r\n");
+      }
+    }
+    
+    //Force update FW
+    if (metadataSD.FW_cmd == FW_REWRITE_FW)
+    {
+        printf("@ SD force update\r\n");
+    }
+    
+  }else{
+    
+    //Nand
+    
+    
+  }
+  
+  
+
+
   //read metadata
   if (MEM_NAND_readData(addr, (uint8_t*)&FW_metadata, sizeof(FW_metadata_t)) != HAL_OK)
   {
