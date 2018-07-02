@@ -218,7 +218,6 @@ int main(void)
   }
   
   printf("@ Go to start\r\n");
-  goto jump_to_application;
   
   //Jump to main program
 jump_to_application:

@@ -22,6 +22,7 @@ typedef enum{
 void MEM_init(SRAM_HandleTypeDef *sram1, SRAM_HandleTypeDef *sram2, NAND_HandleTypeDef *nand);
 
 //***************************************NAND mem map***********************************************
+
 #define MEM_NAND_PAGE_SIZE      0x800UL                 //2048 bytes
 #define MEM_NAND_BLOCK_SIZE     0x1000UL                // in pages
 #define MEM_NAND_PLANE_SIZE     0x400000UL              // in blocks

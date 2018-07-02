@@ -352,6 +352,7 @@
           <state>$PROJ_DIR$\..\Libs\Clock</state>
           <state>$PROJ_DIR$\..\Libs\Network</state>
           <state>$PROJ_DIR$\..\Libs\deviceDefs</state>
+          <state>$PROJ_DIR$\..\Libs\FW_update</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1221,6 +1222,15 @@
       <name>EXP</name>
       <file>
         <name>$PROJ_DIR$\..\Libs\EXP\EXP.h</name>
+      </file>
+    </group>
+    <group>
+      <name>FW_update</name>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\FW_update\FW_update.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\FW_update\FW_update.h</name>
       </file>
     </group>
     <group>

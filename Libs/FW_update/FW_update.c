@@ -48,11 +48,9 @@ DEV_Status_t FW_readInfodata(DEV_info_t* info)
   
   //read infodata
   if (MEM_NAND_readData(addr, (uint8_t*)info, sizeof(DEV_info_t)) != HAL_OK)
-  {
-    return DEV_OK;
-  }
+    return DEV_ERROR;
   
-  return DEV_ERROR;
+  return DEV_OK;
 }
 //--------------------------------------------------------------------------------------------------
 //Read Next str

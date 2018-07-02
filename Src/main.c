@@ -63,6 +63,7 @@
 #include "Clock.h"
 #include "dns.h"
 #include "EMS_protocol.h"
+#include "FW_update.h"
 
 /* USER CODE END Includes */
 
@@ -142,6 +143,8 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
+  SCB->VTOR = FLASH_BASE | FW_IMAGE_START_ADDRESS;
+    
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
