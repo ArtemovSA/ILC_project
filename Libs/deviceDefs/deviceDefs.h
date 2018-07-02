@@ -25,9 +25,9 @@ typedef enum
 
 //Device info struct
 typedef struct{
-  uint16_t SW_version; //Software version
-  uint16_t HW_version; //Hardware version
-  uint32_t lastUpdate; //Timestamp last update
+  uint16_t SW_version;          //Software version
+  uint16_t HW_version;          //Hardware version
+  uint32_t lastUpdate;          //Timestamp last update
 }DEV_info_t;
 
 #endif

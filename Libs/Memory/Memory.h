@@ -29,10 +29,11 @@ void MEM_init(SRAM_HandleTypeDef *sram1, SRAM_HandleTypeDef *sram2, NAND_HandleT
 #define MEM_NAND_DEV_ID         0xDA                    // default id
 
                                                       //plane, block, page
-#define MEM_NAND_ADDR_INFO      (NAND_AddressTypeDef) {0, 0, 0} //Info page
-#define MEM_NAND_ADDR_SETTINGS  (NAND_AddressTypeDef) {0, 0, 1} //Main settings
-#define MEM_NAND_ADDR_LOG       (NAND_AddressTypeDef) {0, 0, 2} //Start log data
-#define MEM_NAND_ADDR_FW        (NAND_AddressTypeDef) {0, 0, 10} //FW space 8 blocks by 128kB on 1024kB
+#define MEM_NAND_ADDR_INFO      (NAND_AddressTypeDef) {0, 0, 0}         //Info page
+#define MEM_NAND_ADDR_SETTINGS  (NAND_AddressTypeDef) {0, 0, 1}         //Main settings
+#define MEM_NAND_ADDR_LOG       (NAND_AddressTypeDef) {0, 0, 2}         //Start log data
+#define MEM_NAND_ADDR_FW_META   (NAND_AddressTypeDef) {0, 0, 10}        //Nand FW metadata
+#define MEM_NAND_ADDR_FW        (NAND_AddressTypeDef) {0, 0, 11}        //FW space 8 blocks by 128kB on 1024kB
 
 //***************************************NAND functions*********************************************
 

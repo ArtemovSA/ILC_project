@@ -7,7 +7,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "PCA9555.h"
-#include "EXP.h"
+#include "deviceDefs.h"
 #include "Task_transfer.h"
 #include "stm32f4xx_hal_gpio.h"
 
@@ -48,6 +48,8 @@ void DC_getUnicID();
 //Init
 void DC_init(osMessageQId *eventQueue)
 {
+  HAL_StatusTypeDef stat;
+  
   DC_debugOut("\r\n# Start dev ILC\r\n");
   
   //Get unic ID
@@ -67,9 +69,7 @@ void DC_init(osMessageQId *eventQueue)
   
   //PCA9555
   PCA9555_init(&hi2c1);
-  
-  HAL_StatusTypeDef stat;
-  
+
   //Set pin mode
   if ((stat = PCA9555_regSetValue(PCA9555_DEF_ADDR, PCA9555_REG_CONFIG, PCA9555_PIN_MODE_DEF)) == HAL_OK)
   {     

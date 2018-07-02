@@ -23,9 +23,6 @@ typedef struct
   uint8_t FW_CRC; //Firmware CRC
 }FW_metadata_t;
 
-//FW buffer
-extern uint8_t FW_buf[MEM_NAND_PAGE_SIZE];
-
 //Read infodata
 DEV_Status_t FW_readInfodata(DEV_info_t* info);
 
@@ -38,10 +35,20 @@ DEV_Status_t FW_readInfodata(DEV_info_t* info);
 #define FW_IMAGE_START_ADDRESS          0x00008000UL
 #define FW_IMAGE_END_ADDRESS            0x080FFFFFUL
 
+//Read nand metadata
+DEV_Status_t FW_readNandMetadata(FW_metadata_t* metadata);
+//Nand update
+DEV_Status_t FW_nandUpdate(FW_metadata_t* metadata);
+
 //**********************************FW SD CARD***********************************************
 
 #define FW_SD_BIN_FILE_NAME     "FW.bin"        //FW file
 #define FW_SD_INF_FILE_NAME     "FW.inf"        //FW metadata file
+
+//Read card metadata
+DEV_Status_t FW_readCardMetadata(FW_metadata_t* metadata);
+//SD card update
+DEV_Status_t FW_SDcardUpdate(FW_metadata_t* metadata);
 
 
 #endif

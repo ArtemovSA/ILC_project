@@ -351,7 +351,7 @@
           <state>$PROJ_DIR$\..\Libs\EMS_proocol</state>
           <state>$PROJ_DIR$\..\Libs\Clock</state>
           <state>$PROJ_DIR$\..\Libs\Network</state>
-          <state>$PROJ_DIR$\..\Libs\FW_update</state>
+          <state>$PROJ_DIR$\..\Libs\deviceDefs</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1224,12 +1224,6 @@
       </file>
     </group>
     <group>
-      <name>FW_update</name>
-      <file>
-        <name>$PROJ_DIR$\..\Libs\FW_update\FW_update.h</name>
-      </file>
-    </group>
-    <group>
       <name>JSON</name>
       <file>
         <name>$PROJ_DIR$\..\Libs\JSON\cJSON.c</name>
@@ -1307,6 +1301,9 @@
         <name>$PROJ_DIR$\..\Libs\V9203\V9203.h</name>
       </file>
     </group>
+    <file>
+      <name>$PROJ_DIR$\..\Libs\deviceDefs\deviceDefs.h</name>
+    </file>
   </group>
   <group>
     <name>Middlewares</name>

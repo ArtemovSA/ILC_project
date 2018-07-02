@@ -57,7 +57,6 @@
 #include "FW_update.h"
 #include "deviceDefs.h"
 #include "Memory.h"
-#include "CRC8.h"
 
 uint32_t ApplicationAddress = FW_IMAGE_START_ADDRESS;
 uint32_t JumpAddress;
@@ -99,13 +98,6 @@ FW_metadata_t metadataNAND; //FW metadata NAND
 DEV_info_t DEV_info; //dev info struct
 DEV_Status_t retStat; //Return status
 
-//NAND
-uint16_t pages;
-uint16_t tail;
-uint8_t crc_val = 0;
-uint32_t SectorError = 0;
-FLASH_EraseInitTypeDef EraseInitStruct;
-
 /* USER CODE END 0 */
 
 /**
@@ -146,6 +138,14 @@ int main(void)
   //Init memory
   MEM_init(&hsram1, &hsram2, &hnand1);
   
+  //Check nand
+  if (MEM_NAND_checkID() == HAL_OK)
+  {
+    printf("# Nand check OK\r\n");
+  }else{
+    printf("# Nand check ERROR\r\n");
+  }
+  
   //Read info data
   if (FW_readInfodata(&DEV_info) != DEV_OK)
   {
@@ -162,137 +162,62 @@ int main(void)
     printf("@ SD not inserted\r\n");
   }
   
-  //All ok
+  //Metadata SD readed
   if (retStat == DEV_OK)
   {
-    
     //Update FW
     if (metadataSD.FW_cmd == FW_UDATE_FW)
     {
       if (metadataSD.FW_new_ver > DEV_info.SW_version)
       {
-        printf("@ SD new FW\r\n");
+        printf("@ SD new version SW:%d\r\n", metadataSD.FW_new_ver);
+        //SD card update
+        if (FW_SDcardUpdate(&metadataSD) != DEV_OK)
+          printf("@ SD update error\r\n");
+        goto jump_to_application;
       }
     }
     
     //Force update FW
     if (metadataSD.FW_cmd == FW_REWRITE_FW)
     {
-        printf("@ SD force update\r\n");
-    }
-    
-  }else{
-    
-    //Nand
-    
-    
-  }
-  
-  
-
-
-  //read metadata
-  if (MEM_NAND_readData(addr, (uint8_t*)&FW_metadata, sizeof(FW_metadata_t)) != HAL_OK)
-  {
-    printf("@ NAND IO ERROR\r\n");
-    goto jump_to_application;
-  }
-
-  printf("@ Current version SW:%d\r\n", FW_metadata.FW_curent_ver);
-  
-  //All ok jump to main program
-  if (FW_metadata.FW_mKey == FW_GOTO_FW)
-    goto jump_to_application;
-  
-  //New FW
-  if (FW_metadata.FW_mKey != FW_NEW_FW)
-    goto jump_to_application;
-
-  printf("@ New version SW:%d\r\n", FW_metadata.FW_new_ver);
-  
-  pages = (FW_metadata.FW_size/MEM_NAND_PAGE_SIZE);
-  tail = FW_metadata.FW_size- pages*MEM_NAND_PAGE_SIZE;
-    
-  //Full pages
-  for ( int pageNum = 0; pageNum < pages; pageNum++)
-  {
-    if (MEM_NAND_readData(addr, FW_buf, MEM_NAND_PAGE_SIZE) != HAL_OK)
-    {
-      printf("@ NAND IO ERROR\r\n");
+      printf("@ SD force update SW:%d\r\n", metadataSD.FW_new_ver);
+      //SD card update
+      if (FW_SDcardUpdate(&metadataSD) != DEV_OK)
+        printf("@ SD update error\r\n");
       goto jump_to_application;
     }
-    
-    crc_val = crc8( FW_buf, MEM_NAND_PAGE_SIZE, crc_val);
   }
-
-  //Tail
-  if (MEM_NAND_readData(addr, FW_buf, tail) != HAL_OK)
+  
+  //Read nand metadata
+  if (FW_readNandMetadata(&metadataNAND) == DEV_OK)
   {
-    printf("@ NAND IO ERROR\r\n");
-    goto jump_to_application;
-  }
-  
-  crc_val = crc8( FW_buf, tail, crc_val);
-  
-  //Check CRC
-  if (crc_val != FW_metadata.FW_CRC)
-  {
-    printf("@ CRC New FW inccorect\r\n");
-    goto jump_to_application;
-  }
-  
-  HAL_FLASH_Unlock(); //Unlock
-  
-  //Erace flash
-  EraseInitStruct.TypeErase = TYPEERASE_SECTORS;
-  EraseInitStruct.VoltageRange = VOLTAGE_RANGE_3;
-  EraseInitStruct.Sector = FW_IMAGE_START_SECTOR;
-  EraseInitStruct.NbSectors = FW_IMAGE_END_SECTOR;
-  
-  //Try erace sector
-  if (HAL_FLASHEx_Erase(&EraseInitStruct, &SectorError) != HAL_OK)
-  { 
-    printf("@ FLASH erace error\r\n");
-    goto jump_to_application;
-  }
-  
-  //Write FW in memory
-  //Full pages
-  for ( int pageNum = 0; pageNum < pages; pageNum++)
-  {
-    if (MEM_NAND_readData(addr, FW_buf, MEM_NAND_PAGE_SIZE) != HAL_OK)
+    //Update FW
+    if (metadataNAND.FW_cmd == FW_UDATE_FW)
     {
-      printf("@ NAND IO ERROR\r\n");
-      goto jump_to_application;
-    }
-    
-    for (int i=0; i<MEM_NAND_PAGE_SIZE/32; i++)
-    {
-      if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, FW_IMAGE_START_ADDRESS+pageNum*MEM_NAND_PAGE_SIZE+i, FW_buf[i]) != HAL_OK)
+      if (metadataNAND.FW_new_ver > DEV_info.SW_version)
       {
-        printf("@ FLASH WRITE ERROR\r\n");
+        printf("@ NAND new version SW:%d\r\n", metadataSD.FW_new_ver);
+        //Nand update
+        if (FW_nandUpdate(&metadataNAND) != DEV_OK)
+          printf("@ NAND update error\r\n");
         goto jump_to_application;
       }
     }
-  }
-  
-  //Tail
-  if (MEM_NAND_readData(addr, FW_buf, tail) != HAL_OK)
-  {
-    printf("@ NAND IO ERROR\r\n");
-    goto jump_to_application;
-  }
-  
-  for (int i=0; i<tail; i++)
-  {
-    if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_BYTE, FW_IMAGE_START_ADDRESS+pages*MEM_NAND_PAGE_SIZE+i, FW_buf[i]) != HAL_OK)
+    
+    //Force update FW
+    if (metadataNAND.FW_cmd == FW_REWRITE_FW)
     {
-      printf("@ FLASH WRITE ERROR\r\n");
+      printf("@ NAND force update SW:%d\r\n", metadataSD.FW_new_ver);
+      //Nand update
+      if (FW_nandUpdate(&metadataNAND) != DEV_OK)
+        printf("@ NAND update error\r\n");
       goto jump_to_application;
     }
+    
   }
   
-  printf("@ FLASH WRITE FW OK\r\n");
+  printf("@ Go to start\r\n");
   goto jump_to_application;
   
   //Jump to main program
@@ -521,12 +446,12 @@ static void MX_FSMC_Init(void)
   hnand1.Init.Waitfeature = FSMC_NAND_PCC_WAIT_FEATURE_ENABLE;
   hnand1.Init.MemoryDataWidth = FSMC_NAND_PCC_MEM_BUS_WIDTH_8;
   hnand1.Init.EccComputation = FSMC_NAND_ECC_DISABLE;
-  hnand1.Init.ECCPageSize = FSMC_NAND_ECC_PAGE_SIZE_256BYTE;
+  hnand1.Init.ECCPageSize = FSMC_NAND_ECC_PAGE_SIZE_2048BYTE;
   hnand1.Init.TCLRSetupTime = 0;
   hnand1.Init.TARSetupTime = 0;
   /* hnand1.Config */
   hnand1.Config.PageSize = 2048;
-  hnand1.Config.SpareAreaSize = 125000000;
+  hnand1.Config.SpareAreaSize = 128;
   hnand1.Config.BlockSize = 64;
   hnand1.Config.BlockNbr = 1024;
   hnand1.Config.PlaneNbr = 1;
@@ -538,10 +463,10 @@ static void MX_FSMC_Init(void)
   ComSpaceTiming.HoldSetupTime = 252;
   ComSpaceTiming.HiZSetupTime = 252;
   /* AttSpaceTiming */
-  AttSpaceTiming.SetupTime = 252;
-  AttSpaceTiming.WaitSetupTime = 252;
-  AttSpaceTiming.HoldSetupTime = 252;
-  AttSpaceTiming.HiZSetupTime = 252;
+  AttSpaceTiming.SetupTime = 1;
+  AttSpaceTiming.WaitSetupTime = 3;
+  AttSpaceTiming.HoldSetupTime = 2;
+  AttSpaceTiming.HiZSetupTime = 1;
 
   if (HAL_NAND_Init(&hnand1, &ComSpaceTiming, &AttSpaceTiming) != HAL_OK)
   {

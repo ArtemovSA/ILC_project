@@ -2,7 +2,7 @@
 #define DEVCTRL_H
 
 #include "stm32f4xx_hal.h"
-#include "EXP.h"
+#include "deviceDefs.h"
 #include "V9203.h"
 
 //***********************************Device data****************************************************
