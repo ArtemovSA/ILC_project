@@ -42,6 +42,11 @@ DEV_Status_t FW_nandUpdate(FW_metadata_t* metadata);
 
 //**********************************FW SD CARD***********************************************
 
+#define FW_CMD_PARCE            "#Cmd: %d%n"
+#define FW_VERSION_PARCE        "#Version: %d%n"
+#define FW_SIZE_PARCE           "#SizeFW: %ld%n"
+#define FW_CRC_PARCE            "#CRC: %x02%n"
+
 #define FW_SD_BIN_FILE_NAME     "FW.bin"        //FW file
 #define FW_SD_INF_FILE_NAME     "FW.inf"        //FW metadata file
 

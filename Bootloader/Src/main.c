@@ -49,11 +49,11 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
-#include "fatfs.h"
 
 /* USER CODE BEGIN Includes */
 
 #include "stm32f4xx_hal_flash_ex.h"
+#include "fatfs.h"
 #include "FW_update.h"
 #include "deviceDefs.h"
 #include "Memory.h"
@@ -134,7 +134,7 @@ int main(void)
   MX_SDIO_SD_Init();
   MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
-
+  
   //Init memory
   MEM_init(&hsram1, &hsram2, &hnand1);
   
@@ -318,15 +318,13 @@ static void MX_CRC_Init(void)
 /* SDIO init function */
 static void MX_SDIO_SD_Init(void)
 {
-
   hsd.Instance = SDIO;
   hsd.Init.ClockEdge = SDIO_CLOCK_EDGE_RISING;
   hsd.Init.ClockBypass = SDIO_CLOCK_BYPASS_DISABLE;
   hsd.Init.ClockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
-  hsd.Init.BusWide = SDIO_BUS_WIDE_1B;
-  hsd.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
-  hsd.Init.ClockDiv = 0;
-
+  hsd.Init.BusWide = SDIO_BUS_WIDE_4B;
+  hsd.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_ENABLE;
+  hsd.Init.ClockDiv = 64;
 }
 
 /** Configure pins as 

@@ -68,8 +68,10 @@ static DEV_Status_t FW_readNextStr(char* str_p)
 //Read card metadata
 DEV_Status_t FW_readCardMetadata(FW_metadata_t* metadata)
 {
+  char sdPath[4];	
+  
   //Mount FS
-  if (f_mount(&filesystem, 0, 1) != FR_OK) {
+  if (f_mount(&filesystem, (TCHAR const*)sdPath, 1) != FR_OK) {
     printf("@ SD card not found \n\r");
     return DEV_NEXIST;
   }
@@ -87,7 +89,7 @@ DEV_Status_t FW_readCardMetadata(FW_metadata_t* metadata)
       if (FW_readNextStr(str_p) != DEV_OK)
         printf("@ Can't read inf \n\r");
       
-      sscanf(str_p, "#Cmd: %d%n", &num, &n);
+      sscanf(str_p, FW_CMD_PARCE, &num, &n);
       if (n > 0)
         metadata->FW_cmd = num;
       
@@ -95,7 +97,7 @@ DEV_Status_t FW_readCardMetadata(FW_metadata_t* metadata)
       if (FW_readNextStr(str_p) != DEV_OK)
         printf("@ Can't read inf \n\r");
       
-      sscanf(str_p, "#Version: %d%n", &num, &n);
+      sscanf(str_p, FW_VERSION_PARCE, &num, &n);
       if (n > 0)
         metadata->FW_new_ver = num;
       
@@ -103,7 +105,7 @@ DEV_Status_t FW_readCardMetadata(FW_metadata_t* metadata)
       if (FW_readNextStr(str_p) != DEV_OK)
         printf("@ Can't read inf \n\r");
       
-      sscanf(str_p, "#SizeFW: %ld%n", &num, &n);
+      sscanf(str_p, FW_SIZE_PARCE, &num, &n);
       if (n > 0)
         metadata->FW_size = num;
       
@@ -111,7 +113,7 @@ DEV_Status_t FW_readCardMetadata(FW_metadata_t* metadata)
       if (FW_readNextStr(str_p) != DEV_OK)
         printf("@ Can't read inf \n\r");
       
-      sscanf(str_p, "#CRC: %x02%n", &num, &n);
+      sscanf(str_p, FW_CRC_PARCE, &num, &n);
       if (n > 0)
         metadata->FW_CRC = num;
       
