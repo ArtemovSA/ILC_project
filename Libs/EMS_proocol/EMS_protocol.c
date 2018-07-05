@@ -301,10 +301,10 @@ HAL_StatusTypeDef EMS_setCalibrate(uint8_t* data, uint16_t len)
   //Change params
   switch(channelNum)
   {
-  case 1: DC_set.V9203_ch1_cal = channelCal; DC_debugOut(" # Getted calir for ch: %d\r\n", channelNum); break;
-  case 2: DC_set.V9203_ch2_cal = channelCal; DC_debugOut(" # Getted calir for ch: %d\r\n", channelNum); break;
-  case 3: DC_set.V9203_ch3_cal = channelCal; DC_debugOut(" # Getted calir for ch: %d\r\n", channelNum); break;
-  case 4: DC_set.V9203_ch4_cal = channelCal; DC_debugOut(" # Getted calir for ch: %d\r\n", channelNum); break;
+  case 1: DC_set.V9203_ch1_cal = channelCal; DC_debugOut(" # Getted calirb for ch: %d\r\n", channelNum); break;
+  case 2: DC_set.V9203_ch2_cal = channelCal; DC_debugOut(" # Getted calirb for ch: %d\r\n", channelNum); break;
+  case 3: DC_set.V9203_ch3_cal = channelCal; DC_debugOut(" # Getted calirb for ch: %d\r\n", channelNum); break;
+  case 4: DC_set.V9203_ch4_cal = channelCal; DC_debugOut(" # Getted calirb for ch: %d\r\n", channelNum); break;
   default: DC_debugOut("# Channel number out of range\r\n");
   }
     
