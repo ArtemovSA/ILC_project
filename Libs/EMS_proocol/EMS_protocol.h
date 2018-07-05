@@ -22,6 +22,10 @@
 #define EMS_JSON_NAME_RMSP              "RMSP"
 #define EMS_JSON_NAME_RMSRP             "RMSRP"
 
+//JSON control parametsrs
+#define EMS_JSON_SET_RELAY(n)           "Relay_n#n"
+#define EMS_JSON_SET_RELAY(n)           "Relay_n#n"
+
 //Settings attributes
 #define EMS_JSON_SET_NET_SET            "net_set"
 #define EMS_JSON_SET_NET_IP             "ip"

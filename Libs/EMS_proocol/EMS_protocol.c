@@ -108,6 +108,32 @@ HAL_StatusTypeDef EMS_JSON_getInt(const cJSON* objectJSON, char *JSON_name, uint
   return HAL_ERROR;
 }
 //------------------------------------------------------------------------------
+//Ctrl callback
+HAL_StatusTypeDef EMS_ctrlCallback(uint8_t* data, uint16_t len)
+{
+  //Main struct
+  cJSON *ctrl_json = cJSON_Parse((char*)data);
+  
+  if (set_json == NULL)
+  {
+    const char *error_ptr = cJSON_GetErrorPtr();
+    if (error_ptr != NULL)
+    {
+      DC_debugOut("# JSON parce Error before: %s\n", error_ptr);
+    }
+    return HAL_ERROR;
+  }
+  
+  //Check child empty
+  if (set_json->child == NULL)
+  {
+    DC_debugOut("# JSON message empty\r\n");
+    return HAL_ERROR;
+  }    
+  
+  
+}
+//------------------------------------------------------------------------------
 //Set main settings
 HAL_StatusTypeDef EMS_setMain_set(uint8_t* data, uint16_t len)
 {
@@ -318,7 +344,7 @@ void EMS_callBack(uint16_t topic_ID, uint8_t* data, uint16_t len)
     {
     case EMS_TOPID_ATTR_MAIN_SET: DC_debugOut("# CALL ATTR MAIN\r\n"); taskENTER_CRITICAL(); EMS_setMain_set(data, len); taskEXIT_CRITICAL(); break;
     case EMS_TOPID_ATTR_CALIBR: DC_debugOut("# CALL ATTR CALIBRATE\r\n"); taskENTER_CRITICAL(); EMS_setCalibrate(data, len); taskEXIT_CRITICAL(); break;
-    case EMS_TOPID_CTRL: DC_debugOut("# CALL CTRL\r\n"); break;
+    case EMS_TOPID_CTRL: DC_debugOut("# CALL CTRL\r\n"); taskENTER_CRITICAL(); EMS_ctrlCallback(data, len); taskEXIT_CRITICAL(); break;
     case EMS_TOPID_DEBUG: DC_debugOut("# CALL DEBUG\r\n"); break;
     default: DC_debugOut("# CALL NON TOPIC\r\n");
     }
