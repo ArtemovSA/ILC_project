@@ -2215,3 +2215,23 @@ WillDestination             :  null
 2018-06-27 12:33:28,850 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Publishing message on topic "attributes/aaaaaaaa-1234-1234-1234-33004c343651/calibrate". Payload size = "360"
 2018-06-27 13:24:33,629 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables/aaaaaaaa-1234-1234-1234-33004c343651/channel
 2018-06-27 13:24:33,630 INFO  [JavaFX Application Thread     ] [MqttConnectionWithReconnection]  - Disconnecting  from [tcp://broker.mqtt-dashboard.com]
+2018-07-06 17:03:55,793 INFO  [JavaFX Application Thread     ] [MqttViewManager               ]  - Default configuration file present (C:\Users\user\mqtt-spy\mqtt-spy-configuration.xml) = true
+2018-07-06 17:03:55,828 INFO  [JavaFX Application Thread     ] [MqttViewManager               ]  - Loading configuration file from C:\Users\user\mqtt-spy\mqtt-spy-configuration.xml
+2018-07-06 17:04:04,594 INFO  [JavaFX Application Thread     ] [MqttConfigurationUtils        ]  - Auto-complete for server URI (ems.insyte.ru:1883 -> tcp://ems.insyte.ru:1883)
+2018-07-06 17:04:05,057 ERROR [JavaFX Application Thread     ] [FileUtils                     ]  - No files in C:\Users\user\mqtt-spy\
+2018-07-06 17:04:05,614 INFO  [mqtt-spy [ConnectionRunnable for user_art@ems.insyte.ru:1883]] [MqttAsyncConnectionRunnable   ]  - Connecting client ID [user_art] to server [[tcp://ems.insyte.ru:1883]]; options = 
+============== Connection options ==============
+CleanSession                :  true
+SocketFactory               :  null
+MqttVersion                 :  0
+KeepAliveInterval           :  60
+ConTimeout                  :  30
+UserName                    :  null
+SSLProperties               :  null
+WillDestination             :  null
+==========================================
+
+2018-07-06 17:04:05,979 INFO  [MQTT Call: user_art           ] [MqttConnectionResultHandler   ]  - user_art@ems.insyte.ru:1883 connected
+2018-07-06 17:04:05,994 INFO  [JavaFX Application Thread     ] [MqttEventHandler              ]  - About to resubscribe to all requested topics
+2018-07-06 17:04:49,893 INFO  [JavaFX Application Thread     ] [MqttConnectionWithReconnection]  - Disconnecting user_art from [tcp://ems.insyte.ru:1883]
+2018-07-06 17:04:49,895 INFO  [MQTT Disc: user_art           ] [MqttDisconnectionResultHandler]  - user_art@ems.insyte.ru:1883 disconnected
