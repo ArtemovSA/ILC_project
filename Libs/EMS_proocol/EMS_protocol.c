@@ -26,25 +26,25 @@ void EMS_callBack(uint16_t topic_ID, uint8_t* data, uint16_t len);
 //Init EMS
 void EMS_init()
 {   
-  // topic: varibles/id/channel
+  // topic: id/varibles/channel
   emsTopics[EMS_TOPID_VAR_CHAN].sub_pub = MQTT_PUB;
-  sprintf(emsTopics[EMS_TOPID_VAR_CHAN].name, "%s/%s/%s", EMS_TOPIC_VAR_PREFIX, DC_unic_idef, EMS_TOPIC_CHANNEL);
+  sprintf(emsTopics[EMS_TOPID_VAR_CHAN].name, "%s/%s/%s", DC_unic_idef, EMS_TOPIC_VAR_PREFIX, EMS_TOPIC_CHANNEL);
   
-  // topic: attributes/id/main_set
+  // topic: id/attributes/main_set
   emsTopics[EMS_TOPID_ATTR_MAIN_SET].sub_pub = MQTT_PUB_SUB;
-  sprintf(emsTopics[EMS_TOPID_ATTR_MAIN_SET].name, "%s/%s/%s", EMS_TOPIC_ATR_PREFIX, DC_unic_idef, EMS_TOPIC_MAIN_SETTINGS);
+  sprintf(emsTopics[EMS_TOPID_ATTR_MAIN_SET].name, "%s/%s/%s", DC_unic_idef, EMS_TOPIC_ATR_PREFIX, EMS_TOPIC_MAIN_SETTINGS);
     
-  // topic: attributes/id/calibrate
+  // topic: id/attributes/calibrate
   emsTopics[EMS_TOPID_ATTR_CALIBR].sub_pub = MQTT_PUB_SUB;
-  sprintf(emsTopics[EMS_TOPID_ATTR_CALIBR].name, "%s/%s/%s", EMS_TOPIC_ATR_PREFIX, DC_unic_idef, EMS_TOPIC_CALIBRATE);
+  sprintf(emsTopics[EMS_TOPID_ATTR_CALIBR].name, "%s/%s/%s", DC_unic_idef, EMS_TOPIC_ATR_PREFIX, EMS_TOPIC_CALIBRATE);
   
-  // topic: ctrl/id/
+  // topic: id/ctrl
   emsTopics[EMS_TOPID_CTRL].sub_pub = MQTT_PUB_SUB;
-  sprintf(emsTopics[EMS_TOPID_CTRL].name, "%s/%s", EMS_TOPIC_CTRL_PREFIX, DC_unic_idef);
+  sprintf(emsTopics[EMS_TOPID_CTRL].name, "%s/%s", DC_unic_idef, EMS_TOPIC_CTRL_PREFIX);
   
   // topic: debug/id
   emsTopics[EMS_TOPID_DEBUG].sub_pub = MQTT_PUB_SUB;
-  sprintf(emsTopics[EMS_TOPID_DEBUG].name, "%s/%s" ,EMS_TOPIC_DEB_PREFIX, DC_unic_idef);
+  sprintf(emsTopics[EMS_TOPID_DEBUG].name, "%s/%s", DC_unic_idef, EMS_TOPIC_DEB_PREFIX);
   
   //MQTT connection
   devMQTT_init(emsTopics, EMS_TOPID_COUNT, &EMS_callBack); //Init MQTT
@@ -240,8 +240,8 @@ HAL_StatusTypeDef EMS_setMain_set(uint8_t* data, uint16_t len)
   return HAL_OK;
 }
 //------------------------------------------------------------------------------
-//Set phase calibrate
-HAL_StatusTypeDef EMS_setPahseCalibrate(cJSON* cal_json, char* jsonName, JBRE_t* phaseCalVal)
+//Set phase total calibrate
+HAL_StatusTypeDef EMS_setPahseTotalCalibrate(cJSON* cal_json, char* jsonName, V9203_Total_cal_t* totalCal_p)
 {
   cJSON *phase_cal_json = cJSON_GetObjectItemCaseSensitive(cal_json, jsonName);
   uint16_t calVal;
@@ -250,7 +250,65 @@ HAL_StatusTypeDef EMS_setPahseCalibrate(cJSON* cal_json, char* jsonName, JBRE_t*
   {
     //Get WARTU
     EMS_JSON_getInt(phase_cal_json, EMS_JSON_CAL_WARTU, &calVal);
-    phaseCalVal->RacWARTU = calVal;
+    totalCal_p->Cal_WARTU = calVal;
+    //Get WARTI
+    EMS_JSON_getInt(phase_cal_json, EMS_JSON_CAL_WARTI, &calVal);
+    totalCal_p->Cal_WARTI = calVal;
+    //Get WAPT
+    EMS_JSON_getInt(phase_cal_json, EMS_JSON_CAL_WAPT, &calVal);
+    totalCal_p->Cal_WAPT = calVal;
+    //Get WAQT
+    EMS_JSON_getInt(phase_cal_json, EMS_JSON_CAL_WAQT, &calVal);
+    totalCal_p->Cal_WAQT = calVal;
+    //Get WWARTU
+    EMS_JSON_getInt(phase_cal_json, EMS_JSON_CAL_WWARTU, &calVal);
+    totalCal_p->Cal_WWARTU = calVal;
+    //Get WWARTI
+    EMS_JSON_getInt(phase_cal_json, EMS_JSON_CAL_WWARTI, &calVal);
+    totalCal_p->Cal_WWARTI = calVal;
+    //Get WWAPT
+    EMS_JSON_getInt(phase_cal_json, EMS_JSON_CAL_WWAPT, &calVal);
+    totalCal_p->Cal_WWAPT = calVal;
+    //Get WWAQT
+    EMS_JSON_getInt(phase_cal_json, EMS_JSON_CAL_WWAQT, &calVal);
+    totalCal_p->Cal_WWAQT = calVal;
+  }
+  
+  return HAL_OK;
+}
+//------------------------------------------------------------------------------
+//Set phase Fundamental calibrate
+HAL_StatusTypeDef EMS_setPahseFundamentalCalibrate(cJSON* cal_json, char* jsonName, V9203_Fund_cal_t* fundCal_p)
+{
+  cJSON *phase_cal_json = cJSON_GetObjectItemCaseSensitive(cal_json, jsonName);
+  uint16_t calVal;
+  
+  if (phase_cal_json != NULL)
+  {
+    //Get WBRTU
+    EMS_JSON_getInt(phase_cal_json, EMS_JSON_CAL_WBRTU, &calVal);
+    fundCal_p->Cal_WBRTU = calVal;
+    //Get WBRTI
+    EMS_JSON_getInt(phase_cal_json, EMS_JSON_CAL_WBRTI, &calVal);
+    fundCal_p->Cal_WBRTI = calVal;
+    //Get WBPT
+    EMS_JSON_getInt(phase_cal_json, EMS_JSON_CAL_WBPT, &calVal);
+    fundCal_p->Cal_WBPT = calVal;
+    //Get WBQT
+    EMS_JSON_getInt(phase_cal_json, EMS_JSON_CAL_WBQT, &calVal);
+    fundCal_p->Cal_WBQT = calVal;
+    //Get WWBRTU
+    EMS_JSON_getInt(phase_cal_json, EMS_JSON_CAL_WWBRTU, &calVal);
+    fundCal_p->Cal_WWBRTU = calVal;
+    //Get WWBRTI
+    EMS_JSON_getInt(phase_cal_json, EMS_JSON_CAL_WWBRTI, &calVal);
+    fundCal_p->Cal_WWBRTI = calVal;
+    //Get WWBPT
+    EMS_JSON_getInt(phase_cal_json, EMS_JSON_CAL_WWBPT, &calVal);
+    fundCal_p->Cal_WWBPT = calVal;
+    //Get WWBQT
+    EMS_JSON_getInt(phase_cal_json, EMS_JSON_CAL_WWBQT, &calVal);
+    fundCal_p->Cal_WWBQT = calVal;
   }
   
   return HAL_OK;
@@ -281,9 +339,8 @@ HAL_StatusTypeDef EMS_setCalibrate(uint8_t* data, uint16_t len)
   
   //Get channel num
   uint16_t channelNum;
-  V9203_calChannel_t channelCal;
   
-  EMS_JSON_getInt(cal_json, EMS_JSON_CAL_CHANNEL, &channelNum);
+  EMS_JSON_getInt(cal_json, EMS_JSON_CAL_CHANNEL_NAME, &channelNum);
   
   //Check channel num
   if ((channelNum > DC_V9203_COUNT_CHANNELS) || (channelNum == 0))
@@ -292,48 +349,62 @@ HAL_StatusTypeDef EMS_setCalibrate(uint8_t* data, uint16_t len)
     return HAL_ERROR;
   }
 
-  //***********************************Calibrate phase********************************************
-  
+  //***********************************Calibrate TOTAL phase********************************************
+
   //Set phaseA calibrate
-  if (EMS_setPahseCalibrate(cal_json, EMS_JSON_CAL_PHASE(A), &channelCal.calPhaseA) != HAL_OK)
+  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASE_NAME(A), &DC_set.V9203_ch_set[channelNum].calTotalPhaseA) != HAL_OK)
   {
-    DC_debugOut("# Phase A calibrate error\r\n");
+    DC_debugOut("# Phase Total A calibrate error\r\n");
     return HAL_ERROR;
   }
   
   //Set phaseB calibrate
-  if (EMS_setPahseCalibrate(cal_json, EMS_JSON_CAL_PHASE(B), &channelCal.calPhaseB) != HAL_OK)
+  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASE_NAME(B), &DC_set.V9203_ch_set[channelNum].calTotalPhaseB) != HAL_OK)
   {
     DC_debugOut("# Phase B calibrate error\r\n");
     return HAL_ERROR;
   }
   
   //Set phaseC calibrate
-  if (EMS_setPahseCalibrate(cal_json, EMS_JSON_CAL_PHASE(C), &channelCal.calPhaseC) != HAL_OK)
+  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASE_NAME(C), &DC_set.V9203_ch_set[channelNum].calTotalPhaseC) != HAL_OK)
   {
     DC_debugOut("# Phase C calibrate error\r\n");
     return HAL_ERROR;
   }
   
-  //Get phase gains
-  uint16_t gainCal;
-  EMS_JSON_getInt(cal_json, EMS_JSON_CAL_GAIN_U, &gainCal);
-  channelCal.gainKoef_U = gainCal;
-  EMS_JSON_getInt(cal_json, EMS_JSON_CAL_GAIN_I, &gainCal);
-  channelCal.gainKoef_I = gainCal;
-  EMS_JSON_getInt(cal_json, EMS_JSON_CAL_GAIN_P, &gainCal);
-  channelCal.gainKoef_P = gainCal;
+  //***********************************Calibrate Fundamental Phase***************************************
   
-  //Change params
-  switch(channelNum)
+  //Set phaseA calibrate
+  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASE_NAME(A), &DC_set.V9203_ch_set[channelNum].calFundPhaseA) != HAL_OK)
   {
-  case 1: DC_set.V9203_ch1_cal = channelCal; DC_debugOut(" # Getted calirb for ch: %d\r\n", channelNum); break;
-  case 2: DC_set.V9203_ch2_cal = channelCal; DC_debugOut(" # Getted calirb for ch: %d\r\n", channelNum); break;
-  case 3: DC_set.V9203_ch3_cal = channelCal; DC_debugOut(" # Getted calirb for ch: %d\r\n", channelNum); break;
-  case 4: DC_set.V9203_ch4_cal = channelCal; DC_debugOut(" # Getted calirb for ch: %d\r\n", channelNum); break;
-  default: DC_debugOut("# Channel number out of range\r\n");
+    DC_debugOut("# Phase Total A calibrate error\r\n");
+    return HAL_ERROR;
   }
-    
+  
+  //Set phaseB calibrate
+  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASE_NAME(B), &DC_set.V9203_ch_set[channelNum].calFundPhaseB) != HAL_OK)
+  {
+    DC_debugOut("# Phase B calibrate error\r\n");
+    return HAL_ERROR;
+  }
+  
+  //Set phaseC calibrate
+  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASE_NAME(C), &DC_set.V9203_ch_set[channelNum].calFundPhaseC) != HAL_OK)
+  {
+    DC_debugOut("# Phase C calibrate error\r\n");
+    return HAL_ERROR;
+  }
+  
+  //***********************************Calibrate Threshold***********************************************
+
+  uint16_t Threshold_val;
+  //Граница детектирования тока
+  EMS_JSON_getInt(cal_json, EMS_JSON_CAL_ZZDCUM, &Threshold_val);
+  DC_set.V9203_ch_set[channelNum].cal_currThrdDetect = Threshold_val;
+  //Граница счета мощности
+  EMS_JSON_getInt(cal_json, EMS_JSON_CAL_ZZEGYTH, &Threshold_val);
+  DC_set.V9203_ch_set[channelNum].cal_energyThrdDetect = Threshold_val;
+
   return HAL_OK;
 }
 //------------------------------------------------------------------------------

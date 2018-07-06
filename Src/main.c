@@ -812,7 +812,6 @@ void startDebugTask(void const * argument)
   MX_USB_DEVICE_Init();
 
   /* USER CODE BEGIN 5 */
-  
   DC_init(&debug_TTqueueHandle);
   
   /* init code for LWIP */
