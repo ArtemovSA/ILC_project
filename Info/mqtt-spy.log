@@ -2235,3 +2235,4 @@ WillDestination             :  null
 2018-07-06 17:04:05,994 INFO  [JavaFX Application Thread     ] [MqttEventHandler              ]  - About to resubscribe to all requested topics
 2018-07-06 17:04:49,893 INFO  [JavaFX Application Thread     ] [MqttConnectionWithReconnection]  - Disconnecting user_art from [tcp://ems.insyte.ru:1883]
 2018-07-06 17:04:49,895 INFO  [MQTT Disc: user_art           ] [MqttDisconnectionResultHandler]  - user_art@ems.insyte.ru:1883 disconnected
+2018-07-06 17:19:25,517 INFO  [JavaFX Application Thread     ] [MqttConnectionWithReconnection]  - Disconnecting user_art from [tcp://ems.insyte.ru:1883]
