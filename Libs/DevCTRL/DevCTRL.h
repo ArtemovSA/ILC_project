@@ -50,15 +50,9 @@ extern char DC_unic_idStr[13]; //Unic id str
 #define DC_DEF_DNS2                     {77,88,8,8}
 
 //MQTT
-#define DC_COUNT_IP_BROCK_ADDR          3
-#define DC_COUNT_NAME_BROCK_ADDR        3
-#define DC_COUNT_BROCKS                 DC_COUNT_NAME_BROCK_ADDR+DC_COUNT_IP_BROCK_ADDR
-#define DC_DEF_MQTT_BROC_IP_1           {52,58,123,29}
-#define DC_DEF_MQTT_BROC_IP_2           {37,187,106,16}
-#define DC_DEF_MQTT_BROC_IP_3           {35,157,158,75}
-#define DC_DEF_MQTT_BROC_NAME_1         "ems.insyte.ru"
-#define DC_DEF_MQTT_BROC_NAME_2         "broker.mqtt-dashboard.com"
-#define DC_DEF_MQTT_BROC_NAME_3         "test.mosquitto.org"
+#define DC_DEF_MQTT_BROC_CH             0 //0 - IP, 1 - DOMEN
+#define DC_DEF_MQTT_BROC_IP             {82,202,249,110}
+#define DC_DEF_MQTT_BROC_DOMEN          "ems.insyte.ru"
 #define DC_DEF_MQTT_PORT                1883
 #define DC_DEF_MQTT_USER                "user"
 #define DC_DEF_MQTT_PASS                "123"
@@ -67,22 +61,9 @@ extern char DC_unic_idStr[13]; //Unic id str
 //EMS
 #define DC_DEF_EMS_OUT_PERIOD           5 //sec
 
-//Calibration cofficients
-//Channel 1
-#define DC_CAL_CH1_UOFFSET      0
-#define DC_CAL_CH1_IOFFSET      0x21A8301BUL
-#define DC_CAL_CH1_P1OFFSET     0x21E51894UL
-#define DC_CAL_CH1_P2OFFSET     0x00000000UL
-#define DC_CAL_CH1_R2POFFSET    0x00000000UL
-
-//Proportiona coefficients
-#define DC_CAL_COEFF_P          0x10BUL
-#define DC_CAL_COEFF_U          0x513bUL
-#define DC_CAL_COEFF_I          0x1A2C0UL
-
 //**********************************Settings*****************************************************
 
-#define DC_SET_MAGICKEY 0x01
+#define DC_SET_MAGICKEY 0x03
 
 typedef struct {
   
@@ -97,9 +78,9 @@ typedef struct {
   uint8_t serverDNS2[4];
   
   //MQTT
-  uint8_t MQTT_broc_ip[DC_COUNT_IP_BROCK_ADDR][4]; //Brocker ip list
-  char MQTT_broc_name[DC_COUNT_NAME_BROCK_ADDR][40]; //Brocker net name list
-  uint8_t MQTT_activeBrock; //Active brocker
+  uint8_t MQTT_broc_ip[4]; //Brocker ip list
+  char MQTT_broc_domen[40]; //Brocker net name list
+  uint8_t MQTT_broc_ch; //Active brocker channel
   uint16_t MQTT_port; //Port
   char MQTT_user[20];
   char MQTT_pass[20];

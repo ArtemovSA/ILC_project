@@ -47,7 +47,7 @@ extern "C"
 #define cJSON_Raw    (1 << 7) /* raw json */
 
 #define cJSON_IsReference 256
-#define cJSON_StringIsConst 512
+#define cJSON_StringIsConst 1024
 
 /* The cJSON structure: */
 typedef struct cJSON

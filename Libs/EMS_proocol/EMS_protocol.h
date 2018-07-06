@@ -18,18 +18,21 @@
 //**********************************Channel variables***********************************************
 
 //JSON attributes
-#define EMS_JSON_VAL_CHANNEL_NAME      "CHANNEL"
-#define EMS_JSON_CAL_PHASE_NAME(t)     "PHASE#t"
+#define EMS_JSON_VAL_CHANNEL_NUM       "CH_NUM"
+#define EMS_JSON_VAL_PHASE_NAME(n)     "PHASE#n"
+#define EMS_JSON_VAL_CHANNEL_VAL       "CH_VAL"
 //Main parameters
 #define EMS_JSON_VAL_FREQ              "FREQ"          //Частота сети
 #define EMS_JSON_VAL_RMSIN             "RMSIN"         //СКЗ тока нейтрали
-#define EMS_JSON_VAL_CONSSP            "CONSSP"        //Потребленная полная мощность       
+#define EMS_JSON_VAL_CONSSP            "CONSSP"        //Потребленная полная мощность  
+#define EMS_JSON_VAL_COSFIS            "COSFIS"        //Коэффициент мощности системы
 //Phase parametrs
 #define EMS_JSON_VAL_RMSV              "RMSV"          //СКЗ напряжения
 #define EMS_JSON_VAL_RMSI              "RMSI"          //СКЗ тока
 #define EMS_JSON_VAL_RMSP              "RMSP"          //СКЗ активной мощности
 #define EMS_JSON_VAL_RMSRP             "RMSRP"         //СКЗ реактивной мощности
 #define EMS_JSON_VAL_COSFI             "COSFI"         //Коэффициент мощности
+#define EMS_JSON_VAL_CONSSP            "CONSSP"        //Потребленная полная мощность
 #define EMS_JSON_VAL_CONSP             "CONSP"         //Потребленная активная мощность
 #define EMS_JSON_VAL_CONSRP            "CONSRP"        //Потребленная реактивная мощность
 
@@ -41,7 +44,7 @@
 //**********************************Calibrate attributes********************************************
 
 #define EMS_JSON_CAL_CHANNEL_NAME       "CHANNEL"
-#define EMS_JSON_CAL_PHASE_NAME(t)      "PHASE#t"
+#define EMS_JSON_CAL_PHASE_NAME(n)      "PHASE#n"
 //Total RMS
 #define EMS_JSON_CAL_WARTU              "WARTU"         //коэффициент усиления по напряжению
 #define EMS_JSON_CAL_WARTI              "WARTI"         //коэффициент усиления по току
@@ -77,9 +80,9 @@
 
 //MQTT settings
 #define EMS_JSON_SET_MQTT_NAME          "MQTT_SET"
-#define EMS_JSON_SET_MQTT_IP(n)         "SERV#n_IP"
-#define EMS_JSON_SET_MQTT_DOMEN(n)      "SERV#n_D"
-#define EMS_JSON_SET_ACT_BROCK          "SERV_ACTN"
+#define EMS_JSON_SET_MQTT_IP            "SERV#n_IP"
+#define EMS_JSON_SET_MQTT_DOMEN         "SERV#n_D"
+#define EMS_JSON_SET_BROC_CH            "BROC_CH"
 #define EMS_JSON_SET_MQTT_PORT          "PORT"
 #define EMS_JSON_SET_MQTT_USER          "USER"
 #define EMS_JSON_SET_MQTT_PASS          "PASS"
@@ -102,16 +105,23 @@ enum {
 
 //Phase mesh
 typedef struct 
-{
-  float freq;
-  float RMSV;
-  float RMSI;
-  float RMSP;
-  float RMSRP;
+{       
+  float RMSV;   //Значение напряжения           
+  float RMSI;   //Значение тока
+  float RMSP;   //Значение мощности
+  float RMSRP;  //Значение реактивной мощности
+  float COSFI;  //Cos Fi
+  uint64_t CONSSP;      //Счетчик полной мощности
+  uint64_t CONSP;       //Счетчик активной мощности
+  uint64_t CONSRP;      //Счетчик реактивной мощности
 }EMS_phase_mesh_t;
 
 //Channel mesh
 typedef struct{
+  float FREQ;   //Чатота сети
+  float RMSNI;  //Общий ток нейтрали
+  uint64_t CONSSP; //Счетчик полной мощности
+  float COSFIS; //Коэффициент мощности
   EMS_phase_mesh_t phaseA;
   EMS_phase_mesh_t phaseB;
   EMS_phase_mesh_t phaseC;

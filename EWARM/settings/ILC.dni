@@ -16,7 +16,7 @@ stlinkfoundProbes=
 stlinkResetStyle=0
 stlinkResetStrategy=1
 [DebugChecksum]
-Checksum=-450487659
+Checksum=-331512174
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -73,16 +73,17 @@ Fmt0=uint8_t[4]	3	0
 Fmt0={W}1:*(devIP+1)	3	0
 Fmt1={W}1:*(devIP+3)	3	0
 Fmt2={W}1:*devIP	3	0
-Fmt3={W}1:addrReg	4	0
-Fmt4={W}1:data	4	0
-Fmt5={W}1:data>>16	4	0
-Fmt6={W}1:dataTx	4	0
-Fmt7={W}1:readyFlag	4	0
-Fmt8={W}1:regData	4	0
-Fmt9={W}1:regData/JbPm_val.ul_URmG	3	0
-Fmt10={W}1:regVal	4	0
-Fmt11={W}1:word_hi	4	0
-Fmt12={W}1:word_lo	4	0
+Fmt3={W}1:*ip	3	0
+Fmt4={W}1:addrReg	4	0
+Fmt5={W}1:data	4	0
+Fmt6={W}1:data>>16	4	0
+Fmt7={W}1:dataTx	4	0
+Fmt8={W}1:readyFlag	4	0
+Fmt9={W}1:regData	4	0
+Fmt10={W}1:regData/JbPm_val.ul_URmG	3	0
+Fmt11={W}1:regVal	4	0
+Fmt12={W}1:word_hi	4	0
+Fmt13={W}1:word_lo	4	0
 [Trace2]
 Enabled=0
 ShowSource=0
@@ -143,8 +144,7 @@ ShowTiming=1
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\DevCTRL\DevCTRL.c}.74.3" 0 0 1 "" 0 "" 0
-Count=1
+Count=0
 [Aliases]
 A0=_ "C:\Users\Sergey\Desktop\INS\ILC\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c" ""
 A1=_ "C:\Users\Sergey\Desktop\INS\ILC\Middlewares\Third_Party\FreeRTOS\Source\tasks.c" ""

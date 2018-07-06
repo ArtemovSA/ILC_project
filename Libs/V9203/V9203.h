@@ -182,7 +182,7 @@
 #define RegMAFA  0xE8E4
 #define RegMAFB  0xE8E5
 #define RegMAFC  0xE8E6
-#define RegMAFS   0xE8E7
+#define RegMAFS  0xE8E7
 
 #define BRTUA 0xE883
 #define BRTUB 0xE884
@@ -199,9 +199,10 @@
 #define RMSUB        0xE945
 #define RMSUC        0xE946
 
-#define RMSI1A       0xE90E
-#define RMSI1B       0xE90F
-#define RMSI1C       0xE910
+#define RMSIA       0xE90E
+#define RMSIB       0xE90F
+#define RMSIC       0xE910
+#define RMSIN       0xE911
 
 #define DATAPA       0xE8E8
 #define DATAPB      0xE8E9
@@ -217,8 +218,36 @@
 #define DATAFREQB    0xC009
 #define DATAFREQC    0xC00A
 
-
 #define DATAFREQ    0xC008
+
+
+//Full consaption
+#define RegEGYAPPAH 0xE8AC
+#define RegEGYAPPAL 0xE8AD
+#define RegEGYAPPBH 0xE8AE
+#define RegEGYAPPBL 0xE8AF
+#define RegEGYAPPCH 0xE8B0
+#define RegEGYAPPCL 0xE8B1
+#define RegEGYAPPSH 0xE8B2
+#define RegEGYAPPSL 0xE8B3
+//Active consamtion
+#define RegEGYPAH 0xE8D0
+#define RegEGYPAL 0xE8D1
+#define RegEGYPBH 0xE8D2
+#define RegEGYPBL 0xE8D3
+#define RegEGYPCH 0xE8D4
+#define RegEGYPCL 0xE8D5
+#define RegEGYPS0H 0xE8D6
+#define RegEGYPS0L 0xE8D7
+//Reactive consaption
+#define RegEGYQAH 0xE8DA
+#define RegEGYQAL 0xE8DB
+#define RegEGYQBH 0xE8DC
+#define RegEGYQBL 0xE8DD
+#define RegEGYQCH 0xE8DE
+#define RegEGYQCL 0xE8DF
+#define RegEGYQS0H 0xE8E0
+#define RegEGYQS0L 0xE8E1
 
 //The following is for the compiler through
 #define DATAP       0x0119
@@ -311,7 +340,8 @@ typedef enum
   LINE_A = 0,
   LINE_B,
   LINE_C,
-  LINE_N
+  LINE_N,
+  LINE_S
 }V9203_line_t;
 
 //Default settings struct
@@ -373,5 +403,13 @@ float V9203_getRMS_Current(uint8_t channel, V9203_line_t line);
 float V9203_getRMS_Power(uint8_t channel, V9203_line_t line);
 //Get reactive power
 float V9203_getRMS_reactivePower(uint8_t channel, V9203_line_t line);
+//Get S Consamption
+uint64_t V9203_getSCons(uint8_t channel, V9203_line_t line);
+//Get active Consamption
+uint64_t V9203_getPCons(uint8_t channel, V9203_line_t line);
+//Get reactive Consamption
+uint64_t V9203_getQCons(uint8_t channel, V9203_line_t line);
+//Get cos Fi
+float V9203_getCOSfi(uint8_t channel, V9203_line_t line);
 
 #endif

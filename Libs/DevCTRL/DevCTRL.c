@@ -15,12 +15,7 @@
 const uint8_t DC_const_dev_ip_addr[] = DC_DEF_DEV_IP_ADDR;
 const uint8_t DC_const_gw_ip_addr[] = DC_DEF_GW_IP_ADDR;
 const uint8_t DC_const_net_mask[] = DC_DEF_NET_MASK;
-const uint8_t DC_const_MQTT_ip_broc_1[] = DC_DEF_MQTT_BROC_IP_1;
-const uint8_t DC_const_MQTT_ip_broc_2[] = DC_DEF_MQTT_BROC_IP_2;
-const uint8_t DC_const_MQTT_ip_broc_3[] = DC_DEF_MQTT_BROC_IP_3;
-const char DC_const_MQTT_name_broc_1[] = DC_DEF_MQTT_BROC_NAME_1;
-const char DC_const_MQTT_name_broc_2[] = DC_DEF_MQTT_BROC_NAME_2;
-const char DC_const_MQTT_name_broc_3[] = DC_DEF_MQTT_BROC_NAME_2;
+const uint8_t DC_const_MQTT_ip_broc[] = DC_DEF_MQTT_BROC_IP;
 const char DC_const_NTP_server_name[] = DC_DEF_NTP_SERVER;
 const char DC_const_serverDNS1[] = DC_DEF_DNS1;
 const char DC_const_serverDNS2[] = DC_DEF_DNS2;
@@ -131,20 +126,6 @@ void DC_debug_ipAdrrOut(char *text, uint8_t *ip)
   DC_debugOut("%s %d:%d:%d:%d\r\n", text, *ip, *(ip+1), *(ip+2), *(ip+3));
 }
 //--------------------------------------------------------------------------------------------------
-//IP active out
-void DC_debug_ipActiveAdrrOut(char *text, uint8_t activeBrock)
-{
-  if (activeBrock < 3)
-  {
-    DC_debug_ipAdrrOut(text, DC_set.MQTT_broc_ip[activeBrock]);
-  }
-  
-  if ((activeBrock > 3) && (activeBrock < 7))
-  {
-    DC_debugOut("%s %s", text, DC_set.MQTT_broc_name[activeBrock-3]);
-  }
-}
-//--------------------------------------------------------------------------------------------------
 //Out settings
 void DC_debug_settingsOut()
 {
@@ -153,7 +134,6 @@ void DC_debug_settingsOut()
   DC_debug_ipAdrrOut("# NET GATEWAY IP: ", DC_set.net_gw_ip_addr);
   DC_debug_ipAdrrOut("# NET MASK: ", DC_set.net_mask);
   DC_debugOut("# --MQTT Settings--\r\n");
-  DC_debug_ipActiveAdrrOut("# MQTT ACTIVE BROCKER: ", DC_set.MQTT_activeBrock);
   DC_debugOut("# MQTT PORT %d\r\n", DC_set.MQTT_port);
   DC_debugOut("# MQTT USER %s\r\n", DC_set.MQTT_user);
   DC_debugOut("# MQTT PASS %s\r\n", DC_set.MQTT_pass);
@@ -197,7 +177,7 @@ HAL_StatusTypeDef DC_load_settings()
   
   //Clear settings
   memset(&DC_set, 0, sizeof(DC_set));
-  
+
   //Set default
   //Network
   memcpy(DC_set.net_dev_ip_addr, DC_const_dev_ip_addr, 4);
@@ -208,13 +188,10 @@ HAL_StatusTypeDef DC_load_settings()
   memcpy(DC_set.serverDNS1, DC_const_serverDNS2, 4);
 
   //MQTT
-  memcpy(DC_set.MQTT_broc_ip[0], DC_const_MQTT_ip_broc_1, 4);
-  memcpy(DC_set.MQTT_broc_ip[1], DC_const_MQTT_ip_broc_2, 4);
-  memcpy(DC_set.MQTT_broc_ip[2], DC_const_MQTT_ip_broc_3, 4);
-  memcpy(DC_set.MQTT_broc_name[0], DC_const_MQTT_name_broc_1, strlen(DC_const_MQTT_name_broc_1));
-  memcpy(DC_set.MQTT_broc_name[1], DC_const_MQTT_name_broc_2, strlen(DC_const_MQTT_name_broc_2));
-  memcpy(DC_set.MQTT_broc_name[2], DC_const_MQTT_name_broc_3, strlen(DC_const_MQTT_name_broc_3));
+  memcpy(DC_set.MQTT_broc_ip, DC_const_MQTT_ip_broc, 4);
+  memcpy(DC_set.MQTT_broc_domen, DC_DEF_MQTT_BROC_DOMEN, strlen(DC_DEF_MQTT_BROC_DOMEN));
   DC_set.MQTT_port = DC_DEF_MQTT_PORT;
+  DC_set.MQTT_broc_ch = DC_DEF_MQTT_BROC_CH;
 
   memcpy(DC_set.MQTT_user, DC_DEF_MQTT_USER, sizeof(DC_DEF_MQTT_USER));
   memcpy(DC_set.MQTT_pass, DC_DEF_MQTT_PASS, sizeof(DC_DEF_MQTT_PASS));

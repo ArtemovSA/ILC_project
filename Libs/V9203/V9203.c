@@ -522,9 +522,10 @@ float V9203_getRMS_Current(uint8_t channel, V9203_line_t line)
   //Get register address
   switch(line)
   {
-  case LINE_A: regAddr = RMSI1A; break;
-  case LINE_B: regAddr = RMSI1B; break;
-  case LINE_C: regAddr = RMSI1C; break;
+  case LINE_A: regAddr = RMSIA; break;
+  case LINE_B: regAddr = RMSIB; break;
+  case LINE_C: regAddr = RMSIC; break;
+  case LINE_N: regAddr = RMSIN; break;
   default: DC_debugOut("# Line num ERROR\r\n"); return -1;
   }
   
@@ -597,4 +598,159 @@ float V9203_getRMS_reactivePower(uint8_t channel, V9203_line_t line)
   }
   
   return regData;
+}
+//----------------------------------------------------------------------------------
+//Get S Consamption
+uint64_t V9203_getSCons(uint8_t channel, V9203_line_t line)
+{
+  uint64_t value = 0;
+  uint16_t regAddrHI, regAddrLO;
+  uint32_t regDataHI, regDataLO;
+  
+  //Check channel
+  if (channel > DC_V9203_COUNT_CHANNELS)
+  {
+    DC_debugOut("# Channel num ERROR\r\n");
+    return 0;
+  }
+  
+  //Get register address
+  switch(line)
+  {
+  case LINE_A: regAddrHI = RegEGYAPPAH; regAddrLO = RegEGYAPPAL; break;
+  case LINE_B: regAddrHI = RegEGYAPPBH; regAddrLO = RegEGYAPPBL; break;
+  case LINE_C: regAddrHI = RegEGYAPPCH; regAddrLO = RegEGYAPPCL; break;
+  case LINE_S: regAddrHI = RegEGYAPPSH; regAddrLO = RegEGYAPPSL;  break;
+  default: DC_debugOut("# Line num ERROR\r\n"); return -1;
+  }
+
+  if (V9203_rd_flash(channel, regAddrHI, &regDataHI) != HAL_OK)
+  {
+    DC_debugOut("# Full cons ERROR\r\n");
+    return -1;
+  }
+
+  if (V9203_rd_flash(channel, regAddrLO, &regDataLO) != HAL_OK)
+  {
+    DC_debugOut("# Full cons ERROR\r\n");
+    return 0;
+  }
+  
+  value = (uint64_t)(regDataHI << 31)|regDataLO;
+  
+  return value;
+}
+//----------------------------------------------------------------------------------
+//Get active Consamption
+uint64_t V9203_getPCons(uint8_t channel, V9203_line_t line)
+{
+  uint64_t value = 0;
+  uint16_t regAddrHI, regAddrLO;
+  uint32_t regDataHI, regDataLO;
+  
+  //Check channel
+  if (channel > DC_V9203_COUNT_CHANNELS)
+  {
+    DC_debugOut("# Channel num ERROR\r\n");
+    return 0;
+  }
+  
+  //Get register address
+  switch(line)
+  {
+  case LINE_A: regAddrHI = RegEGYPAH; regAddrLO = RegEGYPAL; break;
+  case LINE_B: regAddrHI = RegEGYPBH; regAddrLO = RegEGYPBL; break;
+  case LINE_C: regAddrHI = RegEGYPCH; regAddrLO = RegEGYPCL; break;
+  case LINE_S: regAddrHI = RegEGYPS0H; regAddrLO = RegEGYPS0L;  break;
+  default: DC_debugOut("# Line num ERROR\r\n"); return -1;
+  }
+
+  if (V9203_rd_flash(channel, regAddrHI, &regDataHI) != HAL_OK)
+  {
+    DC_debugOut("# Active cons ERROR\r\n");
+    return -1;
+  }
+
+  if (V9203_rd_flash(channel, regAddrLO, &regDataLO) != HAL_OK)
+  {
+    DC_debugOut("# Active cons ERROR\r\n");
+    return 0;
+  }
+  
+  value = (uint64_t)(regDataHI << 31)|regDataLO;
+  
+  return value;
+}
+//----------------------------------------------------------------------------------
+//Get reactive Consamption
+uint64_t V9203_getQCons(uint8_t channel, V9203_line_t line)
+{
+  uint64_t value = 0;
+  uint16_t regAddrHI, regAddrLO;
+  uint32_t regDataHI, regDataLO;
+  
+  //Check channel
+  if (channel > DC_V9203_COUNT_CHANNELS)
+  {
+    DC_debugOut("# Channel num ERROR\r\n");
+    return 0;
+  }
+  
+  //Get register address
+  switch(line)
+  {
+  case LINE_A: regAddrHI = RegEGYQAH; regAddrLO = RegEGYQAL; break;
+  case LINE_B: regAddrHI = RegEGYQBH; regAddrLO = RegEGYQBL; break;
+  case LINE_C: regAddrHI = RegEGYQCH; regAddrLO = RegEGYQCL; break;
+  case LINE_S: regAddrHI = RegEGYQS0H; regAddrLO = RegEGYQS0L;  break;
+  default: DC_debugOut("# Line num ERROR\r\n"); return -1;
+  }
+
+  if (V9203_rd_flash(channel, regAddrHI, &regDataHI) != HAL_OK)
+  {
+    DC_debugOut("# Reactive cons ERROR\r\n");
+    return -1;
+  }
+
+  if (V9203_rd_flash(channel, regAddrLO, &regDataLO) != HAL_OK)
+  {
+    DC_debugOut("# Reactive cons ERROR\r\n");
+    return 0;
+  }
+  
+  value = (uint64_t)(regDataHI << 31)|regDataLO;
+  
+  return value;
+}
+//----------------------------------------------------------------------------------
+//Get cos Fi
+float V9203_getCOSfi(uint8_t channel, V9203_line_t line)
+{
+  uint16_t regAddr;
+  uint32_t regData;
+  
+  //Check channel
+  if (channel > DC_V9203_COUNT_CHANNELS)
+  {
+    DC_debugOut("# Channel num ERROR\r\n");
+    return -1;
+  }
+  
+  //Get register address
+  switch(line)
+  {
+  case LINE_A: regAddr = RegMAFA; break;
+  case LINE_B: regAddr = RegMAFB; break;
+  case LINE_C: regAddr = RegMAFC; break;
+  case LINE_S: regAddr = RegMAFS; break;
+  default: DC_debugOut("# Line num ERROR\r\n"); return -1;
+  }
+  
+  if (V9203_rd_flash(channel, regAddr, &regData) != HAL_OK)
+  {
+    DC_debugOut("# Reactive power ERROR\r\n");
+    return -1;
+  }
+  
+  return (float)regData;
 }

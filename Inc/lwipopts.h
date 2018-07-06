@@ -82,19 +82,19 @@
 /*----- Value in opt.h for MEM_ALIGNMENT: 1 -----*/
 #define MEM_ALIGNMENT 4
 /*----- Default Value for MEMP_NUM_TCP_SEG: 16 ---*/
-#define MEMP_NUM_TCP_SEG 24
+#define MEMP_NUM_TCP_SEG 16
 /*----- Value in opt.h for LWIP_ETHERNET: LWIP_ARP || PPPOE_SUPPORT -*/
 #define LWIP_ETHERNET 1
 /*----- Value in opt.h for LWIP_DNS_SECURE: (LWIP_DNS_SECURE_RAND_XID | LWIP_DNS_SECURE_NO_MULTIPLE_OUTSTANDING | LWIP_DNS_SECURE_RAND_SRC_PORT) -*/
 #define LWIP_DNS_SECURE 7
 /*----- Default Value for TCP_WND: 1840 ---*/
-#define TCP_WND 1840
+#define TCP_WND 1840    //1840
 /*----- Default Value for TCP_MSS: 536 ---*/
-#define TCP_MSS 460
+#define TCP_MSS 460 //460
 /*----- Default Value for TCP_SND_BUF: 920 ---*/
-#define TCP_SND_BUF 1840
+#define TCP_SND_BUF 1840  //1840
 /*----- Value in opt.h for TCPIP_THREAD_STACKSIZE: 0 -----*/
-#define TCPIP_THREAD_STACKSIZE 1024
+#define TCPIP_THREAD_STACKSIZE 1024     //1024
 /*----- Value in opt.h for TCPIP_THREAD_PRIO: 1 -----*/
 #define TCPIP_THREAD_PRIO 3
 /*----- Value in opt.h for TCPIP_MBOX_SIZE: 0 -----*/
