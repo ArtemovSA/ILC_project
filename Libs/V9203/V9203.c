@@ -8,37 +8,28 @@
 #include "cmsis_os.h"
 
 //Var
-SPI_HandleTypeDef *V9203_hspi;
-JBPM_t JbPm_val;
+SPI_HandleTypeDef *V9203_hspi; //SPI pointer
+V9203_defSet_t V9203_defSet; //Default settings
 
-//Init dev
-HAL_StatusTypeDef V9203_initDev(uint8_t channel);
-//Setup registers
-void V9203_setupReg(uint8_t channel);
+
 //Write flash
 HAL_StatusTypeDef V9203_wr_flash(uint8_t channel, uint16_t addrReg, uint32_t data);
 //Read flash
 HAL_StatusTypeDef V9203_rd_flash(uint8_t channel, uint16_t addrReg, uint32_t* data);
 //CRC16
-uint16_t V9203_crc16(const void *data, unsigned data_size);
-
-//Defaul reg val
-void V9203_initRegVal();
+static uint16_t V9203_crc16(const void *data, unsigned data_size);
+//Setup registers
+static void V9203_setupReg(uint8_t channel, V9203_settings_t *settings);
 
 //--------------------------------------------------------------------------------------------------
 //Init
 void V9203_init(SPI_HandleTypeDef *hspi)
 {
-  V9203_hspi = hspi;
-  
-  for (int i=0; i<DC_V9203_COUNT_CHANNELS; i++)
-  {
-    V9203_initDev(i);
-  }
+  V9203_hspi = hspi;  
 }
 //--------------------------------------------------------------------------------------------------
 //Init dev
-HAL_StatusTypeDef V9203_initDev(uint8_t channel)
+HAL_StatusTypeDef V9203_initDev(uint8_t channel, V9203_settings_t *settings)
 {
   uint8_t try_count = V9203_TRY_COUNT;
   uint32_t readyFlag = 0;
@@ -66,8 +57,7 @@ HAL_StatusTypeDef V9203_initDev(uint8_t channel)
     V9203_wr_flash(channel, (0xC800+i), 0);
   } 
   
-  V9203_initRegVal();
-  V9203_setupReg(channel); //Setup registers
+  V9203_setupReg(channel, settings); //Setup registers
     
   DC_debugOut(" #V9203 INIT OK CH:%d\r\n", channel);
   
@@ -75,20 +65,131 @@ HAL_StatusTypeDef V9203_initDev(uint8_t channel)
 }
 //--------------------------------------------------------------------------------------------------
 //Setup registers
-void V9203_setupReg(uint8_t channel)
+static void V9203_setupReg(uint8_t channel, V9203_settings_t *settings)
 {
   uint32_t checkSum = 0;
   
-  V9203_wr_flash(channel, RegMTPARA0, 0xaa000000); //clear ram
+  // clear ram
+  V9203_wr_flash(channel, RegMTPARA0, 0xAA000000);
   vTaskDelay(20);
-  V9203_wr_flash(channel, RegMTPARA0, JbPm_val.RacMTPARA0); //Enable digital input
-  checkSum += JbPm_val.RacMTPARA0;
   
-  //Config registers
-  V9203_wr_flash(channel, RegMTPARA1, JbPm_val.RacMTPARA1);
-  checkSum += JbPm_val.RacMTPARA1;
-  V9203_wr_flash(channel, RegMTPARA2, JbPm_val.RacMTPARA2); //MT_PARA2 - Unsegmented,distribute 32bit separately twice,DMA enable UA,non-did,AD all-enable
-  checkSum += JbPm_val.RacMTPARA2;
+  //**********************************Metering data reg*********************************************
+  // Metering data reg
+  V9203_wr_flash(channel, RegMTPARA0, settings->V9203_defSet.MTPARA0); //Enable digital input
+  checkSum += settings->V9203_defSet.MTPARA0;
+  V9203_wr_flash(channel, RegMTPARA1, settings->V9203_defSet.MTPARA1);
+  checkSum += settings->V9203_defSet.MTPARA1;
+  V9203_wr_flash(channel, RegMTPARA2, settings->V9203_defSet.MTPARA2); //MT_PARA2 - Unsegmented,distribute 32bit separately twice,DMA enable UA,non-did,AD all-enable
+  checkSum += settings->V9203_defSet.MTPARA2;
+  
+  //**********************************Analog control register***************************************
+  V9203_wr_flash(channel, RegANCtrl0, settings->V9203_defSet.ANCtrl0);
+  checkSum += settings->V9203_defSet.ANCtrl0;
+  V9203_wr_flash(channel, RegANCtrl1, settings->V9203_defSet.ANCtrl1);
+  checkSum += settings->V9203_defSet.ANCtrl1;
+  V9203_wr_flash(channel, RegANCtrl2, settings->V9203_defSet.ANCtrl2);
+  checkSum += settings->V9203_defSet.ANCtrl2;
+  V9203_wr_flash(channel, RegANCtrl3, settings->V9203_defSet.ANCtrl3);
+  checkSum += settings->V9203_defSet.ANCtrl3;
+  
+  //**********************************Threshold*****************************************************
+  // Low threshold
+  V9203_wr_flash(channel, RegZZEGYTHL, settings->cal_energyThrdDetect);
+  checkSum += settings->cal_energyThrdDetect;
+  // High threshold
+  V9203_wr_flash(channel, RegZZEGYTHH, 0x00000000);
+  checkSum += 0x00000000;
+  // enable threshold limit
+  V9203_wr_flash(channel, RegCTHH, settings->V9203_defSet.CTHH);
+  checkSum += settings->V9203_defSet.CTHH;
+  // enable threshold lower limit
+  V9203_wr_flash(channel, RegCTHL, settings->V9203_defSet.CTHL);
+  checkSum += settings->V9203_defSet.CTHL;
+  //Current threshold
+  V9203_wr_flash(channel, RegZZDCUM, settings->cal_currThrdDetect);
+  checkSum += settings->cal_currThrdDetect; 
+
+  //**********************************Calibration***************************************************
+  // Phase A Total
+  // gain voltage RMS
+  V9203_wr_flash(channel, RegWARTUA, settings->calTotalPhaseA.Cal_WARTU);
+  checkSum += settings->calTotalPhaseA.Cal_WARTU;
+  // gain current RMS
+  V9203_wr_flash(channel, RegWARTIA, settings->calTotalPhaseA.Cal_WARTI);
+  checkSum += settings->calTotalPhaseA.Cal_WARTI;
+  // gain active power coef RMS
+  V9203_wr_flash(channel, RegWAPTA, settings->calTotalPhaseA.Cal_WAPT);
+  checkSum += settings->calTotalPhaseA.Cal_WAPT;
+  // gain reactive power coef RMS
+  V9203_wr_flash(channel, RegWAQTA, settings->calTotalPhaseA.Cal_WAQT);
+  checkSum += settings->calTotalPhaseA.Cal_WAQT;
+  // offset voltage RMS
+  V9203_wr_flash(channel, RegWWARTUA, settings->calTotalPhaseA.Cal_WWARTU);
+  checkSum += settings->calTotalPhaseA.Cal_WARTU;
+  // offset current RMS
+  V9203_wr_flash(channel, RegWWARTIA, settings->calTotalPhaseA.Cal_WWARTI);
+  checkSum += settings->calTotalPhaseA.Cal_WARTI;
+  // offset active power
+  V9203_wr_flash(channel, RegWWAPTA, settings->calTotalPhaseA.Cal_WWAPT);
+  checkSum += settings->calTotalPhaseA.Cal_WAPT;
+  // offset reactive power
+  V9203_wr_flash(channel, RegWWAQTA, settings->calTotalPhaseA.Cal_WWAQT);
+  checkSum += settings->calTotalPhaseA.Cal_WAQT;
+  
+  // Phase B Total
+  // gain voltage RMS
+  V9203_wr_flash(channel, RegWARTUB, settings->calTotalPhaseB.Cal_WARTU);
+  checkSum += settings->calTotalPhaseB.Cal_WARTU;
+  // gain current RMS
+  V9203_wr_flash(channel, RegWARTIB, settings->calTotalPhaseB.Cal_WARTI);
+  checkSum += settings->calTotalPhaseB.Cal_WARTI;
+  // gain active power coef RMS
+  V9203_wr_flash(channel, RegWAPTB, settings->calTotalPhaseB.Cal_WAPT);
+  checkSum += settings->calTotalPhaseB.Cal_WAPT;
+  // gain reactive power coef RMS
+  V9203_wr_flash(channel, RegWAQTB, settings->calTotalPhaseB.Cal_WAQT);
+  checkSum += settings->calTotalPhaseB.Cal_WAQT;
+  // offset voltage RMS
+  V9203_wr_flash(channel, RegWWARTUB, settings->calTotalPhaseB.Cal_WWARTU);
+  checkSum += settings->calTotalPhaseB.Cal_WARTU;
+  // offset current RMS
+  V9203_wr_flash(channel, RegWWARTIB, settings->calTotalPhaseB.Cal_WWARTI);
+  checkSum += settings->calTotalPhaseB.Cal_WARTI;
+  // offset active power
+  V9203_wr_flash(channel, RegWWAPTB, settings->calTotalPhaseB.Cal_WWAPT);
+  checkSum += settings->calTotalPhaseB.Cal_WAPT;
+  // offset reactive power
+  V9203_wr_flash(channel, RegWWAQTB, settings->calTotalPhaseB.Cal_WWAQT);
+  checkSum += settings->calTotalPhaseB.Cal_WAQT;
+  
+  // Phase C Total
+  // gain voltage RMS
+  V9203_wr_flash(channel, RegWARTUC, settings->calTotalPhaseC.Cal_WARTU);
+  checkSum += settings->calTotalPhaseC.Cal_WARTU;
+  // gain current RMS
+  V9203_wr_flash(channel, RegWARTIC, settings->calTotalPhaseC.Cal_WARTI);
+  checkSum += settings->calTotalPhaseC.Cal_WARTI;
+  // gain active power coef RMS
+  V9203_wr_flash(channel, RegWAPTC, settings->calTotalPhaseC.Cal_WAPT);
+  checkSum += settings->calTotalPhaseC.Cal_WAPT;
+  // gain reactive power coef RMS
+  V9203_wr_flash(channel, RegWAQTC, settings->calTotalPhaseC.Cal_WAQT);
+  checkSum += settings->calTotalPhaseC.Cal_WAQT;
+  // offset voltage RMS
+  V9203_wr_flash(channel, RegWWARTUC, settings->calTotalPhaseC.Cal_WWARTU);
+  checkSum += settings->calTotalPhaseC.Cal_WARTU;
+  // offset current RMS
+  V9203_wr_flash(channel, RegWWARTIC, settings->calTotalPhaseC.Cal_WWARTI);
+  checkSum += settings->calTotalPhaseC.Cal_WARTI;
+  // offset active power
+  V9203_wr_flash(channel, RegWWAPTC, settings->calTotalPhaseC.Cal_WWAPT);
+  checkSum += settings->calTotalPhaseC.Cal_WAPT;
+  // offset reactive power
+  V9203_wr_flash(channel, RegWWAQTC, settings->calTotalPhaseC.Cal_WWAQT);
+  checkSum += settings->calTotalPhaseC.Cal_WAQT;
+  
+ 
+  //**********************************Others********************************************************
   
   // Full-wave / fundamental combined phase power combination 	 A+B+C 
   V9203_wr_flash(channel, ZZAPPA, 0x00000007);
@@ -98,93 +199,9 @@ void V9203_setupReg(uint8_t channel)
   V9203_wr_flash(channel, ZZCPSEL, 0x00000001);
   checkSum += 0x00000001;
   
-  // Analog control register 0 0x000f1111 Voltage gain double Current gain 4 times
-  V9203_wr_flash(channel, RegANCtrl0, JbPm_val.RacANCtrl0);
-  checkSum += JbPm_val.RacANCtrl0;
-  
-  // Analog control register 1
-  V9203_wr_flash(channel, RegANCtrl1, JbPm_val.RacANCtrl1);
-  checkSum += JbPm_val.RacANCtrl1;
-  
-  // Analog control register 2
-  V9203_wr_flash(channel, RegANCtrl2, JbPm_val.RacANCtrl2);
-  checkSum += JbPm_val.RacANCtrl2;
-  
-  // Analog control register 3
-  V9203_wr_flash(channel, RegANCtrl3, JbPm_val.RacANCtrl3);
-  checkSum += JbPm_val.RacANCtrl3;
-  
-  // Low threshold
-  V9203_wr_flash(channel, RegZZEGYTHL, JbPm_val.RacEGYTH);
-  checkSum += JbPm_val.RacEGYTH;
-  
-  // High threshold
-  V9203_wr_flash(channel, RegZZEGYTHH, 0x00000000);
-  checkSum += 0x00000000;
-   
-  // enable threshold limit
-  V9203_wr_flash(channel, RegCTHH, JbPm_val.RacCTHH);
-  checkSum += JbPm_val.RacCTHH;
-  
-  // enable threshold lower limit
-  V9203_wr_flash(channel, RegCTHL, JbPm_val.RacCTHL);
-  checkSum += JbPm_val.RacCTHL;
-
-  // Active A difference ratio 0	
-  V9203_wr_flash(channel, RegWAPTA0, JbPm_val.gs_JBA.RacWAPT);
-  checkSum += JbPm_val.gs_JBA.RacWAPT;
-  
-  // Active B difference ratio 0	
-  V9203_wr_flash(channel, RegWAPTB0, JbPm_val.gs_JBB.RacWAPT);
-  checkSum += JbPm_val.gs_JBB.RacWAPT;
-
-  // Active C difference ratio 0	
-  V9203_wr_flash(channel, RegWAPTC0, JbPm_val.gs_JBC.RacWAPT);
-  checkSum += JbPm_val.gs_JBC.RacWAPT;  
-  
-  // Reactive A difference ratio
-  V9203_wr_flash(channel, RegWAQTA, JbPm_val.gs_JBA.RacWAPT);
-  checkSum += JbPm_val.gs_JBA.RacWAPT;  
-
-  // Reactive B difference ratio
-  V9203_wr_flash(channel, RegWAQTB, JbPm_val.gs_JBB.RacWAPT);
-  checkSum += JbPm_val.gs_JBB.RacWAPT;  
-  
-  // Reactive C difference ratio
-  V9203_wr_flash(channel, RegWAQTC, JbPm_val.gs_JBC.RacWAPT);
-  checkSum += JbPm_val.gs_JBC.RacWAPT;
-  
-  //A Current rms difference
-  V9203_wr_flash(channel, RegWARTIA, JbPm_val.gs_JBA.RacWARTI);
-  checkSum += JbPm_val.gs_JBA.RacWARTI;
-  
-  //B Current rms difference
-  V9203_wr_flash(channel, RegWARTIB, JbPm_val.gs_JBB.RacWARTI);
-  checkSum += JbPm_val.gs_JBB.RacWARTI;
-
-  //C Current rms difference
-  V9203_wr_flash(channel, RegWARTIC, JbPm_val.gs_JBC.RacWARTI);
-  checkSum += JbPm_val.gs_JBC.RacWARTI;  
-  
-  //A RMS voltage difference
-  V9203_wr_flash(channel, RegWARTUA, JbPm_val.gs_JBA.RacWARTU);
-  checkSum += JbPm_val.gs_JBA.RacWARTU;
-  
-  //B RMS voltage difference
-  V9203_wr_flash(channel, RegWARTUB, JbPm_val.gs_JBB.RacWARTU);
-  checkSum += JbPm_val.gs_JBB.RacWARTU;
-  
-  //C RMS voltage difference
-  V9203_wr_flash(channel, RegWARTUC, JbPm_val.gs_JBC.RacWARTU);
-  checkSum += JbPm_val.gs_JBC.RacWARTU;
-  
   // Angle difference
-  V9203_wr_flash(channel, RegWAEC0, JbPm_val.RacWAEC0);
-  checkSum += JbPm_val.RacWAEC0;
-  
-  //UMChannel DC component  preset negative value  current detection interrupted
-  V9203_wr_flash(channel, RegZZDCUM, JbPm_val.RacZZDCUM);
-  checkSum += JbPm_val.RacZZDCUM;  
+  V9203_wr_flash(channel, RegWAEC0, settings->V9203_defSet.WAEC0);
+  checkSum += settings->V9203_defSet.WAEC0;
   
   // Active and phase 0 configuration
   V9203_wr_flash(channel, ZZPA0, 0x00000015);
@@ -228,51 +245,58 @@ void V9203_setupReg(uint8_t channel)
 }
 //--------------------------------------------------------------------------------------------------
 //Defaul reg val
-void V9203_initRegVal()
-{
-  JbPm_val.ui_MeterC=1200;               // Table constant
-  JbPm_val.ui_Un=22000;                  // Nominal voltage
-  JbPm_val.ui_Ib=5000;                   // Nominal current
-  JbPm_val.ui_Resve1=0;
+void V9203_setDefaultReg(uint8_t channel, V9203_settings_t *settings)
+{    
+  //Default settings
+  settings->V9203_defSet.CTHH = V9203_DEF_CTHH; // Top judgment threshold register
+  settings->V9203_defSet.CTHL = V9203_DEF_CTHL; // Bottom judgment threshold register
+  settings->V9203_defSet.WAEC0 = V9203_DEF_WAEC0; // Angle difference 0
+  settings->V9203_defSet.MTPARA0 = V9203_DEF_MTPARA0; // Metering data reg 0
+  settings->V9203_defSet.MTPARA1 = V9203_DEF_MTPARA1; // Metering data reg 1
+  settings->V9203_defSet.MTPARA2 = V9203_DEF_MTPARA2; // Metering data reg 2
+  settings->V9203_defSet.ANCtrl0 = V9203_DEF_ANCTRL0; //Analog control register 0
+  settings->V9203_defSet.ANCtrl1 = V9203_DEF_ANCTRL1; //Analog control register 1
+  settings->V9203_defSet.ANCtrl2 = V9203_DEF_ANCTRL2; //Analog control register 2
+  settings->V9203_defSet.ANCtrl3 = V9203_DEF_ANCTRL3; //Analog control register 3
   
-  JbPm_val.RacEGYTH  = 0x2fd3ff5;      // Energy accumulation threshold  0x2C7BDF00  0x04fBDF00 0x5aa8c57
-  JbPm_val.RacCTHH= 0x000221E5;      //Enable,creep threshold
-  JbPm_val.RacCTHL= 0x0001EB4E;      // Enable,creep threshold
-  JbPm_val.RacZZDCUM =  0xfff00000;       //0x0134 Current detection threshold
-  JbPm_val.RacWAEC0 = 0x00000000;        // Angle difference
+  //Total calibrate
+  //Gaint
+  settings->calTotalPhaseA.Cal_WARTU = V9203_DEF_CAL_WARTU;
+  settings->calTotalPhaseA.Cal_WARTI = V9203_DEF_CAL_WARTI;
+  settings->calTotalPhaseA.Cal_WAPT = V9203_DEF_CAL_WAPT;
+  settings->calTotalPhaseA.Cal_WAQT = V9203_DEF_CAL_WAQT;
+  //Offset
+  settings->calTotalPhaseA.Cal_WWARTU = V9203_DEF_CAL_WWARTU;
+  settings->calTotalPhaseA.Cal_WWARTI = V9203_DEF_CAL_WWARTI;
+  settings->calTotalPhaseA.Cal_WWAPT = V9203_DEF_CAL_WWAPT;
+  settings->calTotalPhaseA.Cal_WWAQT = V9203_DEF_CAL_WWAQT;
   
-  JbPm_val.RacMTPARA0 = 0x000000ff;
-  JbPm_val.RacMTPARA1 = 0x00000000;
-  JbPm_val.RacMTPARA2 = 0x070080ff;
-  JbPm_val.RacANCtrl0 = 0x00000333;     
-  JbPm_val.RacANCtrl1 = 0x00000000;      
-  JbPm_val.RacANCtrl2 = 0x77005400;      //0x77005400;  0xF7005400;  
-  JbPm_val.RacANCtrl3 = 0x00000406;      //0x00000406; 
+  settings->calTotalPhaseB = settings->calTotalPhaseA;
+  settings->calTotalPhaseC = settings->calTotalPhaseA;
   
-  JbPm_val.gs_JBA.RacWARTU = 0;//0xFC9A0D98;  // Full-wave voltage rms ratio difference register 0xFC9A0D98
-  JbPm_val.gs_JBA.RacWARTI = 0x21A8301B;  // Full-wave current rms ratio difference register
-  JbPm_val.gs_JBA.RacWAPT = 0x21E51894;   // Full-wave active power ratio difference register 0xEBA74B27
-  JbPm_val.gs_JBA.RacWWAPT = 0x00000000;  // Full-wave active power secondary compensation register
-  JbPm_val.gs_JBA.RacREWWAPT = 0x00000000;  // Full-wave reactive power secondary compensation register
+  //Findamental calibrate
+  //Gaint
+  settings->calFundPhaseA.Cal_WBRTU = V9203_DEF_CAL_WBRTU;
+  settings->calFundPhaseA.Cal_WBRTI = V9203_DEF_CAL_WBRTI;
+  settings->calFundPhaseA.Cal_WBPT = V9203_DEF_CAL_WBPT;
+  settings->calFundPhaseA.Cal_WBQT = V9203_DEF_CAL_WBQT;
+  //Offset
+  settings->calFundPhaseA.Cal_WWBRTU = V9203_DEF_CAL_WWBRTU;
+  settings->calFundPhaseA.Cal_WWBRTI = V9203_DEF_CAL_WWBRTI;
+  settings->calFundPhaseA.Cal_WWBPT = V9203_DEF_CAL_WWBPT;
+  settings->calFundPhaseA.Cal_WWBQT = V9203_DEF_CAL_WWBQT;
   
-  JbPm_val.gs_JBB.RacWARTU = 1;//0xFD6F2E2F;  // Full-wave voltage rms ratio difference register
-  JbPm_val.gs_JBB.RacWARTI = 0xE4913EB;  // Full-wave current rms ratio difference register
-  JbPm_val.gs_JBB.RacWAPT = 0xF5DC2F3;   // Full-wave active power ratio difference register 0xECC04599
-  JbPm_val.gs_JBB.RacWWAPT = 0x00000000;  // Full-wave active power secondary compensation register
-  JbPm_val.gs_JBB.RacREWWAPT = 0x00000000;  // Full-wave reactive power secondary compensation register
+  settings->calFundPhaseB = settings->calFundPhaseA;
+  settings->calFundPhaseC = settings->calFundPhaseA;
   
-  JbPm_val.gs_JBC.RacWARTU = 1;//0xFD1996B1;  // Full-wave voltage rms ratio difference register
-  JbPm_val.gs_JBC.RacWARTI = 0xE38E38E;  // Full-wave current rms ratio difference register
-  JbPm_val.gs_JBC.RacWAPT = 0xEF92325;   //Full-wave active power ratio difference register0xEC4A811B
-  JbPm_val.gs_JBC.RacWWAPT = 0x00000000;  //Full-wave active power secondary compensation register
-  JbPm_val.gs_JBC.RacREWWAPT = 0x00000000;  //Full-wave reactive power secondary compensation register 
+  //Proportion coeff
+  settings->calPropVoltage = V9203_DEF_PROP_VOLTAGE;
+  settings->calPropCurrent = V9203_DEF_PROP_CURRENT;
+  settings->calPropPower = V9203_DEF_PROP_POWER;
   
-  JbPm_val.ui_Resve2 = 0;
-  JbPm_val.ul_PG = 0x10B;               // Power proportional coefficient
-  JbPm_val.ul_URmG = 0x513b;            // Voltage channel proportional coefficient
-  JbPm_val.ul_I1RmG = 0x1A2C0;          // Current channel 1 proportional coefficient
-  
-  JbPm_val.ui_JbCRC = V9203_crc16((uint8_t*)&JbPm_val, sizeof(JBPM_t)-2);   // The CRC result of the calibration parameter
+  //Threshold
+  settings->cal_currThrdDetect = V9203_DEF_THRD_CURRENT_DETECT;
+  settings->cal_energyThrdDetect = V9203_DEF_THRD_POWER_DETECT;
 }
 //--------------------------------------------------------------------------------------------------
 //Set chip select
@@ -404,7 +428,7 @@ const uint16_t V9203_crc16_table[256]={ // X16+X12+X5+1
   0x6e17, 0x7e36, 0x4e55, 0x5e74, 0x2e93, 0x3eb2, 0x0ed1, 0x1ef0
 };
 
-uint16_t V9203_crc16(const void *data, unsigned data_size)
+static uint16_t V9203_crc16(const void *data, unsigned data_size)
 {
   if (!data || !data_size)
     return 0;
@@ -479,11 +503,7 @@ float V9203_getRMS_Voltage(uint8_t channel, V9203_line_t line)
     return -1;
   }
   
-  //Check return data
-//  if (regData > 0xFFFFFFF)
-//    return -1;
-  
-  return regData/JbPm_val.ul_URmG/10;
+  return regData;
 }
 //----------------------------------------------------------------------------------
 //Get RMS current
@@ -514,11 +534,7 @@ float V9203_getRMS_Current(uint8_t channel, V9203_line_t line)
     return -1;
   }
   
-  //Check return data
-//  if (regData > 0xFFFFFFF)
-//    return -1;
-  
-  return regData/JbPm_val.ul_I1RmG;
+  return regData;
 }
 //----------------------------------------------------------------------------------
 //Get power
@@ -549,11 +565,7 @@ float V9203_getRMS_Power(uint8_t channel, V9203_line_t line)
     return -1;
   }
   
-  //Check return data
-//  if (regData > 0xFFFFFFF)
-//    return -1;
-  
-  return regData/JbPm_val.ul_PG;
+  return regData;
 }
 //----------------------------------------------------------------------------------
 //Get reactive power
@@ -584,9 +596,5 @@ float V9203_getRMS_reactivePower(uint8_t channel, V9203_line_t line)
     return -1;
   }
   
-  //Check return data
-//  if (regData > 0xFFFFFFF)
-//    return -1;
-  
-  return regData/JbPm_val.ul_PG;
+  return regData;
 }

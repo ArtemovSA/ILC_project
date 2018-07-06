@@ -108,11 +108,8 @@ typedef struct {
   //EMS
   uint16_t EMS_out_period;
   
-  //Calibration struct
-  V9203_calChannel_t V9203_ch1_cal;
-  V9203_calChannel_t V9203_ch2_cal;
-  V9203_calChannel_t V9203_ch3_cal;
-  V9203_calChannel_t V9203_ch4_cal;
+  //Settings struct
+  V9203_settings_t V9203_ch_set[DC_V9203_COUNT_CHANNELS];
   
 }DC_set_t;
 

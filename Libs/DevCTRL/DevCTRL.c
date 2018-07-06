@@ -223,19 +223,9 @@ HAL_StatusTypeDef DC_load_settings()
   //EMS
   DC_set.EMS_out_period = DC_DEF_EMS_OUT_PERIOD;
   
-  //Calibration
-  DC_set.V9203_ch1_cal.calPhaseA.RacWARTU = DC_CAL_CH1_UOFFSET;
-  DC_set.V9203_ch1_cal.calPhaseA.RacWARTI= DC_CAL_CH1_IOFFSET;
-  DC_set.V9203_ch1_cal.calPhaseA.RacWAPT = DC_CAL_CH1_P1OFFSET;
-  DC_set.V9203_ch1_cal.calPhaseA.RacWWAPT = DC_CAL_CH1_P2OFFSET;
-  DC_set.V9203_ch1_cal.calPhaseA.RacREWWAPT = DC_CAL_CH1_R2POFFSET;
-  
-  DC_set.V9203_ch1_cal.calPhaseB = DC_set.V9203_ch1_cal.calPhaseA;
-  DC_set.V9203_ch1_cal.calPhaseC = DC_set.V9203_ch1_cal.calPhaseA;
-  
-  DC_set.V9203_ch1_cal.gainKoef_U = DC_CAL_COEFF_U;
-  DC_set.V9203_ch1_cal.gainKoef_I = DC_CAL_COEFF_I;
-  DC_set.V9203_ch1_cal.gainKoef_P = DC_CAL_COEFF_P;
+  //V9203 set settings
+  for (int i=0; i<DC_V9203_COUNT_CHANNELS; i++)
+    V9203_setDefaultReg(i, &DC_set.V9203_ch_set[i]);
   
   //Set magic key
   DC_set.magicKey = DC_SET_MAGICKEY;

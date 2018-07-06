@@ -114,7 +114,7 @@ HAL_StatusTypeDef EMS_ctrlCallback(uint8_t* data, uint16_t len)
   //Main struct
   cJSON *ctrl_json = cJSON_Parse((char*)data);
   
-  if (set_json == NULL)
+  if (ctrl_json == NULL)
   {
     const char *error_ptr = cJSON_GetErrorPtr();
     if (error_ptr != NULL)
@@ -125,7 +125,7 @@ HAL_StatusTypeDef EMS_ctrlCallback(uint8_t* data, uint16_t len)
   }
   
   //Check child empty
-  if (set_json->child == NULL)
+  if (ctrl_json->child == NULL)
   {
     DC_debugOut("# JSON message empty\r\n");
     return HAL_ERROR;
@@ -162,7 +162,7 @@ HAL_StatusTypeDef EMS_setMain_set(uint8_t* data, uint16_t len)
   
   //***********************************Network struct********************************************
   //Get cJSON net set section
-  cJSON *set_net_json = cJSON_GetObjectItemCaseSensitive(set_json, EMS_JSON_SET_NET_SET);
+  cJSON *set_net_json = cJSON_GetObjectItemCaseSensitive(set_json, EMS_JSON_SET_NET_NAME);
   
   if (set_net_json != NULL)
   {
@@ -176,7 +176,7 @@ HAL_StatusTypeDef EMS_setMain_set(uint8_t* data, uint16_t len)
     EMS_JSON_getIPAdrr(set_net_json, EMS_JSON_SET_NET_MASK, settings.net_mask);
     
     //SET_NTP_NAME
-    EMS_JSON_getStr(set_net_json, EMS_JSON_SET_NTP_NAME, settings.netNTP_server, sizeof(settings.netNTP_server));
+    EMS_JSON_getStr(set_net_json, EMS_JSON_SET_NTP_DOMEN, settings.netNTP_server, sizeof(settings.netNTP_server));
     
     //SET_DNS_IP
     EMS_JSON_getIPAdrr(set_net_json, EMS_JSON_SET_DNS_IP(1), settings.serverDNS1);
@@ -185,7 +185,7 @@ HAL_StatusTypeDef EMS_setMain_set(uint8_t* data, uint16_t len)
   
   //***********************************MQTT struct**********************************************
   //Get cJSON MQTT set section
-  cJSON *set_mqtt_json = cJSON_GetObjectItemCaseSensitive(set_json, EMS_JSON_SET_MQTT_SET);
+  cJSON *set_mqtt_json = cJSON_GetObjectItemCaseSensitive(set_json, EMS_JSON_SET_MQTT_NAME);
   
   if (set_mqtt_json != NULL)
   {
@@ -195,7 +195,7 @@ HAL_StatusTypeDef EMS_setMain_set(uint8_t* data, uint16_t len)
     
     //Set MQTT name
     for (int i=0; i<DC_COUNT_IP_BROCK_ADDR; i++)
-      EMS_JSON_getStr(set_mqtt_json, EMS_JSON_SET_MQTT_NAME(i), settings.MQTT_broc_name[i], sizeof(settings.MQTT_broc_name[i]));
+      EMS_JSON_getStr(set_mqtt_json, EMS_JSON_SET_MQTT_DOMEN(i), settings.MQTT_broc_name[i], sizeof(settings.MQTT_broc_name[i]));
     
     //Set active brocker
     uint16_t brockID;
@@ -216,7 +216,7 @@ HAL_StatusTypeDef EMS_setMain_set(uint8_t* data, uint16_t len)
   
   //***********************************EMS struct**********************************************
   //Get cJSON EMS set section
-  cJSON *set_ems_json = cJSON_GetObjectItemCaseSensitive(set_json, EMS_JSON_SET_EMS_SET);
+  cJSON *set_ems_json = cJSON_GetObjectItemCaseSensitive(set_json, EMS_JSON_SET_EMS_NAME);
   
   if (set_ems_json != NULL)
   {
@@ -362,25 +362,25 @@ void EMS_sendChannelVars(uint8_t channel_num)
   cJSON *channel = NULL;
   
   phaseA = cJSON_CreateObject();
-  cJSON_AddNumberToObject(phaseA, EMS_JSON_NAME_FREQ, meshChan[channel_num].phaseA.freq);
-  cJSON_AddNumberToObject(phaseA, EMS_JSON_NAME_RMSV, meshChan[channel_num].phaseA.RMSV);
-  cJSON_AddNumberToObject(phaseA, EMS_JSON_NAME_RMSI, meshChan[channel_num].phaseA.RMSI);
-  cJSON_AddNumberToObject(phaseA, EMS_JSON_NAME_RMSP, meshChan[channel_num].phaseA.RMSP);
-  cJSON_AddNumberToObject(phaseA, EMS_JSON_NAME_RMSRP, meshChan[channel_num].phaseA.RMSRP);
+  cJSON_AddNumberToObject(phaseA, EMS_JSON_VAL_FREQ, meshChan[channel_num].phaseA.freq);
+  cJSON_AddNumberToObject(phaseA, EMS_JSON_VAL_RMSV, meshChan[channel_num].phaseA.RMSV);
+  cJSON_AddNumberToObject(phaseA, EMS_JSON_VAL_RMSI, meshChan[channel_num].phaseA.RMSI);
+  cJSON_AddNumberToObject(phaseA, EMS_JSON_VAL_RMSP, meshChan[channel_num].phaseA.RMSP);
+  cJSON_AddNumberToObject(phaseA, EMS_JSON_VAL_RMSRP, meshChan[channel_num].phaseA.RMSRP);
   
   phaseB = cJSON_CreateObject();
-  cJSON_AddNumberToObject(phaseB, EMS_JSON_NAME_FREQ, meshChan[channel_num].phaseB.freq);
-  cJSON_AddNumberToObject(phaseB, EMS_JSON_NAME_RMSV, meshChan[channel_num].phaseB.RMSV);
-  cJSON_AddNumberToObject(phaseB, EMS_JSON_NAME_RMSI, meshChan[channel_num].phaseB.RMSI);
-  cJSON_AddNumberToObject(phaseB, EMS_JSON_NAME_RMSP, meshChan[channel_num].phaseB.RMSP);
-  cJSON_AddNumberToObject(phaseB, EMS_JSON_NAME_RMSRP, meshChan[channel_num].phaseB.RMSRP);
+  cJSON_AddNumberToObject(phaseB, EMS_JSON_VAL_FREQ, meshChan[channel_num].phaseB.freq);
+  cJSON_AddNumberToObject(phaseB, EMS_JSON_VAL_RMSV, meshChan[channel_num].phaseB.RMSV);
+  cJSON_AddNumberToObject(phaseB, EMS_JSON_VAL_RMSI, meshChan[channel_num].phaseB.RMSI);
+  cJSON_AddNumberToObject(phaseB, EMS_JSON_VAL_RMSP, meshChan[channel_num].phaseB.RMSP);
+  cJSON_AddNumberToObject(phaseB, EMS_JSON_VAL_RMSRP, meshChan[channel_num].phaseB.RMSRP);
   
   phaseC = cJSON_CreateObject();
-  cJSON_AddNumberToObject(phaseC, EMS_JSON_NAME_FREQ, meshChan[channel_num].phaseC.freq);
-  cJSON_AddNumberToObject(phaseC, EMS_JSON_NAME_RMSV, meshChan[channel_num].phaseC.RMSV);
-  cJSON_AddNumberToObject(phaseC, EMS_JSON_NAME_RMSI, meshChan[channel_num].phaseC.RMSI);
-  cJSON_AddNumberToObject(phaseC, EMS_JSON_NAME_RMSP, meshChan[channel_num].phaseC.RMSP);
-  cJSON_AddNumberToObject(phaseC, EMS_JSON_NAME_RMSRP, meshChan[channel_num].phaseC.RMSRP);
+  cJSON_AddNumberToObject(phaseC, EMS_JSON_VAL_FREQ, meshChan[channel_num].phaseC.freq);
+  cJSON_AddNumberToObject(phaseC, EMS_JSON_VAL_RMSV, meshChan[channel_num].phaseC.RMSV);
+  cJSON_AddNumberToObject(phaseC, EMS_JSON_VAL_RMSI, meshChan[channel_num].phaseC.RMSI);
+  cJSON_AddNumberToObject(phaseC, EMS_JSON_VAL_RMSP, meshChan[channel_num].phaseC.RMSP);
+  cJSON_AddNumberToObject(phaseC, EMS_JSON_VAL_RMSRP, meshChan[channel_num].phaseC.RMSRP);
   
   channel = cJSON_CreateObject();
   cJSON_AddItemToObject(channel, "phaseA", phaseA);
@@ -421,6 +421,10 @@ void EMS_ChannelDebugOut(uint8_t channel)
 void startEMS_task(void const * argument)
 { 
   V9203_init(&hspi1);
+  
+  for (int i=0; i<DC_V9203_COUNT_CHANNELS; i++)
+    V9203_initDev(i, &DC_set.V9203_ch_set[i]); //Init dev
+  
   EMS_init();
   
   while(1)

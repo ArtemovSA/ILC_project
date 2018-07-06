@@ -107,24 +107,30 @@
 #define   RegWARTIB     0xE969
 #define   RegWARTIC     0xE96A
 
+#define   RegWWARTIA    0xE994
+#define   RegWWARTIB    0xE995
+#define   RegWWARTIC    0xE996
+
 #define   RegWARTUA     0xE96C
 #define   RegWARTUB     0xE96D
 #define   RegWARTUC     0xE96E
 
+#define   RegWWARTUA     0xE998
+#define   RegWWARTUB     0xE999
+#define   RegWWARTUC     0xE99A
 
 //=============================================================
 //Full wave active / reactive power correction register 
 //=============================================================
-#define   RegWAPTA0      0xE95A
-#define   RegWAPTB0      0xE95E
-#define   RegWAPTC0      0xE962
+#define   RegWAPTA      0xE95A
+#define   RegWAPTB      0xE95E
+#define   RegWAPTC      0xE962
 
 #define   RegWAQTA      0xE965
 #define   RegWAQTB      0xE966
 #define   RegWAQTC      0xE967
 
-#define  RegWAEC0      0XE954       // Angle difference
-
+#define   RegWAEC0      0XE954       // Angle difference
 
 //=============================================================
 //Baseband active / reactive power correction register
@@ -227,15 +233,77 @@
 #define ARRTI       0x0105  // full wave voltage rms original value
 // The above is for compile through
 
-enum
+//****************************************Default values********************************************
+
+//Default settings
+#define V9203_DEF_CTHH        0x000221E5	// Top judgment threshold register
+#define V9203_DEF_CTHL        0x0001EB4E	// Bottom judgment threshold register
+#define V9203_DEF_WAEC0       0x00000000	// Angle difference 0
+#define V9203_DEF_MTPARA0     0x000000ff	// Metering data reg 0
+#define V9203_DEF_MTPARA1     0x00000000	// Metering data reg 1
+#define V9203_DEF_MTPARA2     0x070080ff	// Metering data reg 2
+#define V9203_DEF_ANCTRL0     0x00000333	// Analog control register 0
+#define V9203_DEF_ANCTRL1     0x00000000	// Analog control register 1
+#define V9203_DEF_ANCTRL2     0x77005400	// Analog control register 2
+#define V9203_DEF_ANCTRL3     0x00000406	// Analog control register 3
+
+//Default calibrate
+//Total
+#define V9203_DEF_CAL_WARTU   0x00000000	// gain voltage RMS
+#define V9203_DEF_CAL_WARTI   0x21A8301B	// gain current RMS
+#define V9203_DEF_CAL_WAPT    0x21E51894	// gain active power coef RMS
+#define V9203_DEF_CAL_WAQT    0x00000000	// gain reactive power coef RMS
+#define V9203_DEF_CAL_WWARTU  0x00000000	// offset voltage RMS
+#define V9203_DEF_CAL_WWARTI  0x00000000	// offset current RMS
+#define V9203_DEF_CAL_WWAPT   0x00000000	// offset active power
+#define V9203_DEF_CAL_WWAQT   0x00000000	// offset reactive power
+//Fundamental
+#define V9203_DEF_CAL_WBRTU   0x00000000
+#define V9203_DEF_CAL_WBRTI   0x00000000
+#define V9203_DEF_CAL_WBPT    0x00000000
+#define V9203_DEF_CAL_WBQT    0x00000000
+#define V9203_DEF_CAL_WWBRTU  0x00000000
+#define V9203_DEF_CAL_WWBRTI  0x00000000
+#define V9203_DEF_CAL_WWBPT   0x00000000
+#define V9203_DEF_CAL_WWBQT   0x00000000
+
+//Proportional coeff
+#define V9203_DEF_PROP_VOLTAGE	  0x00000000
+#define V9203_DEF_PROP_CURRENT	  0x00000000
+#define V9203_DEF_PROP_POWER	  0x00000000
+
+//Threshold detect
+#define V9203_DEF_THRD_CURRENT_DETECT	0x00000000
+#define V9203_DEF_THRD_POWER_DETECT		0x00000000
+
+//****************************************Calibration struct****************************************
+//Calibtation total struct
+typedef struct
 {
-  Addr_UA = 0,
-  Addr_IA,
-  Addr_UB,
-  Addr_IB,
-  Addr_UC,
-  Addr_IC
-};
+  uint32_t  Cal_WARTU;
+  uint32_t  Cal_WARTI;
+  uint32_t  Cal_WAPT;
+  uint32_t  Cal_WAQT;
+  uint32_t  Cal_WWARTU;
+  uint32_t  Cal_WWARTI;
+  uint32_t  Cal_WWAPT;
+  uint32_t  Cal_WWAQT;
+}V9203_Total_cal_t;
+
+//Calibtation Fundamental struct
+typedef struct
+{
+  uint32_t  Cal_WBRTU;
+  uint32_t  Cal_WBRTI;
+  uint32_t  Cal_WBPT;
+  uint32_t  Cal_WBQT;
+  uint32_t  Cal_WWBRTU;
+  uint32_t  Cal_WWBRTI;
+  uint32_t  Cal_WWBPT;
+  uint32_t  Cal_WWBQT;
+}V9203_Fund_cal_t;
+
+//****************************************Data structs**********************************************
 
 //Line num
 typedef enum
@@ -246,67 +314,55 @@ typedef enum
   LINE_N
 }V9203_line_t;
 
-//Calibtation struct
-typedef struct
-{
-  unsigned int  RacWARTU;           //Full-wave voltage rms ratio difference register
-  unsigned int  RacWARTI;           //Full-wave current rms ratio difference register
-  unsigned int  RacWAPT;            //Full-wave active power ratio difference register
-  unsigned int  RacWWAPT;           //Full-wave active power secondary compensation register                
-  unsigned int  RacREWWAPT;         //Full-wave reactive power secondary compensation register               
-}JBRE_t;
-
-
+//Default settings struct
 typedef struct 
-{
-  unsigned short ui_MeterC;           // Table constant
-  unsigned short ui_Un;               // Nominal voltage
-  unsigned short ui_Ib;               // Nominal current
-  unsigned short ui_Resve1;           //Retention
-  
-  unsigned int  RacEGYTH;           //Active threshold register
-  unsigned int  RacCTHH;             //Start / creep judgment threshold register
-  unsigned int  RacCTHL;             //Start / creep judgment threshold register
-  unsigned int RacZZDCUM;        //Current detection threshold
-  unsigned int  RacWAEC0;         //Angle difference 0
-  unsigned int RacMTPARA0;
-  unsigned int  RacMTPARA1;
-  unsigned int RacMTPARA2;
-  unsigned int  RacANCtrl0;         //Analog control register0
-  unsigned int  RacANCtrl1;         // Analog control register 1
-  unsigned int  RacANCtrl2;         // Analog control register 2
-  unsigned int  RacANCtrl3;         // Analog control register 2
-  JBRE_t  gs_JBA;                   //A Compared to the difference group
-  JBRE_t  gs_JBB;                   //B Compared to the difference group
-  JBRE_t  gs_JBC;                   //C Compared to the difference group
-  unsigned int ul_PG;               //Power proportional coefficient
-  unsigned int ul_URmG;             //Voltage channel proportional coefficient
-  unsigned int ul_I1RmG;            //Current channel 1 proportional coefficient
-  
-  unsigned short ui_Resve2;           // Retention
-  unsigned short ui_JbCRC;            // Calibration table parameters CRC results
-}JBPM_t;
+{  
+  uint32_t  CTHH;                    // Top judgment threshold register
+  uint32_t  CTHL;                    // Bottom judgment threshold register
+  uint32_t  WAEC0;                   // Angle difference 0
+  uint32_t  MTPARA0;                 // Metering data reg 0
+  uint32_t  MTPARA1;                 // Metering data reg 1
+  uint32_t  MTPARA2;                 // Metering data reg 2
+  uint32_t  ANCtrl0;                 // Analog control register 0
+  uint32_t  ANCtrl1;                 // Analog control register 1
+  uint32_t  ANCtrl2;                 // Analog control register 2
+  uint32_t  ANCtrl3;                 // Analog control register 3
+}V9203_defSet_t;
 
 //Calibration channel coefficients
 typedef struct
 {
-  //Phase values
-  JBRE_t  calPhaseA;
-  JBRE_t  calPhaseB;
-  JBRE_t  calPhaseC;
+  //Default settings
+  V9203_defSet_t V9203_defSet;
   
-  //Gaint coeff
-  uint32_t gainKoef_P;
-  uint32_t gainKoef_U;
-  uint32_t gainKoef_I;
+  //Calibtation total struct
+  V9203_Total_cal_t calTotalPhaseA;
+  V9203_Total_cal_t calTotalPhaseB;
+  V9203_Total_cal_t calTotalPhaseC;
   
-}V9203_calChannel_t;
+  //Calibtation Fundamental struct
+  V9203_Fund_cal_t calFundPhaseA;
+  V9203_Fund_cal_t calFundPhaseB;
+  V9203_Fund_cal_t calFundPhaseC;
+  
+  //Proportion coefficents
+  uint32_t calPropPower;                //Proportiona Power coeff
+  uint32_t calPropVoltage;              //Proportiona U coeff
+  uint32_t calPropCurrent;              //Proportiona I coeff
+  
+  //Threshold
+  uint32_t cal_currThrdDetect;          //Threshold current detect
+  uint32_t cal_energyThrdDetect;        //Threshold energy meter detect
+  
+}V9203_settings_t;
 
 //***********************************************API************************************************
 //Init
 void V9203_init(SPI_HandleTypeDef *hspi);
-//Setup registers
-void V9203_setupReg(uint8_t channel);
+//Init dev
+HAL_StatusTypeDef V9203_initDev(uint8_t channel, V9203_settings_t *settings);
+//Defaul reg val
+void V9203_setDefaultReg(uint8_t channel, V9203_settings_t *settings);
 //Get frequency
 float V9203_getFreq(uint8_t channel, V9203_line_t line);
 //Get RMS voltage
