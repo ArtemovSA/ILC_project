@@ -78,6 +78,8 @@ D:\Sergey\ILC_project\EWARM\..\Libs\deviceDefs
 -I
 D:\Sergey\ILC_project\EWARM\..\Libs\FW_update
 -I
+D:\Sergey\ILC_project\EWARM\..\Libs\USB_ctrl
+-I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\inc
@@ -159,6 +161,8 @@ D:\Sergey\ILC_project\Libs\Network
 D:\Sergey\ILC_project\Libs\deviceDefs
 -I
 D:\Sergey\ILC_project\Libs\FW_update
+-I
+D:\Sergey\ILC_project\Libs\USB_ctrl
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -DUSE_HAL_DRIVER=1

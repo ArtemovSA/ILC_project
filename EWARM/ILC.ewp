@@ -77,7 +77,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>7.80.3.12143</state>
+          <state>7.80.4.12487</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -353,6 +353,7 @@
           <state>$PROJ_DIR$\..\Libs\Network</state>
           <state>$PROJ_DIR$\..\Libs\deviceDefs</state>
           <state>$PROJ_DIR$\..\Libs\FW_update</state>
+          <state>$PROJ_DIR$\..\Libs\USB_ctrl</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1300,6 +1301,15 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\Libs\TCP\devTCP.h</name>
+      </file>
+    </group>
+    <group>
+      <name>USB_ctrl</name>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\USB_ctrl\USB_ctrl.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\USB_ctrl\USB_ctrl.h</name>
       </file>
     </group>
     <group>

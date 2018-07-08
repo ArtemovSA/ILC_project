@@ -1458,6 +1458,15 @@
       </file>
     </group>
     <group>
+      <name>USB_ctrl</name>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\USB_ctrl\USB_ctrl.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\USB_ctrl\USB_ctrl.h</name>
+      </file>
+    </group>
+    <group>
       <name>V9203</name>
       <file>
         <name>$PROJ_DIR$\..\Libs\V9203\V9203.c</name>

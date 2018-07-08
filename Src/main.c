@@ -131,6 +131,11 @@ void sampleTimerCall(void const * argument);
 
 /* USER CODE BEGIN 0 */
 
+SemaphoreHandle_t muxNAND;
+SemaphoreHandle_t muxSRAM1;
+SemaphoreHandle_t muxSRAM2;
+SemaphoreHandle_t muxUSB;
+
 /* USER CODE END 0 */
 
 
@@ -181,7 +186,11 @@ int main(void)
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
-  /* add mutexes, ... */
+  muxNAND = xSemaphoreCreateMutex();
+  muxSRAM1 = xSemaphoreCreateMutex();
+  muxSRAM2 = xSemaphoreCreateMutex();
+  muxUSB = xSemaphoreCreateMutex();
+  
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
