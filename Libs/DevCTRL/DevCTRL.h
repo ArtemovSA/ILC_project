@@ -46,8 +46,7 @@ extern char DC_unic_idStr[13]; //Unic id str
 #define DC_DEF_GW_IP_ADDR               {192,168,1,1}
 #define DC_DEF_NET_MASK                 {255,255,255,0}
 #define DC_DEF_NTP_SERVER               "ntp1.stratum2.ru"
-#define DC_DEF_DNS1                     {8,8,8,8}
-#define DC_DEF_DNS2                     {77,88,8,8}
+#define DC_DEF_DNS                      {8,8,8,8}
 
 //MQTT
 #define DC_DEF_MQTT_BROC_CH             0 //0 - IP, 1 - DOMEN
@@ -63,7 +62,7 @@ extern char DC_unic_idStr[13]; //Unic id str
 
 //**********************************Settings*****************************************************
 
-#define DC_SET_MAGICKEY 0x03
+#define DC_SET_MAGICKEY 0x01
 
 typedef struct {
   
@@ -74,8 +73,7 @@ typedef struct {
   uint8_t net_gw_ip_addr[4];
   uint8_t net_mask[4];
   char netNTP_server[40];
-  uint8_t serverDNS1[4];
-  uint8_t serverDNS2[4];
+  uint8_t serverDNS[4];
   
   //MQTT
   uint8_t MQTT_broc_ip[4]; //Brocker ip list

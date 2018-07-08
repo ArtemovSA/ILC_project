@@ -66,7 +66,7 @@
  */
 #define SD_TIMEOUT 30 * 1000
 
-#define SD_DEFAULT_BLOCK_SIZE 512
+#define SD_DEFAULT_BLOCK_SIZE 2048
 
 /*
  * Depending on the use case, the SD card initialization could be done at the

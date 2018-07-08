@@ -7,6 +7,7 @@
 #include "Clock.h"
 #include "Memory.h"
 #include "Network.h"
+#include "fatfs.h"
 
 //topic list
 devMQTT_topic emsTopics[EMS_TOPID_COUNT];
@@ -65,6 +66,38 @@ void EMS_init()
   hooks.malloc_fn = pvPortMalloc;
   hooks.free_fn = vPortFree;
   cJSON_InitHooks(&hooks);
+  
+  /* init code for FATFS */
+  MX_FATFS_Init();
+  
+  extern char SDPath[4]; /* SD logical drive path */
+  FATFS fileSystem;
+  FIL testFile;
+  FRESULT res;
+  uint8_t testBuffer[16] = "SD write success";
+  char path[] = "testfile.txt";
+  uint32_t testBytes;
+  
+  //Init log file on sd
+//  if(FATFS_LinkDriver(&SD_Driver, SDPath) == 0)
+//  {    
+//    if(f_mount(&fileSystem, (TCHAR const*)SDPath, 1) == FR_OK)
+//    {
+//      DC_debugOut("# Mount OK\r\n");
+//      if (f_open(&testFile, "testfile.txt", FA_WRITE | FA_CREATE_ALWAYS) == FR_OK)
+//      {
+//        res = f_write(&testFile, testBuffer, 16, &testBytes);
+//        res = f_close(&testFile);
+//      }
+//    }else{
+//      DC_debugOut("# Mount error\r\n");
+//    }
+//  }else{
+//    if(f_mkfs((TCHAR const*)SDPath, FM_FAT32, 512, 0, 0) == FR_OK)
+//    {
+//      DC_debugOut("# SD format OK\r\n");
+//    }
+//  }
 }
 //------------------------------------------------------------------------------
 //Get ip addres by name in JSON
@@ -189,8 +222,7 @@ HAL_StatusTypeDef EMS_setMain_set(uint8_t* data, uint16_t len)
     EMS_JSON_getStr(set_net_json, EMS_JSON_SET_NTP_DOMEN, settings.netNTP_server, sizeof(settings.netNTP_server));
     
     //SET_DNS_IP
-    EMS_JSON_getIPAdrr(set_net_json, EMS_JSON_SET_DNS_IP(1), settings.serverDNS1);
-    EMS_JSON_getIPAdrr(set_net_json, EMS_JSON_SET_DNS_IP(2), settings.serverDNS2);
+    EMS_JSON_getIPAdrr(set_net_json, EMS_JSON_SET_DNS_IP(1), settings.serverDNS);
   }
   
   //***********************************MQTT struct**********************************************
@@ -359,21 +391,21 @@ HAL_StatusTypeDef EMS_setCalibrate(uint8_t* data, uint16_t len)
   //***********************************Calibrate TOTAL phase********************************************
 
   //Set phaseA calibrate
-  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASE_NAME(A), &DC_set.V9203_ch_set[channelNum].calTotalPhaseA) != HAL_OK)
+  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASEA_NAME, &DC_set.V9203_ch_set[channelNum].calTotalPhaseA) != HAL_OK)
   {
     DC_debugOut("# Phase Total A calibrate error\r\n");
     return HAL_ERROR;
   }
   
   //Set phaseB calibrate
-  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASE_NAME(B), &DC_set.V9203_ch_set[channelNum].calTotalPhaseB) != HAL_OK)
+  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASEB_NAME, &DC_set.V9203_ch_set[channelNum].calTotalPhaseB) != HAL_OK)
   {
     DC_debugOut("# Phase B calibrate error\r\n");
     return HAL_ERROR;
   }
   
   //Set phaseC calibrate
-  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASE_NAME(C), &DC_set.V9203_ch_set[channelNum].calTotalPhaseC) != HAL_OK)
+  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASEC_NAME, &DC_set.V9203_ch_set[channelNum].calTotalPhaseC) != HAL_OK)
   {
     DC_debugOut("# Phase C calibrate error\r\n");
     return HAL_ERROR;
@@ -382,21 +414,21 @@ HAL_StatusTypeDef EMS_setCalibrate(uint8_t* data, uint16_t len)
   //***********************************Calibrate Fundamental Phase***************************************
   
   //Set phaseA calibrate
-  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASE_NAME(A), &DC_set.V9203_ch_set[channelNum].calFundPhaseA) != HAL_OK)
+  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASEA_NAME, &DC_set.V9203_ch_set[channelNum].calFundPhaseA) != HAL_OK)
   {
     DC_debugOut("# Phase Total A calibrate error\r\n");
     return HAL_ERROR;
   }
   
   //Set phaseB calibrate
-  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASE_NAME(B), &DC_set.V9203_ch_set[channelNum].calFundPhaseB) != HAL_OK)
+  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASEB_NAME, &DC_set.V9203_ch_set[channelNum].calFundPhaseB) != HAL_OK)
   {
     DC_debugOut("# Phase B calibrate error\r\n");
     return HAL_ERROR;
   }
   
   //Set phaseC calibrate
-  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASE_NAME(C), &DC_set.V9203_ch_set[channelNum].calFundPhaseC) != HAL_OK)
+  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASEC_NAME, &DC_set.V9203_ch_set[channelNum].calFundPhaseC) != HAL_OK)
   {
     DC_debugOut("# Phase C calibrate error\r\n");
     return HAL_ERROR;
@@ -472,9 +504,9 @@ void EMS_sendChannelVars(uint8_t channel_num)
   
   //Channel values
   channel = cJSON_CreateObject();
-  cJSON_AddItemToObject(channel, EMS_JSON_CAL_PHASE_NAME(A), phaseA);
-  cJSON_AddItemToObject(channel, EMS_JSON_CAL_PHASE_NAME(B), phaseB);
-  cJSON_AddItemToObject(channel, EMS_JSON_CAL_PHASE_NAME(C), phaseC);
+  cJSON_AddItemToObject(channel, EMS_JSON_CAL_PHASEA_NAME, phaseA);
+  cJSON_AddItemToObject(channel, EMS_JSON_CAL_PHASEB_NAME, phaseB);
+  cJSON_AddItemToObject(channel, EMS_JSON_CAL_PHASEC_NAME, phaseC);
   
   //Main parameters
   cJSON_AddNumberToObject(channel, EMS_JSON_VAL_FREQ, meshChan[channel_num].FREQ);

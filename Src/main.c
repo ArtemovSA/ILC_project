@@ -199,7 +199,7 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of debugTask */
-  osThreadDef(debugTask, startDebugTask, osPriorityNormal, 0, 256);
+  osThreadDef(debugTask, startDebugTask, osPriorityNormal, 0, 128);
   debugTaskHandle = osThreadCreate(osThread(debugTask), NULL);
 
   /* definition and creation of WM_task */
@@ -215,7 +215,7 @@ int main(void)
   CL_taskHandle = osThreadCreate(osThread(CL_task), NULL);
 
   /* definition and creation of EMS_task */
-  osThreadDef(EMS_task, startEMS_task, osPriorityIdle, 0, 512);
+  osThreadDef(EMS_task, startEMS_task, osPriorityIdle, 0, 1536);
   EMS_taskHandle = osThreadCreate(osThread(EMS_task), NULL);
   vTaskSuspend(EMS_taskHandle);
   
@@ -483,9 +483,9 @@ static void MX_SDIO_SD_Init(void)
   hsd.Init.ClockEdge = SDIO_CLOCK_EDGE_RISING;
   hsd.Init.ClockBypass = SDIO_CLOCK_BYPASS_DISABLE;
   hsd.Init.ClockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
-  hsd.Init.BusWide = SDIO_BUS_WIDE_1B;
+  hsd.Init.BusWide = SDIO_BUS_WIDE_4B;
   hsd.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
-  hsd.Init.ClockDiv = 0;
+  hsd.Init.ClockDiv = 16;
 
 }
 
@@ -804,10 +804,7 @@ static void MX_FSMC_Init(void)
 
 /* startDebugTask function */
 void startDebugTask(void const * argument)
-{
-  /* init code for FATFS */
-  MX_FATFS_Init();
-  
+{  
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
 
@@ -819,10 +816,8 @@ void startDebugTask(void const * argument)
   
   //DNS init
   ip4_addr_t ipaddr;
-  IP4_ADDR(&ipaddr, DC_set.serverDNS1[0], DC_set.serverDNS1[1], DC_set.serverDNS1[2], DC_set.serverDNS1[3]);
+  IP4_ADDR(&ipaddr, DC_set.serverDNS[0], DC_set.serverDNS[1], DC_set.serverDNS[2], DC_set.serverDNS[3]);
   dns_setserver(0, &ipaddr);
-  IP4_ADDR(&ipaddr, DC_set.serverDNS2[0], DC_set.serverDNS2[1], DC_set.serverDNS2[2], DC_set.serverDNS2[3]);
-  dns_setserver(1, &ipaddr);
   dns_init();
   DC_debugOut("DNS init OK\r\n");
   

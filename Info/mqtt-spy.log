@@ -2236,3 +2236,142 @@ WillDestination             :  null
 2018-07-06 17:04:49,893 INFO  [JavaFX Application Thread     ] [MqttConnectionWithReconnection]  - Disconnecting user_art from [tcp://ems.insyte.ru:1883]
 2018-07-06 17:04:49,895 INFO  [MQTT Disc: user_art           ] [MqttDisconnectionResultHandler]  - user_art@ems.insyte.ru:1883 disconnected
 2018-07-06 17:19:25,517 INFO  [JavaFX Application Thread     ] [MqttConnectionWithReconnection]  - Disconnecting user_art from [tcp://ems.insyte.ru:1883]
+2018-07-06 22:54:07,550 INFO  [JavaFX Application Thread     ] [MqttViewManager               ]  - Default configuration file present (C:\Users\Sergey\mqtt-spy\mqtt-spy-configuration.xml) = true
+2018-07-06 22:54:07,615 INFO  [JavaFX Application Thread     ] [MqttViewManager               ]  - Loading configuration file from C:\Users\Sergey\mqtt-spy\mqtt-spy-configuration.xml
+2018-07-06 22:54:22,168 INFO  [JavaFX Application Thread     ] [MqttConfigurationUtils        ]  - Auto-complete for server URI (ems.insyte.ru:1883 -> tcp://ems.insyte.ru:1883)
+2018-07-06 22:54:22,770 ERROR [JavaFX Application Thread     ] [FileUtils                     ]  - No files in C:\Users\Sergey\mqtt-spy\
+2018-07-06 22:54:23,339 INFO  [mqtt-spy [ConnectionRunnable for Sergey102615521@ems.insyte.ru:1883]] [MqttAsyncConnectionRunnable   ]  - Connecting client ID [Sergey102615521] to server [[tcp://ems.insyte.ru:1883]]; options = 
+============== Connection options ==============
+SocketFactory               :  null
+CleanSession                :  true
+MqttVersion                 :  0
+KeepAliveInterval           :  60
+ConTimeout                  :  30
+UserName                    :  null
+SSLProperties               :  null
+WillDestination             :  null
+==========================================
+
+2018-07-06 22:54:23,429 INFO  [MQTT Call: Sergey102615521    ] [MqttConnectionResultHandler   ]  - Sergey102615521@ems.insyte.ru:1883 connected
+2018-07-06 22:54:23,431 INFO  [JavaFX Application Thread     ] [MqttEventHandler              ]  - About to resubscribe to all requested topics
+2018-07-06 22:54:27,216 INFO  [JavaFX Application Thread     ] [NewSubscriptionController     ]  - Subscribing to variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel
+2018-07-06 22:54:27,218 INFO  [JavaFX Application Thread     ] [MqttSubscriptionViewManager   ]  - Creating subscription for variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel
+2018-07-06 22:54:27,324 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel
+2018-07-07 00:33:14,316 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel
+2018-07-07 00:33:14,318 INFO  [JavaFX Application Thread     ] [MqttConnectionWithReconnection]  - Disconnecting Sergey102615521 from [tcp://ems.insyte.ru:1883]
+2018-07-07 00:33:14,323 INFO  [MQTT Disc: Sergey102615521    ] [MqttDisconnectionResultHandler]  - Sergey102615521@ems.insyte.ru:1883 disconnected
+2018-07-07 11:04:50,380 INFO  [JavaFX Application Thread     ] [MqttViewManager               ]  - Default configuration file present (C:\Users\Sergey\mqtt-spy\mqtt-spy-configuration.xml) = true
+2018-07-07 11:04:50,449 INFO  [JavaFX Application Thread     ] [MqttViewManager               ]  - Loading configuration file from C:\Users\Sergey\mqtt-spy\mqtt-spy-configuration.xml
+2018-07-07 11:04:55,859 INFO  [JavaFX Application Thread     ] [MqttConfigurationUtils        ]  - Auto-complete for server URI (ems.insyte.ru:1883 -> tcp://ems.insyte.ru:1883)
+2018-07-07 11:04:56,534 ERROR [JavaFX Application Thread     ] [FileUtils                     ]  - No files in C:\Users\Sergey\mqtt-spy\
+2018-07-07 11:04:57,100 INFO  [mqtt-spy [ConnectionRunnable for Sergey102615521@ems.insyte.ru:1883]] [MqttAsyncConnectionRunnable   ]  - Connecting client ID [Sergey102615521] to server [[tcp://ems.insyte.ru:1883]]; options = 
+============== Connection options ==============
+SocketFactory               :  null
+CleanSession                :  true
+MqttVersion                 :  0
+KeepAliveInterval           :  60
+ConTimeout                  :  30
+UserName                    :  null
+SSLProperties               :  null
+WillDestination             :  null
+==========================================
+
+2018-07-07 11:04:57,199 INFO  [MQTT Call: Sergey102615521    ] [MqttConnectionResultHandler   ]  - Sergey102615521@ems.insyte.ru:1883 connected
+2018-07-07 11:04:57,211 INFO  [JavaFX Application Thread     ] [MqttEventHandler              ]  - About to resubscribe to all requested topics
+2018-07-07 11:05:20,970 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Publishing message on topic "variables\#". Payload size = "0"
+2018-07-07 11:05:20,972 ERROR [JavaFX Application Thread     ] [SpyUncaughtExceptionHandler   ]  - Thread Thread[JavaFX Application Thread,5,main] failed with java.lang.IllegalArgumentException: The topic name MUST NOT contain any wildcard characters (#+)
+java.lang.IllegalArgumentException: The topic name MUST NOT contain any wildcard characters (#+)
+	at org.eclipse.paho.client.mqttv3.MqttTopic.validate(MqttTopic.java:203)
+	at org.eclipse.paho.client.mqttv3.MqttAsyncClient.publish(MqttAsyncClient.java:1018)
+	at org.eclipse.paho.client.mqttv3.MqttAsyncClient.publish(MqttAsyncClient.java:991)
+	at org.eclipse.paho.client.mqttv3.MqttAsyncClient.publish(MqttAsyncClient.java:998)
+	at pl.baczkowicz.mqttspy.connectivity.MqttAsyncConnection.publish(MqttAsyncConnection.java:219)
+	at pl.baczkowicz.mqttspy.ui.controllers.NewPublicationController.publish(NewPublicationController.java:614)
+	at pl.baczkowicz.mqttspy.ui.controllers.NewPublicationController$2.handle(NewPublicationController.java:217)
+	at pl.baczkowicz.mqttspy.ui.controllers.NewPublicationController$2.handle(NewPublicationController.java:207)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler$NormalEventFilterRecord.handleCapturingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.CompositeEventHandler.dispatchCapturingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchCapturingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventHandlerManager.dispatchCapturingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.CompositeEventDispatcher.dispatchCapturingEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEventImpl(Unknown Source)
+	at javafx.base/com.sun.javafx.event.EventUtil.fireEvent(Unknown Source)
+	at javafx.base/javafx.event.Event.fireEvent(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene$KeyHandler.process(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene$KeyHandler.access$1600(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene.processKeyEvent(Unknown Source)
+	at javafx.graphics/javafx.scene.Scene$ScenePeerListener.keyEvent(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$KeyEventNotification.run(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler$KeyEventNotification.run(Unknown Source)
+	at java.base/java.security.AccessController.doPrivileged(Native Method)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleKeyEvent$1(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(Unknown Source)
+	at javafx.graphics/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleKeyEvent(Unknown Source)
+	at javafx.graphics/com.sun.glass.ui.View.handleKeyEvent(Unknown Source)
+	at javafx.graphics/com.sun.glass.ui.View.notifyKey(Unknown Source)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+2018-07-07 11:05:32,966 INFO  [JavaFX Application Thread     ] [NewSubscriptionController     ]  - Subscribing to variables/#
+2018-07-07 11:05:32,967 INFO  [JavaFX Application Thread     ] [MqttSubscriptionViewManager   ]  - Creating subscription for variables/#
+2018-07-07 11:05:33,075 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/#
+2018-07-08 00:08:14,178 INFO  [JavaFX Application Thread     ] [MqttViewManager               ]  - Default configuration file present (C:\Users\Sergey\mqtt-spy\mqtt-spy-configuration.xml) = true
+2018-07-08 00:08:14,243 INFO  [JavaFX Application Thread     ] [MqttViewManager               ]  - Loading configuration file from C:\Users\Sergey\mqtt-spy\mqtt-spy-configuration.xml
+2018-07-08 00:08:15,739 INFO  [JavaFX Application Thread     ] [MqttConfigurationUtils        ]  - Auto-complete for server URI (ems.insyte.ru:1883 -> tcp://ems.insyte.ru:1883)
+2018-07-08 00:08:16,359 ERROR [JavaFX Application Thread     ] [FileUtils                     ]  - No files in C:\Users\Sergey\mqtt-spy\
+2018-07-08 00:08:16,920 INFO  [mqtt-spy [ConnectionRunnable for Sergey102615521@ems.insyte.ru:1883]] [MqttAsyncConnectionRunnable   ]  - Connecting client ID [Sergey102615521] to server [[tcp://ems.insyte.ru:1883]]; options = 
+============== Connection options ==============
+SocketFactory               :  null
+CleanSession                :  true
+MqttVersion                 :  0
+KeepAliveInterval           :  60
+ConTimeout                  :  30
+UserName                    :  null
+SSLProperties               :  null
+WillDestination             :  null
+==========================================
+
+2018-07-08 00:08:17,034 INFO  [MQTT Call: Sergey102615521    ] [MqttConnectionResultHandler   ]  - Sergey102615521@ems.insyte.ru:1883 connected
+2018-07-08 00:08:17,038 INFO  [JavaFX Application Thread     ] [MqttEventHandler              ]  - About to resubscribe to all requested topics
+2018-07-08 00:08:30,359 INFO  [JavaFX Application Thread     ] [NewSubscriptionController     ]  - Subscribing to variables/#
+2018-07-08 00:08:30,360 INFO  [JavaFX Application Thread     ] [MqttSubscriptionViewManager   ]  - Creating subscription for variables/#
+2018-07-08 00:08:30,470 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/#
+2018-07-08 00:08:51,683 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables/#
+2018-07-08 00:08:51,684 INFO  [JavaFX Application Thread     ] [MqttConnectionWithReconnection]  - Disconnecting Sergey102615521 from [tcp://ems.insyte.ru:1883]
+2018-07-08 00:08:51,691 INFO  [MQTT Disc: Sergey102615521    ] [MqttDisconnectionResultHandler]  - Sergey102615521@ems.insyte.ru:1883 disconnected
+2018-07-08 14:44:45,402 INFO  [JavaFX Application Thread     ] [MqttViewManager               ]  - Default configuration file present (C:\Users\Sergey\mqtt-spy\mqtt-spy-configuration.xml) = true
+2018-07-08 14:44:45,474 INFO  [JavaFX Application Thread     ] [MqttViewManager               ]  - Loading configuration file from C:\Users\Sergey\mqtt-spy\mqtt-spy-configuration.xml
+2018-07-08 14:45:00,209 INFO  [JavaFX Application Thread     ] [MqttConfigurationUtils        ]  - Auto-complete for server URI (ems.insyte.ru:1883 -> tcp://ems.insyte.ru:1883)
+2018-07-08 14:45:00,892 ERROR [JavaFX Application Thread     ] [FileUtils                     ]  - No files in C:\Users\Sergey\mqtt-spy\
+2018-07-08 14:45:01,454 INFO  [mqtt-spy [ConnectionRunnable for Sergey102615521@ems.insyte.ru:1883]] [MqttAsyncConnectionRunnable   ]  - Connecting client ID [Sergey102615521] to server [[tcp://ems.insyte.ru:1883]]; options = 
+============== Connection options ==============
+SocketFactory               :  null
+CleanSession                :  true
+MqttVersion                 :  0
+KeepAliveInterval           :  60
+ConTimeout                  :  30
+UserName                    :  null
+SSLProperties               :  null
+WillDestination             :  null
+==========================================
+
+2018-07-08 14:45:01,543 INFO  [MQTT Call: Sergey102615521    ] [MqttConnectionResultHandler   ]  - Sergey102615521@ems.insyte.ru:1883 connected
+2018-07-08 14:45:01,550 INFO  [JavaFX Application Thread     ] [MqttEventHandler              ]  - About to resubscribe to all requested topics
+2018-07-08 14:45:11,519 INFO  [JavaFX Application Thread     ] [NewSubscriptionController     ]  - Subscribing to variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel
+2018-07-08 14:45:11,521 INFO  [JavaFX Application Thread     ] [MqttSubscriptionViewManager   ]  - Creating subscription for variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel
+2018-07-08 14:45:11,626 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel
+2018-07-08 14:50:42,294 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel
+2018-07-08 14:50:42,296 INFO  [JavaFX Application Thread     ] [MqttConnectionWithReconnection]  - Disconnecting Sergey102615521 from [tcp://ems.insyte.ru:1883]
+2018-07-08 14:50:42,302 INFO  [MQTT Disc: Sergey102615521    ] [MqttDisconnectionResultHandler]  - Sergey102615521@ems.insyte.ru:1883 disconnected

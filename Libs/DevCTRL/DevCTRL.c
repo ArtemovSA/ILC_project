@@ -17,8 +17,7 @@ const uint8_t DC_const_gw_ip_addr[] = DC_DEF_GW_IP_ADDR;
 const uint8_t DC_const_net_mask[] = DC_DEF_NET_MASK;
 const uint8_t DC_const_MQTT_ip_broc[] = DC_DEF_MQTT_BROC_IP;
 const char DC_const_NTP_server_name[] = DC_DEF_NTP_SERVER;
-const char DC_const_serverDNS1[] = DC_DEF_DNS1;
-const char DC_const_serverDNS2[] = DC_DEF_DNS2;
+const char DC_const_serverDNS[] = DC_DEF_DNS;
 
 //Var
 DC_set_t DC_set; //Device settings
@@ -184,8 +183,7 @@ HAL_StatusTypeDef DC_load_settings()
   memcpy(DC_set.net_gw_ip_addr, DC_const_gw_ip_addr, 4);
   memcpy(DC_set.net_mask, DC_const_net_mask, 4);
   memcpy(DC_set.netNTP_server, DC_const_NTP_server_name, strlen(DC_const_NTP_server_name));
-  memcpy(DC_set.serverDNS1, DC_const_serverDNS1, 4);
-  memcpy(DC_set.serverDNS1, DC_const_serverDNS2, 4);
+  memcpy(DC_set.serverDNS, DC_const_serverDNS, 4);
 
   //MQTT
   memcpy(DC_set.MQTT_broc_ip, DC_const_MQTT_ip_broc, 4);

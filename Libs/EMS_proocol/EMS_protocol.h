@@ -44,7 +44,9 @@
 //**********************************Calibrate attributes********************************************
 
 #define EMS_JSON_CAL_CHANNEL_NAME       "CHANNEL"
-#define EMS_JSON_CAL_PHASE_NAME(n)      "PHASE#n"
+#define EMS_JSON_CAL_PHASEA_NAME        "PHASEA"
+#define EMS_JSON_CAL_PHASEB_NAME        "PHASEB"
+#define EMS_JSON_CAL_PHASEC_NAME        "PHASEC"
 //Total RMS
 #define EMS_JSON_CAL_WARTU              "WARTU"         //коэффициент усиления по напряжению
 #define EMS_JSON_CAL_WARTI              "WARTI"         //коэффициент усиления по току
