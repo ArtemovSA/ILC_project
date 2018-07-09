@@ -16,7 +16,9 @@ enum{
   USB_RET_OK = 1,
   USB_RET_ERROR,
   USB_RET_ADDR_ERR,
-  USB_RET_OVERF
+  USB_RET_OVERF,
+  USB_RET_NANS,
+  USB_RET_NEXIST
 };
 
 //Commands
