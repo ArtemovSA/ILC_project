@@ -37,7 +37,7 @@ void USB_msg_process()
      
      //Write array
      case USB_CMD_FLASH_ARR_WRITE:
-       block = (USB_rx_buf[1]<<8) | USB_rx_buf[2] ;
+       block = (USB_rx_buf[1]<<8) | USB_rx_buf[2];
        page = (USB_rx_buf[3]<<8) | USB_rx_buf[4];
        len = (USB_rx_buf[5]<<8) | USB_rx_buf[6];
        
@@ -73,90 +73,90 @@ void USB_msg_process()
        
      case USB_CMD_FLASH_ARR_READ:
        
-      addr = (USB_rx_buf[1]<<16) | (USB_rx_buf[2]<<8) | USB_rx_buf[3];
-      len = ADD(USB_rx_buf[5],USB_rx_buf[4]);
-      
-      memset(USB_tx_buf,0,sizeof(USB_tx_buf));
-      
-      if ( xSemaphoreTake(extFlash_mutex, 100) == pdTRUE ) {
-        EXT_Flash_readData(addr, &USB_tx_buf[6], len); //Читать данные из флеш
-        xSemaphoreGive(extFlash_mutex);
+//      addr = (USB_rx_buf[1]<<16) | (USB_rx_buf[2]<<8) | USB_rx_buf[3];
+//      len = ADD(USB_rx_buf[5],USB_rx_buf[4]);
+//      
+//      memset(USB_tx_buf,0,sizeof(USB_tx_buf));
+//      
+//      if ( xSemaphoreTake(extFlash_mutex, 100) == pdTRUE ) {
+//        EXT_Flash_readData(addr, &USB_tx_buf[6], len); //Читать данные из флеш
+//        xSemaphoreGive(extFlash_mutex);
         
         //Формирование ответа
-        memcpy(USB_tx_buf, USB_rx_buf, 5);
+//        memcpy(USB_tx_buf, USB_rx_buf, 5);
 //        USB_tx_buf[0] = USB_rx_buf[0]; //Команда
 //        USB_tx_buf[1] = USB_rx_buf[1]; //Адрес
 //        USB_tx_buf[2] = USB_rx_buf[2]; //Адрес
 //        USB_tx_buf[3] = USB_rx_buf[3]; //Адрес
 //        USB_tx_buf[4] = USB_rx_buf[4]; //Длина
 //        USB_tx_buf[5] = USB_rx_buf[5]; //Длина
-        
-        
-        //Расчет CRC
-        crc_val = crc16(USB_tx_buf,len+6);
-        USB_tx_buf[len+6] = (crc_val & 0x00FF); //CRC16
-        USB_tx_buf[len+7] = (crc_val & 0xFF00) >> 8; //CRC16
-        
-        USB_tx_buf[len+8] = USB_STOP_1; //Стоповый байт
-        USB_tx_buf[len+9] = USB_STOP_2; //Стоповый байт        
-      
-        USB_Send(USB_tx_buf,len+10); //Отправить ответ
-
-      }
+//        
+//        
+//        //Расчет CRC
+//        crc_val = crc16(USB_tx_buf,len+6);
+//        USB_tx_buf[len+6] = (crc_val & 0x00FF); //CRC16
+//        USB_tx_buf[len+7] = (crc_val & 0xFF00) >> 8; //CRC16
+//        
+//        USB_tx_buf[len+8] = USB_STOP_1; //Стоповый байт
+//        USB_tx_buf[len+9] = USB_STOP_2; //Стоповый байт        
+//      
+//        USB_Send(USB_tx_buf,len+10); //Отправить ответ
+//
+//      }
       
       break;
      case USB_CMD_FLASH_BYTE_WRITE:
-       
-      addr = (USB_tx_buf[1]<<16) | (USB_tx_buf[2]<<8) | USB_tx_buf[3];
-
-      if ( xSemaphoreTake(extFlash_mutex, 100) == pdTRUE ) {
-        EXT_Flash_ReWriteData(addr,&USB_rx_buf[4], 1); //Записать данные   
-        xSemaphoreGive(extFlash_mutex);
+//       
+//      addr = (USB_tx_buf[1]<<16) | (USB_tx_buf[2]<<8) | USB_tx_buf[3];
+//
+//      if ( xSemaphoreTake(extFlash_mutex, 100) == pdTRUE ) {
+//        EXT_Flash_ReWriteData(addr,&USB_rx_buf[4], 1); //Записать данные   
+//        xSemaphoreGive(extFlash_mutex);
         
         //Формирование ответа
-        memcpy(USB_tx_buf, USB_rx_buf, 3);
+//        memcpy(USB_tx_buf, USB_rx_buf, 3);
 //        USB_tx_buf[0] = USB_rx_buf[0]; //Команда
 //        USB_tx_buf[1] = USB_rx_buf[1]; //Адрес
 //        USB_tx_buf[2] = USB_rx_buf[2]; //Адрес
 //        USB_tx_buf[3] = USB_rx_buf[3]; //Адрес
         
-        //Расчет CRC
-        crc_val = crc16(USB_tx_buf,4);
-        USB_tx_buf[4] = (crc_val & 0x00FF); //CRC16
-        USB_tx_buf[5] = (crc_val & 0xFF00) >> 8; //CRC16
-        
-        USB_tx_buf[6] = USB_STOP_1; //Стоповый байт
-        USB_tx_buf[7] = USB_STOP_2; //Стоповый байт        
-        
-        USB_Send(USB_tx_buf,8); //Отправить ответ
-      }
+//        //Расчет CRC
+//        crc_val = crc16(USB_tx_buf,4);
+//        USB_tx_buf[4] = (crc_val & 0x00FF); //CRC16
+//        USB_tx_buf[5] = (crc_val & 0xFF00) >> 8; //CRC16
+//        
+//        USB_tx_buf[6] = USB_STOP_1; //Стоповый байт
+//        USB_tx_buf[7] = USB_STOP_2; //Стоповый байт        
+//        
+//        USB_Send(USB_tx_buf,8); //Отправить ответ
+//      }
       
        break;
      case USB_CMD_FLASH_BYTE_READ:
        
-      addr = (USB_rx_buf[1]<<16) | (USB_rx_buf[2]<<8) | USB_rx_buf[3];
-
-      if ( xSemaphoreTake(extFlash_mutex, 100) == pdTRUE ) {
-        EXT_Flash_readData(addr, &USB_tx_buf[4], 1); //Читать данные из флеш
-        xSemaphoreGive(extFlash_mutex);
-        
-        //Формирование ответа
-        memcpy(USB_tx_buf, USB_rx_buf, 3);
-//        USB_tx_buf[0] = USB_rx_buf[0]; //Команда
-//        USB_tx_buf[1] = USB_rx_buf[1]; //Адрес
-//        USB_tx_buf[2] = USB_rx_buf[2]; //Адрес
-//        USB_tx_buf[3] = USB_rx_buf[3]; //Адрес
-        
-        //Расчет CRC
-        crc_val = crc16(USB_tx_buf,5);
-        USB_tx_buf[5] = (crc_val & 0x00FF); //CRC16
-        USB_tx_buf[6] = (crc_val & 0xFF00) >> 8; //CRC16
-        
-        USB_tx_buf[7] = USB_STOP_1; //Стоповый байт
-        USB_tx_buf[8] = USB_STOP_2; //Стоповый байт        
-        
-        USB_Send(USB_tx_buf,9); //Отправить ответ
-      }
+//      addr = (USB_rx_buf[1]<<16) | (USB_rx_buf[2]<<8) | USB_rx_buf[3];
+//
+//      if ( xSemaphoreTake(extFlash_mutex, 100) == pdTRUE ) {
+//        EXT_Flash_readData(addr, &USB_tx_buf[4], 1); //Читать данные из флеш
+//        xSemaphoreGive(extFlash_mutex);
+//        
+//        //Формирование ответа
+//        memcpy(USB_tx_buf, USB_rx_buf, 3);
+////        USB_tx_buf[0] = USB_rx_buf[0]; //Команда
+////        USB_tx_buf[1] = USB_rx_buf[1]; //Адрес
+////        USB_tx_buf[2] = USB_rx_buf[2]; //Адрес
+////        USB_tx_buf[3] = USB_rx_buf[3]; //Адрес
+//        
+//        //Расчет CRC
+//        crc_val = crc16(USB_tx_buf,5);
+//        USB_tx_buf[5] = (crc_val & 0x00FF); //CRC16
+//        USB_tx_buf[6] = (crc_val & 0xFF00) >> 8; //CRC16
+//        
+//        USB_tx_buf[7] = USB_STOP_1; //Стоповый байт
+//        USB_tx_buf[8] = USB_STOP_2; //Стоповый байт        
+//        
+//        USB_Send(USB_tx_buf,9); //Отправить ответ
+//      }
       
       break;
      }

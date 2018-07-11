@@ -11,12 +11,12 @@ ByteLimit=50
 [StLinkDriver]
 CStepIntDis=_ 0
 LeaveTargetRunning=_ 0
-stlinkserialNo=30303031
-stlinkfoundProbes=
+stlinkserialNo=40450487
+stlinkfoundProbes=00000001:40450487:
 stlinkResetStyle=0
 stlinkResetStrategy=3
 [DebugChecksum]
-Checksum=944189498
+Checksum=-1833775133
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -105,11 +105,8 @@ ShowTiming=1
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\Libs\FW_update\FW_update.c}.74.3" 0 0 1 "" 0 "" 0
-Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\Libs\FW_update\FW_update.c}.76.5" 0 0 1 "" 0 "" 0
-Bp2=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\Libs\FW_update\FW_update.c}.80.3" 0 0 1 "" 0 "" 0
-Bp3=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Src\fatfs.c}.63.3" 0 0 1 "" 0 "" 0
-Count=4
+Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Src\fatfs.c}.63.3" 0 0 1 "" 0 "" 0
+Count=1
 [Aliases]
 Count=0
 SuppressDialog=0

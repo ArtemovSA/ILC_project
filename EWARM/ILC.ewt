@@ -3,7 +3,7 @@
 <project>
   <fileVersion>2</fileVersion>
   <configuration>
-    <name>ILC</name>
+    <name>ILC_edit</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -1179,6 +1179,9 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\Src\freertos.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Inc\FreeRTOSConfig.h</name>
       </file>
       <file>
         <name>$PROJ_DIR$\..\Src\lwip.c</name>

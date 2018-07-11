@@ -8,6 +8,7 @@
 #include "Memory.h"
 #include "Network.h"
 #include "fatfs.h"
+#include "task.h"
 
 //topic list
 devMQTT_topic emsTopics[EMS_TOPID_COUNT];
@@ -70,13 +71,13 @@ void EMS_init()
   /* init code for FATFS */
   MX_FATFS_Init();
   
-  extern char SDPath[4]; /* SD logical drive path */
-  FATFS fileSystem;
-  FIL testFile;
-  FRESULT res;
-  uint8_t testBuffer[16] = "SD write success";
-  char path[] = "testfile.txt";
-  uint32_t testBytes;
+//  extern char SDPath[4]; /* SD logical drive path */
+//  FATFS fileSystem;
+//  FIL testFile;
+//  FRESULT res;
+//  uint8_t testBuffer[16] = "SD write success";
+//  char path[] = "testfile.txt";
+//  uint32_t testBytes;
   
   //Init log file on sd
 //  if(FATFS_LinkDriver(&SD_Driver, SDPath) == 0)
@@ -460,6 +461,24 @@ void EMS_callBack(uint16_t topic_ID, uint8_t* data, uint16_t len)
     }
 }
 //------------------------------------------------------------------------------
+//Add float
+void EMS_AddFloatToObject(cJSON * const object, const char * const name, float value)
+{
+  char strBuf[20];
+  
+  sprintf(strBuf, "%.3f", value);
+  cJSON_AddStringToObject(object, name, strBuf);
+}
+//------------------------------------------------------------------------------
+//Add int
+void EMS_AddIntToObject(cJSON * const object, const char * const name, uint64_t value)
+{
+  char strBuf[20];
+  
+  sprintf(strBuf, "%lld", value);
+  cJSON_AddStringToObject(object, name, strBuf);
+}
+//------------------------------------------------------------------------------
 //Send Channel vars
 void EMS_sendChannelVars(uint8_t channel_num)
 {
@@ -471,36 +490,38 @@ void EMS_sendChannelVars(uint8_t channel_num)
   cJSON *phaseC = NULL;
   cJSON *channel = NULL;
   
+  
   //Phase values
   phaseA = cJSON_CreateObject();
-  cJSON_AddNumberToObject(phaseA, EMS_JSON_VAL_RMSV, meshChan[channel_num].phaseA.RMSV);
-  cJSON_AddNumberToObject(phaseA, EMS_JSON_VAL_RMSI, meshChan[channel_num].phaseA.RMSI);
-  cJSON_AddNumberToObject(phaseA, EMS_JSON_VAL_RMSP, meshChan[channel_num].phaseA.RMSP);
-  cJSON_AddNumberToObject(phaseA, EMS_JSON_VAL_RMSRP, meshChan[channel_num].phaseA.RMSRP);
-  cJSON_AddNumberToObject(phaseA, EMS_JSON_VAL_COSFI, meshChan[channel_num].phaseA.COSFI);
-  cJSON_AddNumberToObject(phaseA, EMS_JSON_VAL_CONSSP, meshChan[channel_num].phaseA.CONSSP);
-  cJSON_AddNumberToObject(phaseA, EMS_JSON_VAL_CONSP, meshChan[channel_num].phaseA.CONSP);
-  cJSON_AddNumberToObject(phaseA, EMS_JSON_VAL_CONSRP, meshChan[channel_num].phaseA.CONSRP);
+  
+  EMS_AddFloatToObject(phaseA, EMS_JSON_VAL_RMSV, meshChan[channel_num].phaseA.RMSV);
+  EMS_AddFloatToObject(phaseA, EMS_JSON_VAL_RMSI, meshChan[channel_num].phaseA.RMSI);
+  EMS_AddFloatToObject(phaseA, EMS_JSON_VAL_RMSP, meshChan[channel_num].phaseA.RMSP);
+  EMS_AddFloatToObject(phaseA, EMS_JSON_VAL_RMSRP, meshChan[channel_num].phaseA.RMSRP);
+  EMS_AddFloatToObject(phaseA, EMS_JSON_VAL_COSFI, meshChan[channel_num].phaseA.COSFI);
+  EMS_AddIntToObject(phaseA, EMS_JSON_VAL_CONSSP, meshChan[channel_num].phaseA.CONSSP);
+  EMS_AddIntToObject(phaseA, EMS_JSON_VAL_CONSP, meshChan[channel_num].phaseA.CONSP);
+  EMS_AddIntToObject(phaseA, EMS_JSON_VAL_CONSRP, meshChan[channel_num].phaseA.CONSRP);
   
   phaseB = cJSON_CreateObject();
-  cJSON_AddNumberToObject(phaseB, EMS_JSON_VAL_RMSV, meshChan[channel_num].phaseB.RMSV);
-  cJSON_AddNumberToObject(phaseB, EMS_JSON_VAL_RMSI, meshChan[channel_num].phaseB.RMSI);
-  cJSON_AddNumberToObject(phaseB, EMS_JSON_VAL_RMSP, meshChan[channel_num].phaseB.RMSP);
-  cJSON_AddNumberToObject(phaseB, EMS_JSON_VAL_RMSRP, meshChan[channel_num].phaseB.RMSRP);
-  cJSON_AddNumberToObject(phaseB, EMS_JSON_VAL_COSFI, meshChan[channel_num].phaseB.COSFI);
-  cJSON_AddNumberToObject(phaseB, EMS_JSON_VAL_CONSSP, meshChan[channel_num].phaseB.CONSSP);
-  cJSON_AddNumberToObject(phaseB, EMS_JSON_VAL_CONSP, meshChan[channel_num].phaseB.CONSP);
-  cJSON_AddNumberToObject(phaseB, EMS_JSON_VAL_CONSRP, meshChan[channel_num].phaseB.CONSRP);
+  EMS_AddFloatToObject(phaseB, EMS_JSON_VAL_RMSV, meshChan[channel_num].phaseB.RMSV);
+  EMS_AddFloatToObject(phaseB, EMS_JSON_VAL_RMSI, meshChan[channel_num].phaseB.RMSI);
+  EMS_AddFloatToObject(phaseB, EMS_JSON_VAL_RMSP, meshChan[channel_num].phaseB.RMSP);
+  EMS_AddFloatToObject(phaseB, EMS_JSON_VAL_RMSRP, meshChan[channel_num].phaseB.RMSRP);
+  EMS_AddFloatToObject(phaseB, EMS_JSON_VAL_COSFI, meshChan[channel_num].phaseB.COSFI);
+  EMS_AddIntToObject(phaseB, EMS_JSON_VAL_CONSSP, meshChan[channel_num].phaseB.CONSSP);
+  EMS_AddIntToObject(phaseB, EMS_JSON_VAL_CONSP, meshChan[channel_num].phaseB.CONSP);
+  EMS_AddIntToObject(phaseB, EMS_JSON_VAL_CONSRP, meshChan[channel_num].phaseB.CONSRP);
   
   phaseC = cJSON_CreateObject();
-  cJSON_AddNumberToObject(phaseC, EMS_JSON_VAL_RMSV, meshChan[channel_num].phaseC.RMSV);
-  cJSON_AddNumberToObject(phaseC, EMS_JSON_VAL_RMSI, meshChan[channel_num].phaseC.RMSI);
-  cJSON_AddNumberToObject(phaseC, EMS_JSON_VAL_RMSP, meshChan[channel_num].phaseC.RMSP);
-  cJSON_AddNumberToObject(phaseC, EMS_JSON_VAL_RMSRP, meshChan[channel_num].phaseC.RMSRP);
-  cJSON_AddNumberToObject(phaseC, EMS_JSON_VAL_COSFI, meshChan[channel_num].phaseC.COSFI);
-  cJSON_AddNumberToObject(phaseC, EMS_JSON_VAL_CONSSP, meshChan[channel_num].phaseC.CONSSP);
-  cJSON_AddNumberToObject(phaseC, EMS_JSON_VAL_CONSP, meshChan[channel_num].phaseC.CONSP);
-  cJSON_AddNumberToObject(phaseC, EMS_JSON_VAL_CONSRP, meshChan[channel_num].phaseC.CONSRP);
+  EMS_AddFloatToObject(phaseC, EMS_JSON_VAL_RMSV, meshChan[channel_num].phaseC.RMSV);
+  EMS_AddFloatToObject(phaseC, EMS_JSON_VAL_RMSI, meshChan[channel_num].phaseC.RMSI);
+  EMS_AddFloatToObject(phaseC, EMS_JSON_VAL_RMSP, meshChan[channel_num].phaseC.RMSP);
+  EMS_AddFloatToObject(phaseC, EMS_JSON_VAL_RMSRP, meshChan[channel_num].phaseC.RMSRP);
+  EMS_AddFloatToObject(phaseC, EMS_JSON_VAL_COSFI, meshChan[channel_num].phaseC.COSFI);
+  EMS_AddIntToObject(phaseC, EMS_JSON_VAL_CONSSP, meshChan[channel_num].phaseC.CONSSP);
+  EMS_AddIntToObject(phaseC, EMS_JSON_VAL_CONSP, meshChan[channel_num].phaseC.CONSP);
+  EMS_AddIntToObject(phaseC, EMS_JSON_VAL_CONSRP, meshChan[channel_num].phaseC.CONSRP);
   
   //Channel values
   channel = cJSON_CreateObject();
@@ -509,10 +530,10 @@ void EMS_sendChannelVars(uint8_t channel_num)
   cJSON_AddItemToObject(channel, EMS_JSON_CAL_PHASEC_NAME, phaseC);
   
   //Main parameters
-  cJSON_AddNumberToObject(channel, EMS_JSON_VAL_FREQ, meshChan[channel_num].FREQ);
-  cJSON_AddNumberToObject(channel, EMS_JSON_VAL_RMSIN, meshChan[channel_num].RMSNI);
-  cJSON_AddNumberToObject(channel, EMS_JSON_VAL_CONSSP, meshChan[channel_num].CONSSP);
-  cJSON_AddNumberToObject(channel, EMS_JSON_VAL_COSFIS, meshChan[channel_num].COSFIS);
+  EMS_AddFloatToObject(channel, EMS_JSON_VAL_FREQ, meshChan[channel_num].FREQ);
+  EMS_AddFloatToObject(channel, EMS_JSON_VAL_RMSIN, meshChan[channel_num].RMSNI);
+  EMS_AddIntToObject(channel, EMS_JSON_VAL_CONSSP, meshChan[channel_num].CONSSP);
+  EMS_AddFloatToObject(channel, EMS_JSON_VAL_COSFIS, meshChan[channel_num].COSFIS);
   
   cJSON_AddItemToObject(vars, EMS_JSON_VAL_CHANNEL_VAL, channel);
   cJSON_AddNumberToObject(vars, EMS_JSON_VAL_CHANNEL_NUM, channel_num);
@@ -530,29 +551,66 @@ void EMS_sendChannelVars(uint8_t channel_num)
   cJSON_Delete(root);
   //DC_debugOut(out);
   
-  devMQTT_publish(emsTopics[EMS_TOPID_VAR_CHAN].name, (uint8_t*)out, strlen(out), DC_set.MQTT_qos);
+  if (devMQTT_publish(emsTopics[EMS_TOPID_VAR_CHAN].name, (uint8_t*)out, strlen(out), DC_set.MQTT_qos) != HAL_OK)
+  {
+    if (DC_set.MQTT_broc_ch == 0)
+    {
+      devMQTT_connect(DC_set.MQTT_broc_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
+      DC_debug_ipAdrrOut("# MQTT connection server by IP#: ", DC_set.MQTT_broc_ip);
+    }else{
+      uint8_t broc_ip;
+      NW_getIP_byDomen(DC_set.MQTT_broc_domen, &broc_ip);
+      devMQTT_connect(&broc_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
+      DC_debugOut("# MQTT connection server by Domen#: %s OK\r\n", DC_set.MQTT_broc_domen);
+    }
+  }
+  
   vPortFree(out);
 }
 //------------------------------------------------------------------------------
 //Debug out counter outputs variables
 void EMS_ChannelDebugOut(uint8_t channel)
 {
-  DC_debugOut("@ ch %d FREQ: %2f | RMSNI: %2f | CONSSP: %2f | COSFIS: %2f\r\n" ,meshChan[channel].FREQ, meshChan[channel].RMSNI, meshChan[channel].CONSSP, meshChan[channel].COSFIS);
+  DC_debugOut("@ ch %d FREQ: %2f | RMSNI: %2f | CONSSP: %2f | COSFIS: %2f\r\n", channel, meshChan[channel].FREQ, meshChan[channel].RMSNI, meshChan[channel].CONSSP, meshChan[channel].COSFIS);
   DC_debugOut("@ ch %d RMSU A: %2f | RMSU B: %2f | RMSU C: %2f\r\n", channel, meshChan[channel].phaseA.RMSV, meshChan[channel].phaseB.RMSV, meshChan[channel].phaseC.RMSV);
   DC_debugOut("@ ch %d RMSI A: %2f | RMSI B: %2f | RMSI C: %2f\r\n", channel, meshChan[channel].phaseA.RMSI, meshChan[channel].phaseB.RMSI, meshChan[channel].phaseC.RMSI);
   DC_debugOut("@ ch %d RMSP A: %2f | RMSP B: %2f | RMSP C: %2f\r\n", channel, meshChan[channel].phaseA.RMSP, meshChan[channel].phaseB.RMSP, meshChan[channel].phaseC.RMSP);
   DC_debugOut("@ ch %d RMSRP A: %2f | RMSRP B: %2f | RMSRP C: %2f\r\n", channel, meshChan[channel].phaseA.RMSRP, meshChan[channel].phaseB.RMSRP, meshChan[channel].phaseC.RMSRP);
+  DC_debugOut("@ ch %d CONSSP A: %lld | CONSSP B: %lld | CONSSP C: %lld\r\n", channel, meshChan[channel].phaseA.CONSSP, meshChan[channel].phaseB.CONSSP, meshChan[channel].phaseC.CONSSP);
+  DC_debugOut("@ ch %d CONSP A: %lld | CONSP B: %lld | CONSP C: %lld\r\n", channel, meshChan[channel].phaseA.CONSP, meshChan[channel].phaseB.CONSP, meshChan[channel].phaseC.CONSP);
+  DC_debugOut("@ ch %d CONSRP A: %lld | CONSRP B: %lld | CONSRP C: %lld\r\n", channel, meshChan[channel].phaseA.CONSRP, meshChan[channel].phaseB.CONSRP, meshChan[channel].phaseC.CONSRP);
 }
+
 //******************************************************************************
 // startEMS_task function
 void startEMS_task(void const * argument)
 { 
+  TickType_t xLastWakeTime = xTaskGetTickCount();
+  
   V9203_init(&hspi1);
   
   for (int i=0; i<DC_V9203_COUNT_CHANNELS; i++)
     V9203_initDev(i, &DC_set.V9203_ch_set[i]); //Init dev
   
   EMS_init();
+  
+  //Clear S consamption
+  V9203_clearSCons(0, LINE_A);
+  V9203_clearSCons(0, LINE_B);
+  V9203_clearSCons(0, LINE_C);
+  V9203_clearSCons(0, LINE_S);
+  
+  //Clear Q consamption
+  V9203_clearQCons(0, LINE_A);
+  V9203_clearQCons(0, LINE_B);
+  V9203_clearQCons(0, LINE_C);
+  V9203_clearQCons(0, LINE_S);
+  
+  //Clear P consamption
+  V9203_clearPCons(0, LINE_A);
+  V9203_clearPCons(0, LINE_B);
+  V9203_clearPCons(0, LINE_C);
+  V9203_clearPCons(0, LINE_S);
   
   while(1)
   {
@@ -612,11 +670,14 @@ void startEMS_task(void const * argument)
 
       //Debug out counter outputs variables
       EMS_ChannelDebugOut(i);
-      
-      //Send vars
-      EMS_sendChannelVars(i);
     }
     
     vTaskDelay(DC_set.EMS_out_period*1000);
+    //vTaskDelayUntil( &xLastWakeTime, (const TickType_t) DC_set.EMS_out_period*1000);
+    
+    for (int i=0; i < DC_V9203_COUNT_CHANNELS; i++)
+    {
+      EMS_sendChannelVars(i);//Send vars
+    }
   }
 }

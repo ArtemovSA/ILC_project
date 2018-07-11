@@ -6,6 +6,7 @@
 #include "DevCTRL.h"
 #include "PCA9555.h"
 #include "cmsis_os.h"
+#include "math.h"
 
 //Var
 SPI_HandleTypeDef *V9203_hspi; //SPI pointer
@@ -438,7 +439,6 @@ static uint16_t V9203_crc16(const void *data, unsigned data_size)
     crc = (crc >> 8) ^ V9203_crc16_table[(unsigned char)crc ^ *buf++];
   return crc;
 }
-
 //***********************************************API************************************************
 //Get frequency
 float V9203_getFreq(uint8_t channel, V9203_line_t line)
@@ -469,7 +469,7 @@ float V9203_getFreq(uint8_t channel, V9203_line_t line)
   }
   
   //Check return data
-  if (regData > 0xFFFF)
+  if (regData >= 0xFFFF)
     return -1;
   
   return regData*V9203_FREQ_MES_RES;
@@ -503,7 +503,11 @@ float V9203_getRMS_Voltage(uint8_t channel, V9203_line_t line)
     return -1;
   }
   
-  return regData;
+  //Check return data
+  if (regData == 0xFFFFFFFF)
+    return -1;
+  
+  return (float)regData/V9203_DEF_PROP_VOLTAGE;
 }
 //----------------------------------------------------------------------------------
 //Get RMS current
@@ -535,7 +539,11 @@ float V9203_getRMS_Current(uint8_t channel, V9203_line_t line)
     return -1;
   }
   
-  return regData;
+  //Check return data
+  if (regData == 0xFFFFFFFF)
+    return -1;
+  
+  return (float)regData/V9203_DEF_PROP_CURRENT;
 }
 //----------------------------------------------------------------------------------
 //Get power
@@ -566,7 +574,11 @@ float V9203_getRMS_Power(uint8_t channel, V9203_line_t line)
     return -1;
   }
   
-  return regData;
+  //Check return data
+  if (regData == 0xFFFFFFFF)
+    return -1;
+  
+  return (float)regData/V9203_DEF_PROP_RPOWER;
 }
 //----------------------------------------------------------------------------------
 //Get reactive power
@@ -597,7 +609,11 @@ float V9203_getRMS_reactivePower(uint8_t channel, V9203_line_t line)
     return -1;
   }
   
-  return regData;
+  //Check return data
+  if (regData == 0xFFFFFFFF)
+    return -1;
+  
+  return (float)regData/V9203_DEF_PROP_POWER;
 }
 //----------------------------------------------------------------------------------
 //Get S Consamption
@@ -627,7 +643,7 @@ uint64_t V9203_getSCons(uint8_t channel, V9203_line_t line)
   if (V9203_rd_flash(channel, regAddrHI, &regDataHI) != HAL_OK)
   {
     DC_debugOut("# Full cons ERROR\r\n");
-    return -1;
+    return 0;
   }
 
   if (V9203_rd_flash(channel, regAddrLO, &regDataLO) != HAL_OK)
@@ -637,6 +653,11 @@ uint64_t V9203_getSCons(uint8_t channel, V9203_line_t line)
   }
   
   value = (uint64_t)(regDataHI << 31)|regDataLO;
+  
+  //Check return data
+  if (value >= 0xFFFFFFFF)
+    return 0;
+  
   
   return value;
 }
@@ -668,7 +689,7 @@ uint64_t V9203_getPCons(uint8_t channel, V9203_line_t line)
   if (V9203_rd_flash(channel, regAddrHI, &regDataHI) != HAL_OK)
   {
     DC_debugOut("# Active cons ERROR\r\n");
-    return -1;
+    return 0;
   }
 
   if (V9203_rd_flash(channel, regAddrLO, &regDataLO) != HAL_OK)
@@ -678,6 +699,10 @@ uint64_t V9203_getPCons(uint8_t channel, V9203_line_t line)
   }
   
   value = (uint64_t)(regDataHI << 31)|regDataLO;
+  
+  //Check return data
+  if (value >= 0xFFFFFFFF)
+    return 0;
   
   return value;
 }
@@ -709,7 +734,7 @@ uint64_t V9203_getQCons(uint8_t channel, V9203_line_t line)
   if (V9203_rd_flash(channel, regAddrHI, &regDataHI) != HAL_OK)
   {
     DC_debugOut("# Reactive cons ERROR\r\n");
-    return -1;
+    return 0;
   }
 
   if (V9203_rd_flash(channel, regAddrLO, &regDataLO) != HAL_OK)
@@ -719,6 +744,10 @@ uint64_t V9203_getQCons(uint8_t channel, V9203_line_t line)
   }
   
   value = (uint64_t)(regDataHI << 31)|regDataLO;
+  
+  //Check return data
+  if (value >= 0xFFFFFFFF)
+    return 0;
   
   return value;
 }
@@ -752,5 +781,126 @@ float V9203_getCOSfi(uint8_t channel, V9203_line_t line)
     return -1;
   }
   
-  return (float)regData;
+  //Check return data
+  if (regData >= 0x9FFFFFFF)
+    return -1;
+  
+  return (float)regData/V9203_DEF_PROP_COSFI;
+}
+//----------------------------------------------------------------------------------
+//Clear P consamption
+HAL_StatusTypeDef V9203_clearPCons(uint8_t channel, V9203_line_t line)
+{
+  uint64_t value = 0;
+  uint16_t regAddrHI, regAddrLO;
+  uint32_t regDataHI, regDataLO;
+  
+  //Check channel
+  if (channel > DC_V9203_COUNT_CHANNELS)
+  {
+    DC_debugOut("# Channel num ERROR\r\n");
+    return 0;
+  }
+  
+  //Get register address
+  switch(line)
+  {
+  case LINE_A: regAddrHI = RegEGYPAH; regAddrLO = RegEGYPAL; break;
+  case LINE_B: regAddrHI = RegEGYPBH; regAddrLO = RegEGYPBL; break;
+  case LINE_C: regAddrHI = RegEGYPCH; regAddrLO = RegEGYPCL; break;
+  case LINE_S: regAddrHI = RegEGYPS0H; regAddrLO = RegEGYPS0L;  break;
+  default: DC_debugOut("# Line num ERROR\r\n"); return -1;
+  }
+
+  if (V9203_wr_flash(channel, regAddrHI, 0) != HAL_OK)
+  {
+    DC_debugOut("# Active cons clear ERROR\r\n");
+    return HAL_ERROR;
+  }
+
+  if (V9203_wr_flash(channel, regAddrLO, 0) != HAL_OK)
+  {
+    DC_debugOut("# Active cons clear ERROR\r\n");
+    return HAL_ERROR;
+  }
+
+  return HAL_OK;
+}
+//----------------------------------------------------------------------------------
+//Clear Q consamption
+HAL_StatusTypeDef V9203_clearQCons(uint8_t channel, V9203_line_t line)
+{
+  uint64_t value = 0;
+  uint16_t regAddrHI, regAddrLO;
+  uint32_t regDataHI, regDataLO;
+  
+  //Check channel
+  if (channel > DC_V9203_COUNT_CHANNELS)
+  {
+    DC_debugOut("# Channel num ERROR\r\n");
+    return 0;
+  }
+  
+  //Get register address
+  switch(line)
+  {
+  case LINE_A: regAddrHI = RegEGYQAH; regAddrLO = RegEGYQAL; break;
+  case LINE_B: regAddrHI = RegEGYQBH; regAddrLO = RegEGYQBL; break;
+  case LINE_C: regAddrHI = RegEGYQCH; regAddrLO = RegEGYQCL; break;
+  case LINE_S: regAddrHI = RegEGYQS0H; regAddrLO = RegEGYQS0L;  break;
+  default: DC_debugOut("# Line num ERROR\r\n"); return -1;
+  }
+
+  if (V9203_wr_flash(channel, regAddrHI, 0) != HAL_OK)
+  {
+    DC_debugOut("# Reactive cons clear ERROR\r\n");
+    return HAL_ERROR;
+  }
+
+  if (V9203_wr_flash(channel, regAddrLO, 0) != HAL_OK)
+  {
+    DC_debugOut("# Reactive cons clear ERROR\r\n");
+    return HAL_ERROR;
+  }
+  
+  return HAL_OK; 
+}
+//----------------------------------------------------------------------------------
+//Clear S consamption
+HAL_StatusTypeDef V9203_clearSCons(uint8_t channel, V9203_line_t line)
+{
+  uint64_t value = 0;
+  uint16_t regAddrHI, regAddrLO;
+  uint32_t regDataHI, regDataLO;
+  
+  //Check channel
+  if (channel > DC_V9203_COUNT_CHANNELS)
+  {
+    DC_debugOut("# Channel num ERROR\r\n");
+    return 0;
+  }
+  
+  //Get register address
+  switch(line)
+  {
+  case LINE_A: regAddrHI = RegEGYAPPAH; regAddrLO = RegEGYAPPAL; break;
+  case LINE_B: regAddrHI = RegEGYAPPBH; regAddrLO = RegEGYAPPBL; break;
+  case LINE_C: regAddrHI = RegEGYAPPCH; regAddrLO = RegEGYAPPCL; break;
+  case LINE_S: regAddrHI = RegEGYAPPSH; regAddrLO = RegEGYAPPSL;  break;
+  default: DC_debugOut("# Line num ERROR\r\n"); return -1;
+  }
+
+  if (V9203_wr_flash(channel, regAddrHI, 0) != HAL_OK)
+  {
+    DC_debugOut("# Full cons clear ERROR\r\n");
+    return HAL_ERROR;
+  }
+
+  if (V9203_wr_flash(channel, regAddrLO, 0) != HAL_OK)
+  {
+    DC_debugOut("# Full cons clear ERROR\r\n");
+    return HAL_ERROR;
+  }
+
+  return HAL_OK;
 }

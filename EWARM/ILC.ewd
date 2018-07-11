@@ -3,7 +3,7 @@
 <project>
   <fileVersion>2</fileVersion>
   <configuration>
-    <name>ILC</name>
+    <name>ILC_edit</name>
     <toolchain>
       <name>ARM</name>
     </toolchain>
@@ -1204,7 +1204,7 @@
         </option>
         <option>
           <name>CCSTLinkInterfaceRadio</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCSTLinkInterfaceCmdLine</name>
@@ -1289,7 +1289,7 @@
         </option>
         <option>
           <name>CCSTLinkUsbSerialNoSelect</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>CCSTLinkJtagSpeedList</name>

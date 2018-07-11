@@ -135,6 +135,8 @@ int main(void)
   MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
   
+  goto jump_to_application;
+  
   //Init memory
   MEM_init(&hsram1, &hsram2, &hnand1);
   

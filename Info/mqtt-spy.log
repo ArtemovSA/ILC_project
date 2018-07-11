@@ -2375,3 +2375,50 @@ WillDestination             :  null
 2018-07-08 14:50:42,294 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel
 2018-07-08 14:50:42,296 INFO  [JavaFX Application Thread     ] [MqttConnectionWithReconnection]  - Disconnecting Sergey102615521 from [tcp://ems.insyte.ru:1883]
 2018-07-08 14:50:42,302 INFO  [MQTT Disc: Sergey102615521    ] [MqttDisconnectionResultHandler]  - Sergey102615521@ems.insyte.ru:1883 disconnected
+2018-07-10 09:33:11,801 INFO  [JavaFX Application Thread     ] [MqttViewManager               ]  - Default configuration file present (C:\Users\user\mqtt-spy\mqtt-spy-configuration.xml) = true
+2018-07-10 09:33:11,837 INFO  [JavaFX Application Thread     ] [MqttViewManager               ]  - Loading configuration file from C:\Users\user\mqtt-spy\mqtt-spy-configuration.xml
+2018-07-10 09:33:17,941 INFO  [JavaFX Application Thread     ] [MqttConfigurationUtils        ]  - Auto-complete for server URI (ems.insyte.ru:1883 -> tcp://ems.insyte.ru:1883)
+2018-07-10 09:33:18,435 ERROR [JavaFX Application Thread     ] [FileUtils                     ]  - No files in C:\Users\user\mqtt-spy\
+2018-07-10 09:33:18,979 INFO  [mqtt-spy [ConnectionRunnable for user_art@ems.insyte.ru:1883]] [MqttAsyncConnectionRunnable   ]  - Connecting client ID [user_art] to server [[tcp://ems.insyte.ru:1883]]; options = 
+============== Connection options ==============
+CleanSession                :  true
+SocketFactory               :  null
+MqttVersion                 :  0
+KeepAliveInterval           :  60
+ConTimeout                  :  30
+UserName                    :  null
+SSLProperties               :  null
+WillDestination             :  null
+==========================================
+
+2018-07-10 09:33:19,039 INFO  [MQTT Call: user_art           ] [MqttConnectionResultHandler   ]  - user_art@ems.insyte.ru:1883 connected
+2018-07-10 09:33:19,040 INFO  [JavaFX Application Thread     ] [MqttEventHandler              ]  - About to resubscribe to all requested topics
+2018-07-10 09:33:22,203 INFO  [JavaFX Application Thread     ] [NewSubscriptionController     ]  - Subscribing to variables/aaaaaaaa-1234-1234-1234-33004c343651/channel
+2018-07-10 09:33:22,203 INFO  [JavaFX Application Thread     ] [MqttSubscriptionViewManager   ]  - Creating subscription for variables/aaaaaaaa-1234-1234-1234-33004c343651/channel
+2018-07-10 09:33:22,305 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/aaaaaaaa-1234-1234-1234-33004c343651/channel
+2018-07-10 17:06:22,506 ERROR [MQTT Ping: user_art           ] [MqttCallbackHandler           ]  - Connection user_art@ems.insyte.ru:1883 lost
+Там-аут ожидания ответа сервера (32000)
+	at org.eclipse.paho.client.mqttv3.internal.ExceptionHelper.createMqttException(ExceptionHelper.java:31)
+	at org.eclipse.paho.client.mqttv3.internal.ClientState.checkForActivity(ClientState.java:661)
+	at org.eclipse.paho.client.mqttv3.internal.ClientComms.checkForActivity(ClientComms.java:732)
+	at org.eclipse.paho.client.mqttv3.internal.ClientComms.checkForActivity(ClientComms.java:718)
+	at org.eclipse.paho.client.mqttv3.TimerPingSender$PingTask.run(TimerPingSender.java:77)
+	at java.util.TimerThread.mainLoop(Unknown Source)
+	at java.util.TimerThread.run(Unknown Source)
+2018-07-10 17:06:22,511 WARN  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Client not connected
+2018-07-10 17:06:22,511 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables/aaaaaaaa-1234-1234-1234-33004c343651/channel
+2018-07-11 09:32:01,349 INFO  [mqtt-spy [ConnectionRunnable for user_art@ems.insyte.ru:1883]] [MqttAsyncConnectionRunnable   ]  - Connecting client ID [user_art] to server [[tcp://ems.insyte.ru:1883]]; options = 
+============== Connection options ==============
+CleanSession                :  true
+SocketFactory               :  null
+MqttVersion                 :  0
+KeepAliveInterval           :  60
+ConTimeout                  :  30
+UserName                    :  null
+SSLProperties               :  null
+WillDestination             :  null
+==========================================
+
+2018-07-11 09:32:01,389 INFO  [MQTT Call: user_art           ] [MqttConnectionResultHandler   ]  - user_art@ems.insyte.ru:1883 connected
+2018-07-11 09:32:01,402 INFO  [JavaFX Application Thread     ] [MqttEventHandler              ]  - About to resubscribe to all requested topics
+2018-07-11 09:32:06,312 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/aaaaaaaa-1234-1234-1234-33004c343651/channel

@@ -166,7 +166,6 @@ HAL_StatusTypeDef DC_load_settings()
     DC_debugOut("# NAND IO ERROR\r\n");
     return stat;
   }
-  
   if (DC_set.magicKey == DC_SET_MAGICKEY)
   {
     DC_debugOut("# Settings load OK\r\n");
