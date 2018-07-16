@@ -16,11 +16,13 @@
 //Device status type
 typedef enum 
 {
-  DEV_OK       = 0x00U,
-  DEV_ERROR    = 0x01U,
-  DEV_BUSY     = 0x02U,
-  DEV_TIMEOUT  = 0x03U,
-  DEV_NEXIST   = 0x04U
+  DEV_OK       = 0,             //Комманда выполнена
+  DEV_ERROR,                    //Неизвестная ошибка
+  DEV_BUSY,                     //Ресурс занят
+  DEV_TIMEOUT,                  //Таймаут
+  DEV_NEXIST,                   //Ресурс не существует
+  DEV_CON_ERROR,                //Ошибка соединения
+  DEV_VAL_ERROR                 //Ошибка значения
 } DEV_Status_t;
 
 //Device info struct

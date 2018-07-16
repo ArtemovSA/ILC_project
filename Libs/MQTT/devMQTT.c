@@ -28,6 +28,13 @@ void devMQTT_init(devMQTT_topic* topics, uint16_t count, void (*callBackPoint)(u
 static void mqtt_pub_request_cb(void *arg, err_t result) {
   if(result != ERR_OK) {
     DC_debugOut("# MQTT Publish cb error result: %d\r\n", result);
+    
+    if (result == ERR_BUF)
+    {
+      mqttMainClient->output.get = 0;
+      mqttMainClient->output.put = 0;
+    }
+    
   }else{
     DC_debugOut("# MQTT Publish cb OK \r\n");
   }
@@ -109,7 +116,8 @@ static void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection
     
     DC_debugOut("# MQTT connection cb: Disconnected, reason: %d\n", status);
     
-    mqttMainClient = mqtt_client_new();
+    if (mqttMainClient == NULL)
+      mqttMainClient = mqtt_client_new();
     
     if (DC_set.MQTT_broc_ch == 0) //If was IP
     {
@@ -133,7 +141,9 @@ HAL_StatusTypeDef devMQTT_connect(uint8_t* MQTT_IP, uint16_t MQTT_port, char* MQ
   ip4_addr_t mqttIPaddr;
   struct mqtt_connect_client_info_t ci; //Client info
   
-  mqttMainClient = mqtt_client_new();
+  if (mqttMainClient == NULL)
+    mqttMainClient = mqtt_client_new();
+  
   if (mqttMainClient == NULL)
   {
     DC_debugOut("# MQTT Client create error");
@@ -149,10 +159,25 @@ HAL_StatusTypeDef devMQTT_connect(uint8_t* MQTT_IP, uint16_t MQTT_port, char* MQ
   ci.client_pass = MQTT_pass;
   ci.keep_alive = 100;
 
-  if (ERR_OK == mqtt_client_connect(mqttMainClient, &mqttIPaddr, MQTT_port, mqtt_connection_cb, NULL, &ci))
+  if (mqtt_client_connect(mqttMainClient, &mqttIPaddr, MQTT_port, mqtt_connection_cb, NULL, &ci) == ERR_OK)
   {
     DC_debug_ipAdrrOut("# MQTT connection OK: ", MQTT_IP);
     return HAL_OK;    
+  }else{
+    mqtt_disconnect(mqttMainClient);
+    DC_debug_ipAdrrOut("# MQTT connection ERROR: ", MQTT_IP);
+    mem_free(mqttMainClient);
+    mqttMainClient = mqtt_client_new();
+    if (mqttMainClient == NULL)
+    {
+      DC_debugOut("# MQTT Client create error");
+      return HAL_ERROR;
+    }
+    if (mqtt_client_connect(mqttMainClient, &mqttIPaddr, MQTT_port, mqtt_connection_cb, NULL, &ci) == ERR_OK)
+    {
+      DC_debugOut("# recoonect OK\r\n");
+      return HAL_OK;
+    }
   }
   
   return HAL_ERROR;

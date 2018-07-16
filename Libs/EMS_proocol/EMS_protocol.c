@@ -555,8 +555,10 @@ void EMS_sendChannelVars(uint8_t channel_num)
   {
     if (DC_set.MQTT_broc_ch == 0)
     {
+      
       devMQTT_connect(DC_set.MQTT_broc_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
       DC_debug_ipAdrrOut("# MQTT connection server by IP#: ", DC_set.MQTT_broc_ip);
+      
     }else{
       uint8_t broc_ip;
       NW_getIP_byDomen(DC_set.MQTT_broc_domen, &broc_ip);

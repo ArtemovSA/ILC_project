@@ -79,7 +79,7 @@ HAL_StatusTypeDef MEM_NAND_writeData(NAND_AddressTypeDef address, uint8_t *data,
   return stat; 
 }
 //--------------------------------------------------------------------------------------------------
-//Read data nand
+//Read data SRAM
 HAL_StatusTypeDef MEM_NAND_readData(NAND_AddressTypeDef address, uint8_t *data, uint16_t len)
 {
   HAL_StatusTypeDef stat;

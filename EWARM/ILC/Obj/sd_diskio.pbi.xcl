@@ -80,6 +80,12 @@ C:\Users\user\Desktop\ILC\ILC_project\EWARM\..\Libs\FW_update
 -I
 C:\Users\user\Desktop\ILC\ILC_project\EWARM\..\Libs\USB_ctrl
 -I
+C:\Users\user\Desktop\ILC\ILC_project\EWARM\..\Libs\WM_python\conversion\inc
+-I
+C:\Users\user\Desktop\ILC\ILC_project\EWARM\..\Libs\WM_python\pymite\src\vm2
+-I
+C:\Users\user\Desktop\ILC\ILC_project\EWARM\..\Libs\WM_python\board
+-I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\inc
@@ -163,6 +169,12 @@ C:\Users\user\Desktop\ILC\ILC_project\Libs\deviceDefs
 C:\Users\user\Desktop\ILC\ILC_project\Libs\FW_update
 -I
 C:\Users\user\Desktop\ILC\ILC_project\Libs\USB_ctrl
+-I
+C:\Users\user\Desktop\ILC\ILC_project\Libs\WM_python\conversion\inc
+-I
+C:\Users\user\Desktop\ILC\ILC_project\Libs\WM_python\pymite\src\vm2
+-I
+C:\Users\user\Desktop\ILC\ILC_project\Libs\WM_python\board
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -DUSE_HAL_DRIVER=1

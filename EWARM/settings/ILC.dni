@@ -11,12 +11,12 @@ ByteLimit=50
 [StLinkDriver]
 CStepIntDis=_ 0
 LeaveTargetRunning=_ 0
-stlinkserialNo=40450487
-stlinkfoundProbes=40450487:FFFFFFFF:
+stlinkserialNo=30303031
+stlinkfoundProbes=30303031:FFFFFFFF:
 stlinkResetStyle=0
 stlinkResetStrategy=1
 [DebugChecksum]
-Checksum=-165280720
+Checksum=-1931312157
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -154,13 +154,6 @@ ShowTimeLog=1
 SumEnabled=0
 ShowTimeSum=1
 SumSortOrder=0
-[Disassemble mode]
-mode=0
-[Breakpoints2]
-Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\DevCTRL\DevCTRL.c}.65.3" 0 0 1 "" 0 "" 0
-Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\EMS_proocol\EMS_protocol.c}.632.7" 0 0 1 "" 0 "" 0
-Bp2=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\V9203\V9203.c}.507.3" 0 0 1 "" 0 "" 0
-Count=3
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -168,12 +161,6 @@ Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
-[Aliases]
-A0=_ "C:\Users\Sergey\Desktop\INS\ILC\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c" ""
-A1=_ "C:\Users\Sergey\Desktop\INS\ILC\Middlewares\Third_Party\FreeRTOS\Source\tasks.c" ""
-A2=_ "C:\Users\Sergey\Desktop\INS\ILC\Src\main.c" ""
-Count=3
-SuppressDialog=0
 [DriverProfiling]
 Enabled=0
 Mode=3
@@ -184,3 +171,14 @@ Exclusions=
 Enabled=0
 [CallStackStripe]
 ShowTiming=1
+[Disassemble mode]
+mode=0
+[Breakpoints2]
+Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\V9203\V9203.c}.507.3" 0 0 1 "" 0 "" 0
+Count=1
+[Aliases]
+A0=_ "C:\Users\Sergey\Desktop\INS\ILC\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c" ""
+A1=_ "C:\Users\Sergey\Desktop\INS\ILC\Middlewares\Third_Party\FreeRTOS\Source\tasks.c" ""
+A2=_ "C:\Users\Sergey\Desktop\INS\ILC\Src\main.c" ""
+Count=3
+SuppressDialog=0

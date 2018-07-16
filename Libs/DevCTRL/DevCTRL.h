@@ -42,7 +42,7 @@ extern char DC_unic_idStr[13]; //Unic id str
 //***********************************Default settings***********************************************
 
 //TCP/IP Ethernet
-#define DC_DEF_DEV_IP_ADDR              {192,168,1,51}
+#define DC_DEF_DEV_IP_ADDR              {192,168,1,55}
 #define DC_DEF_GW_IP_ADDR               {192,168,1,1}
 #define DC_DEF_NET_MASK                 {255,255,255,0}
 #define DC_DEF_NTP_SERVER               "ntp1.stratum2.ru"

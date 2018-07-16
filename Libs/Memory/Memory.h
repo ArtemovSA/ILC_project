@@ -53,6 +53,7 @@ HAL_StatusTypeDef MEM_NAND_readData(NAND_AddressTypeDef address, uint8_t *data, 
 //***************************************SRAM2 mem map**********************************************
 
 #define MEM_SRAM2_MEMORY_SIZE    0xFA000
+#define MEM_SRAM1_ADDR_SCRIPT2   0x0000
 
 //***************************************SRAM functions*********************************************
 
