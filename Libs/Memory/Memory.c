@@ -1,4 +1,5 @@
 #include "Memory.h"
+#include "crc8.h"
 
 #include "stm32f4xx_hal_nand.h"
 #include "stm32f4xx_hal_sram.h"
@@ -43,62 +44,62 @@ void MEM_selectMem(MEM_ID_t ID)
 }
 //***************************************NAND*******************************************************
 //Check nand ID
-HAL_StatusTypeDef MEM_NAND_checkID()
+DEV_Status_t MEM_NAND_checkID()
 {
-  HAL_StatusTypeDef stat;
+  DEV_Status_t stat;
   NAND_IDTypeDef NAND_id;
   
   MEM_selectMem(MEM_ID_NAND); //Select memory
   
-  stat = HAL_NAND_Read_ID(MEM_hNAND1, &NAND_id);
+  stat = (DEV_Status_t)HAL_NAND_Read_ID(MEM_hNAND1, &NAND_id);
   
-  if (stat != HAL_OK)
+  if (stat != DEV_OK)
     return stat;
   
   if (NAND_id.Device_Id == MEM_NAND_DEV_ID)
-    return HAL_OK;
+    return DEV_OK;
   
-  return HAL_ERROR;
+  return DEV_ERROR;
 }
 //--------------------------------------------------------------------------------------------------
-//Write data nand
-HAL_StatusTypeDef MEM_NAND_writeData(NAND_AddressTypeDef address, uint8_t *data, uint16_t len)
+//Write data NAND
+DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint32_t offset_addr, uint8_t *data, uint16_t len)
 {
-  HAL_StatusTypeDef stat;
+  DEV_Status_t stat;
   MEM_selectMem(MEM_ID_NAND); //Select memory
 
-  if ((stat = HAL_NAND_Erase_Block(MEM_hNAND1, &address)) != HAL_OK)
+  if ((stat = (DEV_Status_t)HAL_NAND_Erase_Block(MEM_hNAND1, &address)) != DEV_OK)
     return stat;
   
   memset(MEM_dataBuf, 0, sizeof(MEM_dataBuf));
-  memcpy(MEM_dataBuf, data, len);
+  memcpy((MEM_dataBuf+offset_addr), data, len);
   
-  if ((stat = HAL_NAND_Write_Page_8b(MEM_hNAND1, &address, MEM_dataBuf, 1)) != HAL_OK)
+  if ((stat = (DEV_Status_t)HAL_NAND_Write_Page_8b(MEM_hNAND1, &address, MEM_dataBuf, 1)) != DEV_OK)
     return stat;
   
   return stat; 
 }
 //--------------------------------------------------------------------------------------------------
-//Read data SRAM
-HAL_StatusTypeDef MEM_NAND_readData(NAND_AddressTypeDef address, uint8_t *data, uint16_t len)
+//Read data NAND
+DEV_Status_t MEM_NAND_readData(NAND_AddressTypeDef address, uint32_t offset_addr, uint8_t *data, uint16_t len)
 {
-  HAL_StatusTypeDef stat;
+  DEV_Status_t stat;
   MEM_selectMem(MEM_ID_NAND); //Select memory
   
-  stat = HAL_NAND_Read_Page_8b(MEM_hNAND1, &address, MEM_dataBuf, 1);
+  stat = (DEV_Status_t)HAL_NAND_Read_Page_8b(MEM_hNAND1, &address, MEM_dataBuf, 1);
   
-  if (stat != HAL_OK)
+  if (stat != DEV_OK)
     return stat;
   
-  memcpy(data, MEM_dataBuf, len);
+  memcpy((data+offset_addr), MEM_dataBuf, len);
   
-  return HAL_OK; 
+  return DEV_OK; 
 }
 //***************************************SRAM******************************************************
 //Write data SRAM
-HAL_StatusTypeDef MEM_SRAM_writeData(MEM_ID_t memID, uint32_t address, uint8_t *data, uint32_t len)
+DEV_Status_t MEM_SRAM_writeData(MEM_ID_t memID, uint32_t address, uint8_t *data, uint32_t len)
 {
-  HAL_StatusTypeDef stat;
+  DEV_Status_t stat;
   SRAM_HandleTypeDef *sramHandle;
   
   MEM_selectMem(memID); //Select memory
@@ -110,25 +111,25 @@ HAL_StatusTypeDef MEM_SRAM_writeData(MEM_ID_t memID, uint32_t address, uint8_t *
     sramHandle = MEM_hSRAM1;
   }
 
-  stat = HAL_SRAM_WriteOperation_Enable(sramHandle);
+  stat = (DEV_Status_t)HAL_SRAM_WriteOperation_Enable(sramHandle);
 
-  if (stat != HAL_OK)
+  if (stat != DEV_OK)
     return stat;
   
-  stat = HAL_SRAM_Write_8b(sramHandle, &address, data, len);
+  stat = (DEV_Status_t)HAL_SRAM_Write_8b(sramHandle, &address, data, len);
   
-  if (stat != HAL_OK)
+  if (stat != DEV_OK)
     return stat;
   
-  stat =  HAL_SRAM_WriteOperation_Disable(sramHandle);
+  stat =  (DEV_Status_t)HAL_SRAM_WriteOperation_Disable(sramHandle);
   
   return stat;
 }
 //--------------------------------------------------------------------------------------------------
 //Read data SRAM
-HAL_StatusTypeDef MEM_SRAM_readData(MEM_ID_t memID, uint32_t address, uint8_t *data, uint32_t len)
+DEV_Status_t MEM_SRAM_readData(MEM_ID_t memID, uint32_t address, uint8_t *data, uint32_t len)
 {
-  HAL_StatusTypeDef stat;
+  DEV_Status_t stat;
   SRAM_HandleTypeDef *sramHandle;
   
   MEM_selectMem(memID); //Select memory
@@ -140,7 +141,81 @@ HAL_StatusTypeDef MEM_SRAM_readData(MEM_ID_t memID, uint32_t address, uint8_t *d
     sramHandle = MEM_hSRAM1;
   }
   
-  stat =  HAL_SRAM_Read_8b(sramHandle, &address, data, len);
+  stat = (DEV_Status_t)HAL_SRAM_Read_8b(sramHandle, &address, data, len);
   
   return stat;
+}
+//--------------------------------------------------------------------------------------------------
+//Check CRC in SRAM
+DEV_Status_t MEM_checkCRC8_SRAM(MEM_ID_t memID, uint8_t crc, uint32_t addr, uint32_t len)
+{
+  SRAM_HandleTypeDef *sramHandle;
+  uint8_t buffers = (len/MEM_NAND_PAGE_SIZE); //Count full pages
+  uint32_t tail = len-buffers*MEM_NAND_PAGE_SIZE;  //tail in bytes
+  DEV_Status_t stat; //Return Status
+  uint8_t crcVal = 0;
+  
+  MEM_selectMem(memID); //Select memory
+  
+  if (memID == MEM_ID_SRAM1)
+  {
+    sramHandle = MEM_hSRAM1;
+  }else if(memID == MEM_ID_SRAM2) {
+    sramHandle = MEM_hSRAM1;
+  }
+  
+  //Calc for full buffers
+  for (int i=0; i<buffers; i++)
+  {    
+    if ((stat = (DEV_Status_t)HAL_SRAM_Read_8b(sramHandle, &addr, MEM_dataBuf, MEM_NAND_PAGE_SIZE)) != DEV_OK) //Read buffer
+        return stat;
+         
+    crcVal = crc8(MEM_dataBuf, MEM_NAND_PAGE_SIZE, crcVal);
+    addr += MEM_NAND_PAGE_SIZE;
+  }
+  
+  //Tail
+  if ((stat = (DEV_Status_t)HAL_SRAM_Read_8b(sramHandle, &addr, MEM_dataBuf, tail)) != DEV_OK) //Read buffer
+        return stat;
+         
+  crcVal = crc8(MEM_dataBuf, tail, crcVal); 
+  
+  if (crcVal != crc)
+  {
+    return DEV_VAL_ERROR;
+  }else{
+    return DEV_OK;
+  }
+  
+}
+//--------------------------------------------------------------------------------------------------
+//Copy from NAND to SRAM
+DEV_Status_t MEM_NAND_to_SRAM(MEM_ID_t memoryID, uint32_t addrSRAM, NAND_AddressTypeDef addrNAND, uint32_t offsetNAND, uint32_t len)
+{
+  uint8_t pages = (len/MEM_NAND_PAGE_SIZE); //Count full pages
+  uint32_t tail = len-pages*MEM_NAND_PAGE_SIZE;  //tail in bytes
+  NAND_AddressTypeDef relativeAddrNAND = addrNAND; //Relative address in NAND
+  DEV_Status_t stat; //Return Status
+  
+  //Copy full pages
+  for (int i=0; i<pages; i++)
+  {
+    if ((stat = MEM_NAND_readData(relativeAddrNAND, 0, MEM_dataBuf, MEM_NAND_PAGE_SIZE)) != DEV_OK) //Read page
+      return stat;
+    
+    if ((stat = MEM_SRAM_writeData(memoryID, addrSRAM, MEM_dataBuf, MEM_NAND_PAGE_SIZE)) != DEV_OK) //Write data SRAM
+      return stat;
+    
+    relativeAddrNAND.Page = addrNAND.Page + i;
+    addrSRAM += MEM_NAND_PAGE_SIZE*i;
+  }
+  
+  //Copy tail
+  if ((stat = MEM_NAND_readData(relativeAddrNAND, 0, MEM_dataBuf, tail)) != DEV_OK) //Read page
+      return stat;
+  
+  if ((stat = MEM_SRAM_writeData(memoryID, addrSRAM, MEM_dataBuf, tail)) != DEV_OK) //Write data SRAM
+      return stat;  
+  
+  return DEV_OK; 
 }

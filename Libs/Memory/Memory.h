@@ -2,6 +2,7 @@
 #define MEMORY_H
 
 #include "stm32f4xx_hal.h"
+#include "deviceDefs.h"
 
 //Gpio macros
 #define MEM_EN_SRAM1_ON    HAL_GPIO_WritePin(SRAM_CE2_1_GPIO_Port, SRAM_CE2_1_Pin, GPIO_PIN_SET)
@@ -35,15 +36,16 @@ void MEM_init(SRAM_HandleTypeDef *sram1, SRAM_HandleTypeDef *sram2, NAND_HandleT
 #define MEM_NAND_ADDR_LOG       (NAND_AddressTypeDef) {0, 0, 2}         //Start log data
 #define MEM_NAND_ADDR_FW_META   (NAND_AddressTypeDef) {0, 0, 10}        //Nand FW metadata
 #define MEM_NAND_ADDR_FW        (NAND_AddressTypeDef) {0, 0, 11}        //FW space 8 blocks by 128kB on 1024kB
+#define MEM_NAND_ADDR_WM_DATA   (NAND_AddressTypeDef) {0, 1, 0}         //Wirtual mashine data
 
 //***************************************NAND functions*********************************************
 
 //Check nand ID
-HAL_StatusTypeDef MEM_NAND_checkID();
-//Write data nand
-HAL_StatusTypeDef MEM_NAND_writeData(NAND_AddressTypeDef address, uint8_t *data, uint16_t len);
-//Read data nand
-HAL_StatusTypeDef MEM_NAND_readData(NAND_AddressTypeDef address, uint8_t *data, uint16_t len);
+DEV_Status_t MEM_NAND_checkID();
+//Write data NAND
+DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint32_t offset_addr, uint8_t *data, uint16_t len);
+//Read data NAND
+DEV_Status_t MEM_NAND_readData(NAND_AddressTypeDef address, uint32_t offset_addr, uint8_t *data, uint16_t len);
 
 //***************************************SRAM1 mem map**********************************************
 
@@ -58,9 +60,12 @@ HAL_StatusTypeDef MEM_NAND_readData(NAND_AddressTypeDef address, uint8_t *data, 
 //***************************************SRAM functions*********************************************
 
 //Write data SRAM
-HAL_StatusTypeDef MEM_SRAM_writeData(MEM_ID_t memID, uint32_t address, uint8_t *data, uint32_t len);
+DEV_Status_t MEM_SRAM_writeData(MEM_ID_t memID, uint32_t address, uint8_t *data, uint32_t len);
 //Read data SRAM
-HAL_StatusTypeDef MEM_SRAM_readData(MEM_ID_t memID, uint32_t address, uint8_t *data, uint32_t len);
-
+DEV_Status_t MEM_SRAM_readData(MEM_ID_t memID, uint32_t address, uint8_t *data, uint32_t len);
+//Copy from NAND to SRAM
+DEV_Status_t MEM_NAND_to_SRAM(MEM_ID_t memoryID, uint32_t addrSRAM, NAND_AddressTypeDef addrNAND, uint32_t offsetNAND, uint32_t len);
+//Check CRC in SRAM
+DEV_Status_t MEM_checkCRC8_SRAM(MEM_ID_t memID, uint8_t crc, uint32_t addr, uint32_t len);
 
 #endif

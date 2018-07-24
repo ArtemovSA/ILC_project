@@ -2422,3 +2422,67 @@ WillDestination             :  null
 2018-07-11 09:32:01,389 INFO  [MQTT Call: user_art           ] [MqttConnectionResultHandler   ]  - user_art@ems.insyte.ru:1883 connected
 2018-07-11 09:32:01,402 INFO  [JavaFX Application Thread     ] [MqttEventHandler              ]  - About to resubscribe to all requested topics
 2018-07-11 09:32:06,312 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/aaaaaaaa-1234-1234-1234-33004c343651/channel
+2018-07-12 08:58:59,291 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables/aaaaaaaa-1234-1234-1234-33004c343651/channel
+2018-07-12 08:58:59,291 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Subscription variables/aaaaaaaa-1234-1234-1234-33004c343651/channel removed
+2018-07-12 08:59:01,746 INFO  [JavaFX Application Thread     ] [NewSubscriptionController     ]  - Subscribing to variables/aaaaaaaa-1234-1234-1234-33004c343651/channel
+2018-07-12 08:59:01,746 INFO  [JavaFX Application Thread     ] [MqttSubscriptionViewManager   ]  - Creating subscription for variables/aaaaaaaa-1234-1234-1234-33004c343651/channel
+2018-07-12 08:59:01,812 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/aaaaaaaa-1234-1234-1234-33004c343651/channel
+2018-07-12 12:59:52,255 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Publishing message on topic "111". Payload size = "2"
+2018-07-12 12:59:56,550 INFO  [JavaFX Application Thread     ] [NewSubscriptionController     ]  - Subscribing to 111
+2018-07-12 12:59:56,550 INFO  [JavaFX Application Thread     ] [MqttSubscriptionViewManager   ]  - Creating subscription for 111
+2018-07-12 12:59:56,615 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to 111
+2018-07-12 12:59:57,333 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Publishing message on topic "111". Payload size = "2"
+2018-07-12 13:00:03,431 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Publishing message on topic "111". Payload size = "4"
+2018-07-12 13:04:00,926 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables/aaaaaaaa-1234-1234-1234-33004c343651/channel
+2018-07-12 13:04:02,150 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/aaaaaaaa-1234-1234-1234-33004c343651/channel
+2018-07-13 09:52:04,570 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel
+2018-07-13 09:52:04,570 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Subscription variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel removed
+2018-07-13 09:52:06,865 INFO  [JavaFX Application Thread     ] [NewSubscriptionController     ]  - Subscribing to variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel
+2018-07-13 09:52:06,866 INFO  [JavaFX Application Thread     ] [MqttSubscriptionViewManager   ]  - Creating subscription for variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel
+2018-07-13 09:52:06,931 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel
+2018-07-13 09:52:09,666 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from 111
+2018-07-13 09:52:09,667 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Subscription 111 removed
+2018-07-15 22:15:10,205 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel
+2018-07-15 22:15:10,205 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Subscription variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel removed
+2018-07-15 22:15:14,442 INFO  [JavaFX Application Thread     ] [NewSubscriptionController     ]  - Subscribing to variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel
+2018-07-15 22:15:14,442 INFO  [JavaFX Application Thread     ] [MqttSubscriptionViewManager   ]  - Creating subscription for variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel
+2018-07-15 22:15:14,511 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel
+2018-07-15 22:15:22,508 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables/aaaaaaaa-1234-1234-1234-33004c343651/channel
+2018-07-15 22:15:22,509 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Subscription variables/aaaaaaaa-1234-1234-1234-33004c343651/channel removed
+2018-07-15 22:15:26,769 INFO  [JavaFX Application Thread     ] [NewSubscriptionController     ]  - Subscribing to variables/aaaaaaaa-1234-1234-1234-33004c343651/channel
+2018-07-15 22:15:26,769 INFO  [JavaFX Application Thread     ] [MqttSubscriptionViewManager   ]  - Creating subscription for variables/aaaaaaaa-1234-1234-1234-33004c343651/channel
+2018-07-15 22:15:26,818 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/aaaaaaaa-1234-1234-1234-33004c343651/channel
+2018-07-16 03:00:02,853 ERROR [MQTT Rec: user_art            ] [MqttCallbackHandler           ]  - Connection user_art@ems.insyte.ru:1883 lost
+Соединение потеряно (32109) - java.net.SocketTimeoutException: Read timed out
+	at org.eclipse.paho.client.mqttv3.internal.CommsReceiver.run(CommsReceiver.java:146)
+	at java.lang.Thread.run(Unknown Source)
+Caused by: java.net.SocketTimeoutException: Read timed out
+	at java.net.SocketInputStream.socketRead0(Native Method)
+	at java.net.SocketInputStream.socketRead(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.DataInputStream.readByte(Unknown Source)
+	at org.eclipse.paho.client.mqttv3.internal.wire.MqttInputStream.readMqttWireMessage(MqttInputStream.java:65)
+	at org.eclipse.paho.client.mqttv3.internal.CommsReceiver.run(CommsReceiver.java:107)
+	... 1 more
+2018-07-16 03:00:02,854 WARN  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Client not connected
+2018-07-16 03:00:02,854 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel
+2018-07-16 03:00:02,855 WARN  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Client not connected
+2018-07-16 03:00:02,855 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables/aaaaaaaa-1234-1234-1234-33004c343651/channel
+2018-07-16 09:09:32,468 INFO  [mqtt-spy [ConnectionRunnable for user_art@ems.insyte.ru:1883]] [MqttAsyncConnectionRunnable   ]  - Connecting client ID [user_art] to server [[tcp://ems.insyte.ru:1883]]; options = 
+============== Connection options ==============
+CleanSession                :  true
+SocketFactory               :  null
+MqttVersion                 :  0
+KeepAliveInterval           :  60
+ConTimeout                  :  30
+UserName                    :  null
+SSLProperties               :  null
+WillDestination             :  null
+==========================================
+
+2018-07-16 09:09:32,547 INFO  [MQTT Call: user_art           ] [MqttConnectionResultHandler   ]  - user_art@ems.insyte.ru:1883 connected
+2018-07-16 09:09:32,548 INFO  [JavaFX Application Thread     ] [MqttEventHandler              ]  - About to resubscribe to all requested topics
+2018-07-16 09:09:33,855 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/aaaaaaaa-1234-1234-1234-2e004c343651/channel
+2018-07-16 09:09:35,487 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/aaaaaaaa-1234-1234-1234-33004c343651/channel

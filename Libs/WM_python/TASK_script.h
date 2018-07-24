@@ -3,35 +3,28 @@
 #define TASK_SCRIPT_H
 
 #include "cmsis_os.h"
-#include "py_pm.h"
-#include "py_mem.h"
-#include "py_obj.h"
+#include "PY_pm.h"
+#include "PY_mem.h"
+#include "PY_obj.h"
+#include "Memory.h"
 
 #define PY_SCRIPT_LEN 0x20000 //128 Кбайт
 
 //Режимы работы отладки
 typedef enum {
   PY_SCRIPT_NLOAD = 0,  //Скрипт не загружен
-  PY_SCRIPT_NUSE,       //Скрипт загружен, но не используется
-  PY_DEBUG_LOAD_SCRIPT, //Загрузка скрипта в память
   PY_SCRIPT_PAUSE,      //Скрипт приостановлен
   PY_SCRIPT_STOP,       //Скрипт остановлен
   PY_SCRIPT_START,      //Скрипт запущен 
-  PY_SCRIPT_USE,        //Скрипт используется
-  PY_ERROR_START        //Ошибочный скрипт
-} debug_mode;
+  PY_SCRIPT_ERROR       //Ошибочный скрипт
+} PY_scryptMode;
 
 //Структура описания скрипта в памяти
 typedef struct{
-  uint8_t state;        //Текущее состояние скрипта
-  char name[10];        //Имя скрипта
   uint32_t len;         //Длина скрипта
-  uint8_t num;          //Номер скрипта
   uint16_t crc;         //CRC16
-} py_script_type;
-
-//Количество callback
-#define  PY_COUNT_CALLBACKS     7
+  MEM_ID_t memoryID;    //Тип использованной памяти
+} PY_scryptData_t;
 
 //Настройки названий callback
 #define DEF_PY_SMS_CALLBACK             "SMS_callback"                  //SMS callback
@@ -47,33 +40,33 @@ typedef enum{
   PY_SMS_CALLBACK = 0,
   PY_MQTT_CALLBACK,
   PY_GPIO_CALLBACK,
-  PY_DISPLAY_CALLBACK,
   PY_MODEM_CALLBACK,
-  PY_PY_BLUETOOTH_CALLBACK,
-  PY_RF_CALLBACK  
-} py_callback_ID;
+  PY_RF_CALLBACK,
+  PY_COUNT_CALLBACKS
+} PY_callback_ID;
 
 //Статус callback
 typedef enum{
   PY_CALLBACK_EMPTY = 0,
   PY_CALLBACK_STOP,
   PY_CALLBACK_RUN,
-} py_callback_statuses;
+} PY_callback_stat;
 
-//Названий и функций
+//Callbacks decription
 typedef struct{
-  pPmObj_t py_func;
+  pPmObj_t PY_func;
   char callback_name[20];
   uint8_t callback_status;
   void *callback_val;
-} py_callback_type; 
+} PY_callback_t; 
 
 //Возвращаемые переменные в callback
 //SMS_CALLBACK
 typedef struct{
   char Phone[20];
   char SMS_text[80];
-} py_var_SMS_CALLBACK_type;
+} PY_var_SMS_CALLBACK_t;
+
 //MQTT_CALLBACK
 typedef struct{
   char ip_addr[15];
@@ -81,37 +74,28 @@ typedef struct{
   char topic[20];
   char message[128];
   uint8_t len;
-} py_var_MQTT_CALLBACK_type;
+} PY_var_MQTT_CALLBACK_t;
+
 //GPIO_CALLBACK
 typedef struct{
   uint8_t type_dev;
   uint8_t adr_sw;
   uint8_t adr_port;
   uint8_t value;
-} py_var_GPIO_CALLBACK_type;
-//DISPLAY_CALLBACK
-typedef struct{
-  uint8_t page_id;
-  uint8_t element_id;
-  uint8_t value;
-} py_var_DISPLAY_CALLBACK_type;
+} PY_var_GPIO_CALLBACK_t;
+
 //MODEM_CALLBACK
 typedef struct{
   char rx_buf[256];
   uint8_t len;
-} py_var_MODEM_CALLBACK_type;
-//BLUETOOTH_CALLBACK
-typedef struct{
-  char rx_buf[256];
-  uint8_t len;
-} py_var_BLUETOOTH_CALLBACK_type;
+} PY_var_MODEM_CALLBACK_t;
+
 //RF_CALLBACK
 typedef struct{
   uint8_t rf_addr;
   char rx_buf[256];
   uint8_t len;
-} py_var_RF_CALLBACK_type;
-
+} PY_var_RF_CALLBACK_t;
 
 //------------------------------------------------------------------------------
 
@@ -122,17 +106,17 @@ typedef struct{
   uint8_t adr_port;     //Порт
   uint8_t error_code;   //Код ошибки
   char thread_name[30]; //Имя потока
-}py_error_type;
+}PY_error_t;
 
-extern py_script_type py_main_script; //Основной скрипт
-extern uint8_t py_task; //Выполнение задачи скрипта
-extern uint32_t py_script_addr; //Адрес скрипта во flash
-extern py_error_type py_error; //Ошибка скрипта
-extern py_callback_type py_callback[PY_COUNT_CALLBACKS]; //Название функций Callback
+extern PY_scryptData_t PY_main_script; //Основной скрипт
+extern uint8_t PY_task; //Выполнение задачи скрипта
+extern uint32_t PY_script_addr; //Адрес скрипта во flash
+extern PY_error_t PY_error; //Ошибка скрипта
+extern PY_callback_t PY_callback[PY_COUNT_CALLBACKS]; //Название функций Callback
 
 void TASK_script_init(uint8_t priority); //Инициализация задачи
-void Py_StartScript(uint8_t nub_script); //Запустить скрипт
-int py_get_callbackID(); //Получить из очереди 
-void py_add_callbackID(uint8_t id_callback); //Добавить очередь 
+void PY_StartScript(uint8_t nub_script); //Запустить скрипт
+int PY_get_callbackID(); //Получить из очереди 
+void PY_add_callbackID(uint8_t id_callback); //Добавить очередь 
 
 #endif

@@ -11,7 +11,7 @@
 
 //****************************************Parametrs*************************************************
 
-#define V9203_FREQ_MES_RES      0.0007695 //0.0008 //Hz
+#define V9203_FREQ_MES_RES      0.0008 //Hz
 
 //****************************************Cmd*******************************************************
 
@@ -278,13 +278,13 @@
 
 //Default calibrate
 //Total
-#define V9203_DEF_CAL_WARTU   0x00000000 //0xFC9A0D98	// gain voltage RMS
-#define V9203_DEF_CAL_WARTI   0x00000000 //0x21A8301B	// gain current RMS
-#define V9203_DEF_CAL_WAPT    0x00000000 //0x21E51894	// gain active power coef RMS
+#define V9203_DEF_CAL_WARTU   0x00000000	// gain voltage RMS
+#define V9203_DEF_CAL_WARTI   0x21A8301B	// gain current RMS
+#define V9203_DEF_CAL_WAPT    0x21E51894	// gain active power coef RMS
 #define V9203_DEF_CAL_WAQT    0x00000000	// gain reactive power coef RMS
 #define V9203_DEF_CAL_WWARTU  0x00000000	// offset voltage RMS
 #define V9203_DEF_CAL_WWARTI  0x00000000	// offset current RMS
-#define V9203_DEF_CAL_WWAPT   0x00000000 //0xFFF7F5C2	// offset active power
+#define V9203_DEF_CAL_WWAPT   0x00000000	// offset active power
 #define V9203_DEF_CAL_WWAQT   0x00000000	// offset reactive power
 //Fundamental
 #define V9203_DEF_CAL_WBRTU   0x00000000
@@ -297,15 +297,13 @@
 #define V9203_DEF_CAL_WWBQT   0x00000000
 
 //Proportional coeff
-#define V9203_DEF_PROP_VOLTAGE	  1//0x32C4E
-#define V9203_DEF_PROP_CURRENT	  1//0x663BE00
-#define V9203_DEF_PROP_POWER	  1//0x412F8
-#define V9203_DEF_PROP_RPOWER	  0xF4240
-#define V9203_DEF_PROP_COSFI      0x80000000
+#define V9203_DEF_PROP_VOLTAGE	  0x00000000
+#define V9203_DEF_PROP_CURRENT	  0x00000000
+#define V9203_DEF_PROP_POWER	  0x00000000
 
 //Threshold detect
 #define V9203_DEF_THRD_CURRENT_DETECT	0x00000000
-#define V9203_DEF_THRD_POWER_DETECT	0x00000000
+#define V9203_DEF_THRD_POWER_DETECT		0x00000000
 
 //****************************************Calibration struct****************************************
 //Calibtation total struct
@@ -413,13 +411,5 @@ uint64_t V9203_getPCons(uint8_t channel, V9203_line_t line);
 uint64_t V9203_getQCons(uint8_t channel, V9203_line_t line);
 //Get cos Fi
 float V9203_getCOSfi(uint8_t channel, V9203_line_t line);
-
-//Clear Q consamption
-HAL_StatusTypeDef V9203_clearSCons(uint8_t channel, V9203_line_t line);
-//Clear P consamption
-HAL_StatusTypeDef V9203_clearPCons(uint8_t channel, V9203_line_t line);
-//Clear Q consamption
-HAL_StatusTypeDef V9203_clearQCons(uint8_t channel, V9203_line_t line);
-
 
 #endif

@@ -341,6 +341,7 @@ HAL_StatusTypeDef V9203_data_cmd_flash(uint8_t channel, uint8_t cmd, uint16_t da
   txBuf[2] = dataTx & 0x00ff;
   txBuf[3] = ~((dataTx & 0x00ff) + (dataTx >> 8) + txBuf[0]);
   
+  vTaskDelay(50);
   if ((state = V9203_set_CS(channel, LOW_LEVEL)) != HAL_OK)
     return state;
   
