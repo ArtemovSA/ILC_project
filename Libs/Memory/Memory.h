@@ -14,22 +14,24 @@
 
 //Id memoryes
 typedef enum{
-  MEM_ID_NAND = 0,
+  MEM_ID_RAM = 0,
+  MEM_ID_FLASH,
   MEM_ID_SRAM1,
-  MEM_ID_SRAM2
+  MEM_ID_SRAM2,
+  MEM_ID_NAND
 }MEM_ID_t;
 
 //Init memory
 void MEM_init(SRAM_HandleTypeDef *sram1, SRAM_HandleTypeDef *sram2, NAND_HandleTypeDef *nand);
 
-//***************************************NAND mem map***********************************************
+//***************************************Mem map***********************************************
 
+//NAND
 #define MEM_NAND_PAGE_SIZE      0x800UL                 //2048 bytes
 #define MEM_NAND_BLOCK_SIZE     0x1000UL                // in pages
 #define MEM_NAND_PLANE_SIZE     0x400000UL              // in blocks
 #define MEM_NAND_MEMORY_SIZE    0x400000UL              // in blocks
 #define MEM_NAND_DEV_ID         0xDA                    // default id
-
                                                       //plane, block, page
 #define MEM_NAND_ADDR_INFO      (NAND_AddressTypeDef) {0, 0, 0}         //Info page
 #define MEM_NAND_ADDR_SETTINGS  (NAND_AddressTypeDef) {0, 0, 1}         //Main settings
@@ -37,6 +39,9 @@ void MEM_init(SRAM_HandleTypeDef *sram1, SRAM_HandleTypeDef *sram2, NAND_HandleT
 #define MEM_NAND_ADDR_FW_META   (NAND_AddressTypeDef) {0, 0, 10}        //Nand FW metadata
 #define MEM_NAND_ADDR_FW        (NAND_AddressTypeDef) {0, 0, 11}        //FW space 8 blocks by 128kB on 1024kB
 #define MEM_NAND_ADDR_WM_DATA   (NAND_AddressTypeDef) {0, 1, 0}         //Wirtual mashine data
+
+//SRAM
+#define MEM_SRAM_SCRYPT_ADDR    0x0
 
 //***************************************NAND functions*********************************************
 

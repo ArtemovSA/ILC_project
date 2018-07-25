@@ -8,7 +8,7 @@
 #include "PY_obj.h"
 #include "Memory.h"
 
-#define PY_SCRIPT_LEN 0x20000 //128 Кбайт
+#define PY_SCRIPT_SIZE 0x20000 //128 Кбайт
 
 //Режимы работы отладки
 typedef enum {
@@ -24,6 +24,7 @@ typedef struct{
   uint32_t len;         //Длина скрипта
   uint16_t crc;         //CRC16
   MEM_ID_t memoryID;    //Тип использованной памяти
+  char ModuleName[20];  //Start module name
 } PY_scryptData_t;
 
 //Настройки названий callback
@@ -99,19 +100,9 @@ typedef struct{
 
 //------------------------------------------------------------------------------
 
-//Структура ошибки выполнения
-typedef struct{
-  uint8_t type_dev;     //Тип устройства
-  uint8_t adr_sw;       //Адрес
-  uint8_t adr_port;     //Порт
-  uint8_t error_code;   //Код ошибки
-  char thread_name[30]; //Имя потока
-}PY_error_t;
-
 extern PY_scryptData_t PY_main_script; //Основной скрипт
 extern uint8_t PY_task; //Выполнение задачи скрипта
 extern uint32_t PY_script_addr; //Адрес скрипта во flash
-extern PY_error_t PY_error; //Ошибка скрипта
 extern PY_callback_t PY_callback[PY_COUNT_CALLBACKS]; //Название функций Callback
 
 void TASK_script_init(uint8_t priority); //Инициализация задачи

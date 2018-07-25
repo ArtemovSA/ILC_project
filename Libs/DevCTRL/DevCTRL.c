@@ -33,8 +33,6 @@ extern SRAM_HandleTypeDef hsram1;
 extern SRAM_HandleTypeDef hsram2;
 extern NAND_HandleTypeDef hnand1;
 
-//Func
-HAL_StatusTypeDef DC_load_settings(); //Load settings
 //Get unic ID
 void DC_getUnicID();
 
@@ -52,10 +50,10 @@ void DC_init(osMessageQId *eventQueue)
   //Flash
   //Init memory
   MEM_init(&hsram1, &hsram2, &hnand1);
-  if (MEM_NAND_checkID() == HAL_OK)
+  if (MEM_NAND_checkID() == DEV_OK)
   {
     DC_debugOut("# Nand check OK\r\n");
-    if (DC_load_settings() == HAL_OK)
+    if (DC_load_settings() == DEV_OK)
       DC_debugOut("# Load settings OK\r\n");
   }else{
     DC_debugOut("# Nand check ERROR\r\n");
@@ -140,12 +138,12 @@ void DC_debug_settingsOut()
 }
 //--------------------------------------------------------------------------------------------------
 //Write settings
-HAL_StatusTypeDef DC_writeSet(DC_set_t *settings, NAND_AddressTypeDef addr)
+DEV_Status_t DC_writeSet(DC_set_t *settings, NAND_AddressTypeDef addr)
 {
-  HAL_StatusTypeDef stat;
+  DEV_Status_t stat;
   
   //Write
-  if ((stat = MEM_NAND_writeData(addr, (uint8_t*)settings, sizeof(DC_set_t))) != HAL_OK)
+  if ((stat = MEM_NAND_writeData(addr, 0, (uint8_t*)settings, sizeof(DC_set_t))) != DEV_OK)
   {
     DC_debugOut("# Write settings ERROR\r\n");
   }
@@ -154,14 +152,14 @@ HAL_StatusTypeDef DC_writeSet(DC_set_t *settings, NAND_AddressTypeDef addr)
 }
 //--------------------------------------------------------------------------------------------------
 //Load settings
-HAL_StatusTypeDef DC_load_settings()
+DEV_Status_t DC_load_settings()
 {
-  HAL_StatusTypeDef stat;
+  DEV_Status_t stat;
   
   NAND_AddressTypeDef addr = MEM_NAND_ADDR_SETTINGS;
   
   //read
-  if ((stat = MEM_NAND_readData(addr, (uint8_t*)&DC_set, sizeof(DC_set))) != HAL_OK)
+  if ((stat = MEM_NAND_readData(addr, 0, (uint8_t*)&DC_set, sizeof(DC_set))) != DEV_OK)
   {
     DC_debugOut("# NAND IO ERROR\r\n");
     return stat;
@@ -170,7 +168,7 @@ HAL_StatusTypeDef DC_load_settings()
   {
     DC_debugOut("# Settings load OK\r\n");
     //DC_debug_settingsOut();
-    return HAL_OK;
+    return DEV_OK;
   }
   
   //Clear settings
@@ -210,7 +208,7 @@ HAL_StatusTypeDef DC_load_settings()
   DC_debugOut("# Settings set default\r\n");
   //DC_debug_settingsOut();
   
-  return HAL_OK;
+  return DEV_OK;
 }
 //--------------------------------------------------------------------------------------------------
 //LED out

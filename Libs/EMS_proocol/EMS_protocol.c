@@ -269,7 +269,7 @@ HAL_StatusTypeDef EMS_setMain_set(uint8_t* data, uint16_t len)
   
   //***********************************Settings copy*******************************************
   //Write settings
-  if (DC_writeSet(&settings, MEM_NAND_ADDR_SETTINGS) == HAL_OK)
+  if (DC_writeSet(&settings, MEM_NAND_ADDR_SETTINGS) == DEV_OK)
   {
     DC_set = settings; //Copy new settings
     DC_debugOut(" # JSON settings set OK\r\n");

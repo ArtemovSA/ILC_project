@@ -411,5 +411,11 @@ uint64_t V9203_getPCons(uint8_t channel, V9203_line_t line);
 uint64_t V9203_getQCons(uint8_t channel, V9203_line_t line);
 //Get cos Fi
 float V9203_getCOSfi(uint8_t channel, V9203_line_t line);
+//Clear S consamption
+HAL_StatusTypeDef V9203_clearSCons(uint8_t channel, V9203_line_t line);
+//Clear Q consamption
+HAL_StatusTypeDef V9203_clearQCons(uint8_t channel, V9203_line_t line);
+//Clear P consamption
+HAL_StatusTypeDef V9203_clearPCons(uint8_t channel, V9203_line_t line);
 
 #endif

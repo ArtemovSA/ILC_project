@@ -16,6 +16,7 @@
 #define _PLAT_H_
 
 #define PM_HEAP_SIZE 0x5000 //20k
+#define PM_STRING_SIZE 512
 #define PM_FLOAT_LITTLE_ENDIAN
 #define PM_PLAT_HEAP_ATTR __attribute__((aligned (4)))
 
@@ -23,8 +24,20 @@
 typedef struct {
    uint8_t error_code; //Код ошибки
    char description[50]; //Описание    
-} py_error_codes_type;
+}PM_error_codes_t;
 
-extern const py_error_codes_type py_error_codes[22];
+
+//Структура ошибки выполнения
+typedef struct{
+  uint8_t type_dev;     //Тип устройства
+  uint8_t adr_sw;       //Адрес
+  uint8_t adr_port;     //Порт
+  uint8_t error_code;   //Код ошибки
+  char thread_name[30]; //Имя потока
+}PM_error_t;
+
+extern char PM_str_buf[PM_STRING_SIZE]; //Global string buffer
+extern PM_error_t PM_error; //Return error value
+extern const PM_error_codes_t PM_error_codes[]; //Error description
 
 #endif /* _PLAT_H_ */

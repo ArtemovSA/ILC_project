@@ -27,9 +27,10 @@
 
 extern SemaphoreHandle_t muxSRAM1;
 extern SemaphoreHandle_t muxSRAM2;
-extern uint32_t py_script_addr; //Адрес скрипта во flash
-const py_error_codes_type py_error_codes[22] = {
-  
+char PM_str_buf[PM_STRING_SIZE]; //Global string buffer
+
+//Error description
+const py_error_codes_t py_error_codes[] = {
   //Errors
   {0x00, "All ok"},
   {0xFF, "General no result"},
@@ -56,6 +57,8 @@ const py_error_codes_type py_error_codes[22] = {
   {0xEF, "Stop iteration"},
   {0xF0, "Warning"}
 };
+
+PM_error_t PM_error; //Error return variable
 
 /* MoSync target requires no initiation. */
 PmReturn_t

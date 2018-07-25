@@ -27,10 +27,8 @@
 
 #include "py_pm.h"
 
-
 /** Number of millisecond-ticks to pass before scheduler is run */
 #define PM_THREAD_TIMESLICE_MS  10
-
 
 /** Stores the timer millisecond-ticks since system start */
 volatile uint32_t pm_timerMsTicks = 0;
@@ -38,10 +36,7 @@ volatile uint32_t pm_timerMsTicks = 0;
 /** Stores tick timestamp of last scheduler run */
 volatile uint32_t pm_lastRescheduleTimestamp = 0;
 
-
-PmReturn_t
-pm_init(uint8_t *heap_base, uint32_t heap_size,
-        PmMemSpace_t memspace, uint8_t const * const pusrimg)
+PmReturn_t pm_init(uint8_t *heap_base, uint32_t heap_size, PmMemSpace_t memspace, uint8_t const * const pusrimg)
 {
     PmReturn_t retval;
 

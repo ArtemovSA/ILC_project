@@ -10,10 +10,10 @@ uint8_t PY_task; //Выполнение задачи скрипта
 uint32_t PY_script_addr; //Адрес скрипта
 NAND_AddressTypeDef PY_script_struct_addr; //Метаданные виртуальной машины
 PY_scryptData_t PY_scryptData; //Описание скрипта
-PY_error_t PY_error; //Ошибка скрипта
 
 uint8_t PY_callback_queue[PY_COUNT_CALLBACKS]; //Очередь callback
 uint8_t PY_callback_queue_len; //Длина очереди
+uint8_t PY_heap[PM_HEAP_SIZE]; //Python heap
 
 //Глабальные переменные возвращаемые в callback
 PY_var_SMS_CALLBACK_t PY_var_SMS_CALLBACK;
@@ -46,15 +46,16 @@ void vTASK_script(void *pvParameters) {
     DC_debugOut("Can't read WM descr from NAND\r\n");
     vTaskResume( script_handle );
   }else{
+    
     //Copy from NAND to SRAM
-    if (MEM_NAND_to_SRAM(PY_scryptData.memoryID, 0, PY_WM_data_addr, sizeof(PY_scryptData_t), PY_scryptData.len) != DEV_OK)
+    if (MEM_NAND_to_SRAM(PY_scryptData.memoryID, MEM_SRAM_SCRYPT_ADDR, PY_WM_data_addr, sizeof(PY_scryptData_t), PY_scryptData.len) != DEV_OK)
     {
       DC_debugOut("Can't read WM script from NAND\r\n");
       vTaskResume( script_handle );
     }
     
     //Check CRC in SRAM
-    if ( MEM_checkCRC8_SRAM(MEM_ID_t memID, uint8_t crc, uint32_t addr, uint32_t len) != DEV_OK)
+    if ( MEM_checkCRC8_SRAM(PY_scryptData.memoryID, PY_scryptData.crc, MEM_SRAM_SCRYPT_ADDR, PY_scryptData.len) != DEV_OK)
     {
       DC_debugOut("CRC WM ERROR\r\n");
       vTaskResume( script_handle );
@@ -63,40 +64,11 @@ void vTASK_script(void *pvParameters) {
   
   while (1) {
     
-    
-    
-    
-    //Вычисляется адрес скрипта в памяти относительно его номера
-    PY_script_struct_addr = FADR_SCRIPT_START + num * PY_SCRIPT_LEN;
-    
-    //Читать структуру из памяти
-    if ( xSemaphoreTake(xMutexFlash, MUTEX_FLASH_DELAY) == pdTRUE ) {
-      EXT_Flash_readData(PY_script_struct_addr, (uint8_t*) &script_buf, sizeof(script_buf)); //Читать данные из флеш
-      xSemaphoreGive(xMutexFlash);
-      
-      //Если скрипт не используется или это первый запуск
-      if ((script_buf.state == PY_SCRIPT_NUSE)||(PY_main_script.state == PY_SCRIPT_NLOAD)) {
-        
-        PY_main_script = script_buf; //Копировать параметры скрипта
-        
-        PY_script_addr = PY_script_struct_addr + EXT_FLASH_PACK_SIZE; //Вычисляю адрес начала скрипта
-        
-        //Записать статус
-        PY_main_script.state = PY_SCRIPT_USE;
-        EXT_Flash_ReWriteData(PY_script_struct_addr, (uint8_t*) &PY_main_script, sizeof(PY_main_script));
-        
-        //PY_task = PY_SCRIPT_START; //Запустить
-      }
-    }else{
-      PY_task = PY_SCRIPT_STOP;
-    }
-    
-    if (PY_task == PY_SCRIPT_START) {
-      xTimerStart( PY_timer, 0 ); //Запустить таймер
-      //Инициализировать скрипт
-      retval = pm_init(MEMSPACE_FLASH, (uint8_t const*)PY_script_addr);
-      retval = pm_run((uint8_t*)PY_main_script.name);
-    }
+    xTimerStart( PY_timer, 0 ); //Запустить таймер
+    //Инициализировать скрипт
+
+    retval = pm_init(PY_heap, PM_HEAP_SIZE, (PmMemSpace_t)PY_scryptData.memoryID, MEM_SRAM_SCRYPT_ADDR);
+    retval = pm_run((uint8_t*)PY_scryptData.ModuleName);
     
     vTaskDelay(50); //Задержка на обработку
     xTimerStop( PY_timer, 0 ); //Остановить таймер
@@ -104,36 +76,22 @@ void vTASK_script(void *pvParameters) {
     //Остановить скрипт, если ошибка
     if (retval != PM_RET_OK) {
       
-      //Записать статус как ошибочный скрипт
-      PY_main_script.state = PY_ERROR_START;
-      xSemaphoreTake(xMutexFlash, MUTEX_FLASH_DELAY);
-      EXT_Flash_ReWriteData(PY_script_struct_addr, (uint8_t*) &PY_main_script, sizeof(PY_main_script));
-      xSemaphoreGive(xMutexFlash);
-      
       //Отправить сообщение об ошибке
-      for (int i=0; i<sizeof(PY_error_codes); i++){
-        if (PY_error_codes[i].error_code == retval) {
-          sprintf(str, "\n\rError #%02X - %s",retval, PY_error_codes[i].description);
+      for (int i=0; i<sizeof(PM_error_codes)/sizeof(PM_error_codes_t); i++){
+        if (PM_error_codes[i].error_code == retval) {
+          DC_debugOut("PY Error #%02X - %s", retval, PM_error_codes[i].description);
           break;
         }
       }
-      sprintf(str, "%s\n\rScript stopped",str);
-      TM_USB_VCP_Puts(str);
-    }else{
-      TM_USB_VCP_Puts("\n\rScript stopped");
+      
+      DC_debugOut("Script stopped");
     }
-  
+    
     //Очистить список callback
     for (int i=0; i<PY_COUNT_CALLBACKS; i++) {
       PY_callback[i].callback_status = PY_CALLBACK_EMPTY;
     }
-    
-    //Изменить статус скрипта
-    PY_task = PY_SCRIPT_STOP;
-    
-    while (PY_task != PY_SCRIPT_START) {//Ждать
-      vTaskDelay(100);
-    } 
+
   }
 }
 //----------------------------------------------------------------------------------------------------
@@ -147,26 +105,6 @@ static void PY_TimerHandler( TimerHandle_t xTimer )
 void TASK_script_init(uint8_t priority) {  
   PY_timer = xTimerCreate( "PY_Timer", 1, pdTRUE, (void*)0, PY_TimerHandler );
   xTaskCreate(vTASK_script,(char*)"TASK_script", configMINIMAL_STACK_SIZE+256, NULL, tskIDLE_PRIORITY + priority, &script_handle);
-}
-//----------------------------------------------------------------------------------------------------
-//Запустить скрипт
-void PY_StartScript(uint8_t nub_script) {
-  
-  uint32_t script_addr; //Адрес скрипта
-  PY_script_type script; //Пременная описывающая скрипт
-  
-  //Если это другой скрипт
-  if (PY_main_script.num != nub_script) {
-  
-    //Вычисляется адрес пакета скрипта в памяти
-    script_addr = FADR_SCRIPT_START + nub_script * PY_SCRIPT_LEN;
-    
-    EXT_Flash_readData(script_addr, (uint8_t*) &script, sizeof(script)); //Читать данные из флеш
-    if (script.state != 0x00) { //Если скрипт был загружен
-      PY_task = PY_SCRIPT_STOP; //Останосить предыдущий скрипт
-      PY_main_script = script; //Скопировать параметры
-    }
-  }
 }
 //----------------------------------------------------------------------------------------------------
 //Добавить очередь 

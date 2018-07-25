@@ -94,7 +94,7 @@ typedef struct {
 
 extern DC_set_t DC_set; //Device settings
 //Write settings
-HAL_StatusTypeDef DC_writeSet(DC_set_t *settings, NAND_AddressTypeDef addr);
+DEV_Status_t DC_writeSet(DC_set_t *settings, NAND_AddressTypeDef addr);
 
 //**********************************Flash log*******************************************************
 
@@ -114,7 +114,7 @@ void DC_debugOut(char *str, ...);
 //IP out
 void DC_debug_ipAdrrOut(char *text, uint8_t *ip);
 //Load settings
-HAL_StatusTypeDef DC_load_settings();
+DEV_Status_t DC_load_settings();
 //User function Get Current task ID 
 uint8_t DC_getCurrentTaskID();
 
