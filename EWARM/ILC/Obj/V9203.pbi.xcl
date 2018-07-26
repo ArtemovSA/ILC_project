@@ -88,6 +88,8 @@ C:\Users\user\Desktop\ILC\ILC_project\EWARM\..\Libs\WM_python\board
 -I
 C:\Users\user\Desktop\ILC\ILC_project\EWARM\..\Libs\WM_python
 -I
+C:\Users\user\Desktop\ILC\ILC_project\EWARM\..\Libs\USB_port
+-I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\inc
@@ -179,6 +181,8 @@ C:\Users\user\Desktop\ILC\ILC_project\Libs\WM_python\pymite\src\vm2
 C:\Users\user\Desktop\ILC\ILC_project\Libs\WM_python\board
 -I
 C:\Users\user\Desktop\ILC\ILC_project\Libs\WM_python
+-I
+C:\Users\user\Desktop\ILC\ILC_project\Libs\USB_port
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -DUSE_HAL_DRIVER=1

@@ -19,13 +19,13 @@
 #define PM_STRING_SIZE 512
 #define PM_FLOAT_LITTLE_ENDIAN
 #define PM_PLAT_HEAP_ATTR __attribute__((aligned (4)))
+#define PM_ERROR_CODE_LEN 22
 
 //Описание ошибки
 typedef struct {
    uint8_t error_code; //Код ошибки
    char description[50]; //Описание    
 }PM_error_codes_t;
-
 
 //Структура ошибки выполнения
 typedef struct{
@@ -38,6 +38,6 @@ typedef struct{
 
 extern char PM_str_buf[PM_STRING_SIZE]; //Global string buffer
 extern PM_error_t PM_error; //Return error value
-extern const PM_error_codes_t PM_error_codes[]; //Error description
+extern const PM_error_codes_t PM_error_codes[PM_ERROR_CODE_LEN]; //Error description
 
 #endif /* _PLAT_H_ */

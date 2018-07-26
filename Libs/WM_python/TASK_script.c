@@ -2,6 +2,7 @@
 #include "TASK_script.h"
 #include "PY_usr.h"
 #include "DevCTRL.h"
+#include "py_plat.h"
 
 TimerHandle_t PY_timer; //Таймер
 xTaskHandle script_handle; //Хендл скрипта
@@ -77,7 +78,7 @@ void vTASK_script(void *pvParameters) {
     if (retval != PM_RET_OK) {
       
       //Отправить сообщение об ошибке
-      for (int i=0; i<sizeof(PM_error_codes)/sizeof(PM_error_codes_t); i++){
+      for (int i=0; i<PM_ERROR_CODE_LEN; i++){
         if (PM_error_codes[i].error_code == retval) {
           DC_debugOut("PY Error #%02X - %s", retval, PM_error_codes[i].description);
           break;

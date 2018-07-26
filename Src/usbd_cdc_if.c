@@ -313,6 +313,7 @@ static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
   RxBuffer.Position = 0;
   RxBuffer.Size = *Len;
   RxBuffer.ReadDone = 1;
+
   return (USBD_OK);
   
   /* USER CODE END 6 */

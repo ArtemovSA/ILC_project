@@ -64,6 +64,7 @@
 #include "dns.h"
 #include "EMS_protocol.h"
 #include "FW_update.h"
+#include "TASK_script.h"
 
 /* USER CODE END Includes */
 
@@ -834,6 +835,9 @@ void startDebugTask(void const * argument)
 
   vTaskResume(EMS_taskHandle);
   
+  
+  //Инициализация задачи
+  TASK_script_init(1);
   
   //devMQTT_connect(DC_set.MQTT_broc_ip[DC_set.MQTT_activeBrock], DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
   

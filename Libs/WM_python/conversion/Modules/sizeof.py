@@ -87,13 +87,13 @@ def sizeof(obj):
         else
         {
             /* Return the size of an integer object */
-            retval = int_new(OBJ_GET_SIZE(pobj), &psize);
+            retval = int_new(PM_OBJ_GET_SIZE(pobj), &psize);
         }
     }
     else
     {
         /* Return the size of the given non-integer object */
-        retval = int_new(OBJ_GET_SIZE(pobj), &psize);
+        retval = int_new(PM_OBJ_GET_SIZE(pobj), &psize);
     }
 
     NATIVE_SET_TOS(psize);

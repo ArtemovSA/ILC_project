@@ -47,7 +47,7 @@ DEV_Status_t FW_readInfodata(DEV_info_t* info)
   NAND_AddressTypeDef addr = MEM_NAND_ADDR_INFO;
   
   //read infodata
-  if (MEM_NAND_readData(addr, (uint8_t*)info, sizeof(DEV_info_t)) != HAL_OK)
+  if (MEM_NAND_readData(addr, 0, (uint8_t*)info, sizeof(DEV_info_t)) != DEV_OK)
     return DEV_ERROR;
   
   return DEV_OK;
@@ -192,7 +192,7 @@ DEV_Status_t FW_readNandMetadata(FW_metadata_t* metadata)
   NAND_AddressTypeDef addr = MEM_NAND_ADDR_FW_META;
   
   //read metadata
-  if (MEM_NAND_readData(addr, (uint8_t*)metadata, sizeof(FW_metadata_t)) != HAL_OK)
+  if (MEM_NAND_readData(addr, 0, (uint8_t*)metadata, sizeof(FW_metadata_t)) != DEV_OK)
   {
     printf("@ NAND IO ERROR\r\n");
     return DEV_ERROR;
@@ -213,7 +213,7 @@ DEV_Status_t FW_nandUpdate(FW_metadata_t* metadata)
   //Full pages
   for ( int pageNum = 0; pageNum < pages; pageNum++)
   {
-    if (MEM_NAND_readData(addr, FW_buf, MEM_NAND_PAGE_SIZE) != HAL_OK)
+    if (MEM_NAND_readData(addr, 0, FW_buf, MEM_NAND_PAGE_SIZE) != DEV_OK)
     {
       printf("@ NAND IO ERROR\r\n");
       return DEV_ERROR;
@@ -223,7 +223,7 @@ DEV_Status_t FW_nandUpdate(FW_metadata_t* metadata)
   }
   
   //Tail
-  if (MEM_NAND_readData(addr, FW_buf, tail) != HAL_OK)
+  if (MEM_NAND_readData(addr, 0, FW_buf, tail) != DEV_OK)
   {
     printf("@ NAND IO ERROR\r\n");
     return DEV_ERROR;
@@ -249,7 +249,7 @@ DEV_Status_t FW_nandUpdate(FW_metadata_t* metadata)
   //Full pages
   for ( int pageNum = 0; pageNum < pages; pageNum++)
   {
-    if (MEM_NAND_readData(addr, FW_buf, MEM_NAND_PAGE_SIZE) != HAL_OK)
+    if (MEM_NAND_readData(addr, 0, FW_buf, MEM_NAND_PAGE_SIZE) != DEV_OK)
     {
       printf("@ NAND IO ERROR\r\n");
       return DEV_ERROR;
@@ -266,7 +266,7 @@ DEV_Status_t FW_nandUpdate(FW_metadata_t* metadata)
   }
   
   //Tail
-  if (MEM_NAND_readData(addr, FW_buf, tail) != HAL_OK)
+  if (MEM_NAND_readData(addr, 0,  FW_buf, tail) != DEV_OK)
   {
     printf("@ NAND IO ERROR\r\n");
     return DEV_ERROR;

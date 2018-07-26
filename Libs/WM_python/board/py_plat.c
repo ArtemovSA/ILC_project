@@ -24,13 +24,15 @@
 #include "py_pm.h"
 #include "cmsis_os.h"
 #include "Memory.h"
+#include "string.h"
+#include "USB_ctrl.h"
 
 extern SemaphoreHandle_t muxSRAM1;
 extern SemaphoreHandle_t muxSRAM2;
 char PM_str_buf[PM_STRING_SIZE]; //Global string buffer
 
 //Error description
-const py_error_codes_t py_error_codes[] = {
+const PM_error_codes_t PM_error_codes[PM_ERROR_CODE_LEN] = {
   //Errors
   {0x00, "All ok"},
   {0xFF, "General no result"},
@@ -120,9 +122,9 @@ plat_getByte(uint8_t *b)
 {
     PmReturn_t retval = PM_RET_OK;
     
-    if (VCP_automat == VCP_SCRIPT_MODE) {
-      *b = (uint8_t)VCP_buf[VCP_pos_rx];
-      VCP_pos_rx--;
+    if (USB_mode == USB_MODE_SCRIPT) {
+      //*b = (uint8_t)USB_rx_buf[USB_rx_count];
+      //USB_rx_count--;
     }
     
     return retval;
@@ -140,10 +142,8 @@ plat_putByte(uint8_t b)
   PmReturn_t retval = PM_RET_OK;
   
   //Режим работы с коммандной строкой питона
-  if ((VCP_automat == VCP_SCRIPT_MODE)|(VCP_automat == VCP_DEBUG_MODE)) {
-    xSemaphoreTake(xMutexVCP, portMAX_DELAY);
-    TM_USB_VCP_Send(&b,1);
-    xSemaphoreGive(xMutexVCP);
+  if (USB_mode == USB_MODE_SCRIPT) {
+    USB_Send(&b,1);
   }
   
   return retval;
@@ -166,22 +166,22 @@ plat_reportError(PmReturn_t result)
   char buf[100];
   
     //Режим работы с коммандной строкой питона
-    if (VCP_automat == VCP_DEBUG_MODE) {
+    if (USB_mode == USB_MODE_SCRIPT) {
       
       //Отправить сообщение об ошибке
-      for (int i=0; i<sizeof(py_error_codes); i++){
-        if (py_error_codes[i].error_code == result) {
-          sprintf(buf, "\n\rError #%02X - %s",result, py_error_codes[i].description);
-          TM_USB_VCP_Send((uint8_t*)buf,strlen(buf));
+      for (int i=0; i<PM_ERROR_CODE_LEN; i++){
+        if (PM_error_codes[i].error_code == result) {
+          sprintf(buf, "\n\rError #%02X - %s",result, PM_error_codes[i].description);
+          USB_Send((uint8_t*)buf,strlen(buf));
           break;
         }
       }
       sprintf(buf,"  Release: 0x%02X\n\r", gVmGlobal.errVmRelease);
-      TM_USB_VCP_Send((uint8_t*)buf,strlen(buf));
+      USB_Send((uint8_t*)buf,strlen(buf));
       sprintf(buf,"  FileId:  0x%02X\n\r", gVmGlobal.errFileId);
-      TM_USB_VCP_Send((uint8_t*)buf,strlen(buf));
+      USB_Send((uint8_t*)buf,strlen(buf));
       sprintf(buf,"  LineNum: %d\n\r", gVmGlobal.errLineNum);
-      TM_USB_VCP_Send((uint8_t*)buf,strlen(buf));
+      USB_Send((uint8_t*)buf,strlen(buf));
     }
     
     /* Print traceback */
@@ -191,7 +191,7 @@ plat_reportError(PmReturn_t result)
         PmReturn_t retval;
 
         sprintf(buf,"Traceback (top first):\n\r");
-        TM_USB_VCP_Send((uint8_t*)buf,strlen(buf));
+        USB_Send((uint8_t*)buf,strlen(buf));
 
         /* Get the top frame */
         pframe = (pPmObj_t)gVmGlobal.pthread->pframe;
@@ -206,14 +206,14 @@ plat_reportError(PmReturn_t result)
             if ((retval) != PM_RET_OK)
             {
                 sprintf(buf,"  Unable to get native func name.\n\r");
-                TM_USB_VCP_Send((uint8_t*)buf,strlen(buf));
+                USB_Send((uint8_t*)buf,strlen(buf));
                 return;
             }
             else
             {
               
               sprintf(buf,"  %s() __NATIVE__\n\r", ((pPmString_t)pstr)->val);
-              TM_USB_VCP_Send((uint8_t*)buf,strlen(buf));
+              USB_Send((uint8_t*)buf,strlen(buf));
             }
 
             /* Get the frame that called the native frame */
@@ -231,10 +231,10 @@ plat_reportError(PmReturn_t result)
             if ((retval) != PM_RET_OK) break;
 
             sprintf(buf,"  %s()\n\r", ((pPmString_t)pstr)->val);
-            TM_USB_VCP_Send((uint8_t*)buf,strlen(buf));
+            USB_Send((uint8_t*)buf,strlen(buf));
         }
         
         sprintf(buf,"  <module>.\n\r");
-        TM_USB_VCP_Send((uint8_t*)buf,strlen(buf));
+        USB_Send((uint8_t*)buf,strlen(buf));
     }
 }

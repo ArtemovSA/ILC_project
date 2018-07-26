@@ -358,6 +358,7 @@
           <state>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2</state>
           <state>$PROJ_DIR$\..\Libs\WM_python\board</state>
           <state>$PROJ_DIR$\..\Libs\WM_python</state>
+          <state>$PROJ_DIR$\..\Libs\USB_port</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1317,6 +1318,15 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\Libs\USB_ctrl\USB_ctrl.h</name>
+      </file>
+    </group>
+    <group>
+      <name>USB_port</name>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\USB_port\USB_port.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\USB_port\USB_port.h</name>
       </file>
     </group>
     <group>

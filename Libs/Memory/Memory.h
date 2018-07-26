@@ -48,9 +48,9 @@ void MEM_init(SRAM_HandleTypeDef *sram1, SRAM_HandleTypeDef *sram2, NAND_HandleT
 //Check nand ID
 DEV_Status_t MEM_NAND_checkID();
 //Write data NAND
-DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint32_t offset_addr, uint8_t *data, uint16_t len);
+DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint16_t offset_addr, uint8_t *data, uint16_t len);
 //Read data NAND
-DEV_Status_t MEM_NAND_readData(NAND_AddressTypeDef address, uint32_t offset_addr, uint8_t *data, uint16_t len);
+DEV_Status_t MEM_NAND_readData(NAND_AddressTypeDef address, uint16_t offset_addr, uint8_t *data, uint16_t len);
 
 //***************************************SRAM1 mem map**********************************************
 

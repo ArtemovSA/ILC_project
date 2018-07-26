@@ -42,7 +42,9 @@ void MEM_selectMem(MEM_ID_t ID)
     break;
   }
 }
-//***************************************NAND*******************************************************
+//**************************************************************************************************
+//                                      NAND
+//**************************************************************************************************
 //Check nand ID
 DEV_Status_t MEM_NAND_checkID()
 {
@@ -63,7 +65,7 @@ DEV_Status_t MEM_NAND_checkID()
 }
 //--------------------------------------------------------------------------------------------------
 //Write data NAND
-DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint32_t offset_addr, uint8_t *data, uint16_t len)
+DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint16_t offset_addr, uint8_t *data, uint16_t len)
 {
   DEV_Status_t stat;
   MEM_selectMem(MEM_ID_NAND); //Select memory
@@ -81,7 +83,7 @@ DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint32_t offset_add
 }
 //--------------------------------------------------------------------------------------------------
 //Read data NAND
-DEV_Status_t MEM_NAND_readData(NAND_AddressTypeDef address, uint32_t offset_addr, uint8_t *data, uint16_t len)
+DEV_Status_t MEM_NAND_readData(NAND_AddressTypeDef address, uint16_t offset_addr, uint8_t *data, uint16_t len)
 {
   DEV_Status_t stat;
   MEM_selectMem(MEM_ID_NAND); //Select memory
@@ -95,7 +97,9 @@ DEV_Status_t MEM_NAND_readData(NAND_AddressTypeDef address, uint32_t offset_addr
   
   return DEV_OK; 
 }
-//***************************************SRAM******************************************************
+//**************************************************************************************************
+//                                      SRAM
+//**************************************************************************************************
 //Write data SRAM
 DEV_Status_t MEM_SRAM_writeData(MEM_ID_t memID, uint32_t address, uint8_t *data, uint32_t len)
 {

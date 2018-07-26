@@ -1470,6 +1470,15 @@
       </file>
     </group>
     <group>
+      <name>USB_port</name>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\USB_port\USB_port.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\USB_port\USB_port.h</name>
+      </file>
+    </group>
+    <group>
       <name>V9203</name>
       <file>
         <name>$PROJ_DIR$\..\Libs\V9203\V9203.c</name>
