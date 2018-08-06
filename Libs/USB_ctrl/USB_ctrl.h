@@ -4,7 +4,7 @@
 
 #include "stdint.h"
 
-#define USB_CMD_BUF_LEN  128
+#define USBC_CMD_BUF_LEN  128
 
 //USB states
 enum{

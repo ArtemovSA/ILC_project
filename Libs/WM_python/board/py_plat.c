@@ -26,6 +26,7 @@
 #include "Memory.h"
 #include "string.h"
 #include "USB_ctrl.h"
+#include "USB_port.h"
 
 extern SemaphoreHandle_t muxSRAM1;
 extern SemaphoreHandle_t muxSRAM2;
@@ -122,7 +123,7 @@ plat_getByte(uint8_t *b)
 {
     PmReturn_t retval = PM_RET_OK;
     
-    if (USB_mode == USB_MODE_SCRIPT) {
+    if (USBP_mode == USBP_MODE_SCRIPT) {
       //*b = (uint8_t)USB_rx_buf[USB_rx_count];
       //USB_rx_count--;
     }
@@ -142,8 +143,8 @@ plat_putByte(uint8_t b)
   PmReturn_t retval = PM_RET_OK;
   
   //Режим работы с коммандной строкой питона
-  if (USB_mode == USB_MODE_SCRIPT) {
-    USB_Send(&b,1);
+  if (USBP_mode == USBP_MODE_SCRIPT) {
+    USBP_Send(&b,1);
   }
   
   return retval;
@@ -166,22 +167,22 @@ plat_reportError(PmReturn_t result)
   char buf[100];
   
     //Режим работы с коммандной строкой питона
-    if (USB_mode == USB_MODE_SCRIPT) {
+    if (USBP_mode == USBP_MODE_SCRIPT) {
       
       //Отправить сообщение об ошибке
       for (int i=0; i<PM_ERROR_CODE_LEN; i++){
         if (PM_error_codes[i].error_code == result) {
           sprintf(buf, "\n\rError #%02X - %s",result, PM_error_codes[i].description);
-          USB_Send((uint8_t*)buf,strlen(buf));
+          USBP_Send((uint8_t*)buf,strlen(buf));
           break;
         }
       }
       sprintf(buf,"  Release: 0x%02X\n\r", gVmGlobal.errVmRelease);
-      USB_Send((uint8_t*)buf,strlen(buf));
+      USBP_Send((uint8_t*)buf,strlen(buf));
       sprintf(buf,"  FileId:  0x%02X\n\r", gVmGlobal.errFileId);
-      USB_Send((uint8_t*)buf,strlen(buf));
+      USBP_Send((uint8_t*)buf,strlen(buf));
       sprintf(buf,"  LineNum: %d\n\r", gVmGlobal.errLineNum);
-      USB_Send((uint8_t*)buf,strlen(buf));
+      USBP_Send((uint8_t*)buf,strlen(buf));
     }
     
     /* Print traceback */
@@ -191,7 +192,7 @@ plat_reportError(PmReturn_t result)
         PmReturn_t retval;
 
         sprintf(buf,"Traceback (top first):\n\r");
-        USB_Send((uint8_t*)buf,strlen(buf));
+        USBP_Send((uint8_t*)buf,strlen(buf));
 
         /* Get the top frame */
         pframe = (pPmObj_t)gVmGlobal.pthread->pframe;
@@ -206,14 +207,14 @@ plat_reportError(PmReturn_t result)
             if ((retval) != PM_RET_OK)
             {
                 sprintf(buf,"  Unable to get native func name.\n\r");
-                USB_Send((uint8_t*)buf,strlen(buf));
+                USBP_Send((uint8_t*)buf,strlen(buf));
                 return;
             }
             else
             {
               
               sprintf(buf,"  %s() __NATIVE__\n\r", ((pPmString_t)pstr)->val);
-              USB_Send((uint8_t*)buf,strlen(buf));
+              USBP_Send((uint8_t*)buf,strlen(buf));
             }
 
             /* Get the frame that called the native frame */
@@ -231,10 +232,10 @@ plat_reportError(PmReturn_t result)
             if ((retval) != PM_RET_OK) break;
 
             sprintf(buf,"  %s()\n\r", ((pPmString_t)pstr)->val);
-            USB_Send((uint8_t*)buf,strlen(buf));
+            USBP_Send((uint8_t*)buf,strlen(buf));
         }
         
         sprintf(buf,"  <module>.\n\r");
-        USB_Send((uint8_t*)buf,strlen(buf));
+        USBP_Send((uint8_t*)buf,strlen(buf));
     }
 }

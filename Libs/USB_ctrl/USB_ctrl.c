@@ -5,8 +5,9 @@
 #include "deviceDefs.h"
 #include "crc16.h"
 #include "string.h"
+#include "USB_port.h"
 
-uint8_t USB_cmd_buf[USB_CMD_BUF_LEN]; //CMD buffer
+uint8_t USB_cmd_buf[USBC_CMD_BUF_LEN]; //CMD buffer
 uint8_t USB_cmd_len; //Длина команды
 uint8_t USB_command;
 uint8_t USBC_state = USBC_state_WAIT_STOP1;
@@ -33,12 +34,13 @@ void USBC_init(uint8_t priority)
 //USB command task
 void vUSBC_task(void *pvParameters) 
 {
+  while(1)
   {
     if (USBC_state == USBC_state_MSG_PROCESS)
     {
       USBC_msg_proc();
       USBC_state = USBC_state_WAIT_STOP1;
-      memset(USB_cmd_buf, 0, USB_CMD_BUF_LEN);
+      memset(USB_cmd_buf, 0, USBC_CMD_BUF_LEN);
       USB_cmd_len = 0;
     }
     
@@ -79,24 +81,24 @@ void USBC_msg_proc()
          
          if (MEM_NAND_writeData(addrNAND, offset, &USB_cmd_buf[7], len) == DEV_OK)
          {
-           USB_tx_buf[0] = USB_cmd_buf[0]; //Команда
-           USB_tx_buf[1] = USB_RET_OK;
+           USB_cmd_buf[0] = USB_cmd_buf[0]; //Команда
+           USB_cmd_buf[1] = USBP_RET_OK;
          }else{
-           USB_tx_buf[0] = USB_cmd_buf[0]; //Команда
-           USB_tx_buf[1] = USB_RET_ERROR; 
+           USB_cmd_buf[0] = USB_cmd_buf[0]; //Команда
+           USB_cmd_buf[1] = USBP_RET_ERROR; 
          }
          
          xSemaphoreGive(muxNAND);
          
          //Расчет CRC
-         crc_val = crc16(USB_tx_buf,2);
-         USB_tx_buf[2] = (crc_val & 0x00FF);//CRC16
-         USB_tx_buf[3] = (crc_val & 0xFF00) >> 8; //CRC16
+         crc_val = crc16(USB_cmd_buf,2);
+         USB_cmd_buf[2] = (crc_val & 0x00FF);//CRC16
+         USB_cmd_buf[3] = (crc_val & 0xFF00) >> 8; //CRC16
          
-         USB_tx_buf[4] = USB_STOP_1; //Стоповый байт
-         USB_tx_buf[5] = USB_STOP_2; //Стоповый байт        
+         USB_cmd_buf[4] = USB_STOP_1; //Стоповый байт
+         USB_cmd_buf[5] = USB_STOP_2; //Стоповый байт        
          
-         USB_Send(USB_tx_buf,6); //Отправить ответ
+         USBP_Send(USB_cmd_buf,6); //Отправить ответ
          
        }
        break;
@@ -199,7 +201,7 @@ void USBC_msg_proc()
 //Recive commnd process
 void USBC_Receive_proc(uint8_t *data, uint16_t len)
 {
-  if (USB_cmd_len <= USB_CMD_BUF_LEN)
+  if (USB_cmd_len <= USBC_CMD_BUF_LEN)
     USB_cmd_len = 0;
   
   memcpy(&USB_cmd_buf[USB_cmd_len], data, len);

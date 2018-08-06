@@ -2,6 +2,7 @@
 #include "USB_port.h"
 #include "cmsis_os.h"
 #include "usbd_cdc_if.h"
+#include "USB_ctrl.h"
 
 //USBP modes
 USBP_mode_t USBP_mode;
@@ -9,7 +10,6 @@ USBP_mode_t USBP_mode;
 //Recive buffers
 uint8_t USBP_rx_buf[USBP_RX_BUF_LEN];
 uint8_t USBP_tx_buf[USBP_TX_BUF_LEN];
-uint8_t USBP_rx_count = 0;
 
 //Таймер
 TimerHandle_t USBP_timer;
@@ -42,21 +42,16 @@ uint16_t USBP_Recive(uint8_t* data, uint16_t len)
 //Recive runtime
 static void USBP_runtime( TimerHandle_t xTimer )
 {      
-  uint16_t len = USBP_Recive(USBP_rx_buf, 10);
+  uint16_t len = USBP_Recive(USBP_rx_buf, USBP_RX_BUF_LEN);
   
   if (len > 0)
   {
-    if (USBP_rx_count <= USBP_RX_BUF_LEN)
-      USBP_rx_count = 0;
-    
-    USBP_rx_count += len;
-    
-    if (USB_mode == USB_MODE_CMD)
+    if (USBP_mode == USBP_MODE_CMD)
     {
-      
+      USBC_Receive_proc(USBP_rx_buf, len);//Recive commnd process
     }
     
-    if (USB_mode == USB_MODE_SCRIPT)
+    if (USBP_mode == USBP_MODE_SCRIPT)
     {
       
     }
