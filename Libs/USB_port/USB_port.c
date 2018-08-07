@@ -4,8 +4,8 @@
 #include "usbd_cdc_if.h"
 #include "USB_ctrl.h"
 
-//USBP modes
-USBP_mode_t USBP_mode;
+//USBP mode
+volatile USBP_mode_t USBP_mode;
 
 //Recive buffers
 uint8_t USBP_rx_buf[USBP_RX_BUF_LEN];
@@ -46,11 +46,13 @@ static void USBP_runtime( TimerHandle_t xTimer )
   
   if (len > 0)
   {
+    //Cmd mode
     if (USBP_mode == USBP_MODE_CMD)
     {
       USBC_Receive_proc(USBP_rx_buf, len);//Recive commnd process
     }
     
+    //Scrypt mode
     if (USBP_mode == USBP_MODE_SCRIPT)
     {
       

@@ -6,21 +6,20 @@
 #include "crc16.h"
 #include "string.h"
 #include "USB_port.h"
+#include "DevCTRL.h"
 
-uint8_t USB_cmd_buf[USBC_CMD_BUF_LEN]; //CMD buffer
-uint8_t USB_cmd_len; //Длина команды
-uint8_t USB_command;
-uint8_t USBC_state = USBC_state_WAIT_STOP1;
-const char USB_STOP_1 = 0x54;
-const char USB_STOP_2 = 0x55;
+//Variables
+uint8_t USBC_cmd_buf[USBC_CMD_BUF_LEN]; //CMD buffer
+uint8_t USBC_cmd_len; //Длина команды
+uint8_t USBC_state = USBC_state_WAIT_STOP1; //state
 
 //Semaphores
 extern xSemaphoreHandle muxNAND;
-
+//Task handle
 xTaskHandle USBC_handle;
 
-//Message process
-void USBC_msg_proc();
+//Command process
+void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen);
 //USB command task
 void vUSBC_task(void *pvParameters);
 
@@ -38,161 +37,132 @@ void vUSBC_task(void *pvParameters)
   {
     if (USBC_state == USBC_state_MSG_PROCESS)
     {
-      USBC_msg_proc();
+      USBC_cmd_proc(USBC_cmd_buf, USBC_cmd_len); //Process command
       USBC_state = USBC_state_WAIT_STOP1;
-      memset(USB_cmd_buf, 0, USBC_CMD_BUF_LEN);
-      USB_cmd_len = 0;
+      //Zero cmd buffer
+      memset(USBC_cmd_buf, 0, USBC_CMD_BUF_LEN);
+      USBC_cmd_len = 0;
     }
     
     vTaskDelay(100);
   }
 }
 //--------------------------------------------------------------------------------------------------
-//Message process
-void USBC_msg_proc()
+//Command process
+void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
 {
   uint16_t crc_val; //Значение CRC
   uint16_t block; //Адрес блока
   uint16_t page; //Адрес страницы
   uint16_t offset; //Смещение
   uint16_t len; //Длина
-  NAND_AddressTypeDef addrNAND;
+  uint8_t command; //Command current
+  NAND_AddressTypeDef addrNAND; //Nand address
   
-  crc_val = crc16(USB_cmd_buf,USB_cmd_len-2);
+  //Calc CRC16
+  crc_val = crc16(cmdData, cmdLen-2);
   
+  //If CRC OK
   if (crc_val == 0x0000) {
     
-    USB_command = USB_cmd_buf[0];
+    command = cmdData[0]; //Get cmd
     
-     switch(USB_command) {
-     
-     //Write array
-     case USBC_CMD_FLASH_ARR_WRITE:
-       block = (USB_cmd_buf[1]<<8) | USB_cmd_buf[2];
-       page = (USB_cmd_buf[3]<<8) | USB_cmd_buf[4];
-       offset = (USB_cmd_buf[5]<<8) | USB_cmd_buf[6];
-       len = (USB_cmd_buf[7]<<8) | USB_cmd_buf[8];
-       
-       if ( xSemaphoreTake(muxNAND, 100) == pdTRUE ) {
-         
-         addrNAND.Plane = 0;
-         addrNAND.Block = block;
-         addrNAND.Page = page;
-         
-         if (MEM_NAND_writeData(addrNAND, offset, &USB_cmd_buf[7], len) == DEV_OK)
-         {
-           USB_cmd_buf[0] = USB_cmd_buf[0]; //Команда
-           USB_cmd_buf[1] = USBP_RET_OK;
-         }else{
-           USB_cmd_buf[0] = USB_cmd_buf[0]; //Команда
-           USB_cmd_buf[1] = USBP_RET_ERROR; 
-         }
-         
-         xSemaphoreGive(muxNAND);
-         
-         //Расчет CRC
-         crc_val = crc16(USB_cmd_buf,2);
-         USB_cmd_buf[2] = (crc_val & 0x00FF);//CRC16
-         USB_cmd_buf[3] = (crc_val & 0xFF00) >> 8; //CRC16
-         
-         USB_cmd_buf[4] = USB_STOP_1; //Стоповый байт
-         USB_cmd_buf[5] = USB_STOP_2; //Стоповый байт        
-         
-         USBP_Send(USB_cmd_buf,6); //Отправить ответ
-         
-       }
-       break;
-       
-     case USBC_CMD_FLASH_ARR_READ:
-       
-//      addr = (USB_cmd_buf[1]<<16) | (USB_cmd_buf[2]<<8) | USB_cmd_buf[3];
-//      len = ADD(USB_cmd_buf[5],USB_cmd_buf[4]);
-//      
-//      memset(USB_tx_buf,0,sizeof(USB_tx_buf));
-//      
-//      if ( xSemaphoreTake(extFlash_mutex, 100) == pdTRUE ) {
-//        EXT_Flash_readData(addr, &USB_tx_buf[6], len); //Читать данные из флеш
-//        xSemaphoreGive(extFlash_mutex);
+    switch(command) {
+      
+      //Debug
+    case USBC_CMD_DEBUG:
+      DC_debugOut((char*)&cmdData[1]);
+      break;
+      
+      //Write
+    case USBC_CMD_FLASH_WRITE:
+      
+      block = (cmdData[1]<<8) | cmdData[2];
+      page = (cmdData[3]<<8) | cmdData[4];
+      offset = (cmdData[5]<<8) | cmdData[6];
+      len = (cmdData[7]<<8) | cmdData[8];
+      
+      if ( xSemaphoreTake(muxNAND, 100) == pdTRUE ) {
         
-        //Формирование ответа
-//        memcpy(USB_tx_buf, USB_cmd_buf, 5);
-//        USB_tx_buf[0] = USB_cmd_buf[0]; //Команда
-//        USB_tx_buf[1] = USB_cmd_buf[1]; //Адрес
-//        USB_tx_buf[2] = USB_cmd_buf[2]; //Адрес
-//        USB_tx_buf[3] = USB_cmd_buf[3]; //Адрес
-//        USB_tx_buf[4] = USB_cmd_buf[4]; //Длина
-//        USB_tx_buf[5] = USB_cmd_buf[5]; //Длина
-//        
-//        
-//        //Расчет CRC
-//        crc_val = crc16(USB_tx_buf,len+6);
-//        USB_tx_buf[len+6] = (crc_val & 0x00FF); //CRC16
-//        USB_tx_buf[len+7] = (crc_val & 0xFF00) >> 8; //CRC16
-//        
-//        USB_tx_buf[len+8] = USB_STOP_1; //Стоповый байт
-//        USB_tx_buf[len+9] = USB_STOP_2; //Стоповый байт        
-//      
-//        USB_Send(USB_tx_buf,len+10); //Отправить ответ
-//
-//      }
+        addrNAND.Plane = 0;
+        addrNAND.Block = block;
+        addrNAND.Page = page;
+        
+        //Try write
+        if (MEM_NAND_writeData(addrNAND, offset, &cmdData[9], len) == DEV_OK)
+        {
+          cmdData[0] = command; //Команда
+          cmdData[1] = USBC_RET_OK;
+        }else{
+          cmdData[0] = command; //Команда
+          cmdData[1] = USBC_RET_ERROR; 
+        }
+        
+        xSemaphoreGive(muxNAND);
+        
+        //Расчет CRC
+        crc_val = crc16(cmdData, 2);
+        cmdData[2] = (crc_val & 0x00FF);//CRC16
+        cmdData[3] = (crc_val & 0xFF00) >> 8; //CRC16
+        
+        cmdData[4] = USBC_STOP1_BYTE; //Стоповый байт
+        cmdData[5] = USBC_STOP2_BYTE; //Стоповый байт        
+        
+        USBP_Send(cmdData,6); //Отправить ответ
+        
+      }
+      break;
+      
+      //Read
+    case USBC_CMD_FLASH_READ:
+      
+      block = (cmdData[1]<<8) | cmdData[2];
+      page = (cmdData[3]<<8) | cmdData[4];
+      offset = (cmdData[5]<<8) | cmdData[6];
+      len = (cmdData[7]<<8) | cmdData[8];
+      
+      //Try read
+      if (MEM_NAND_readData(addrNAND, offset, &cmdData[2], len) == DEV_OK)
+      {
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_OK;
+      }else{
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_ERROR; 
+      }
+      
+      xSemaphoreGive(muxNAND);
+      
+      //Расчет CRC
+      crc_val = crc16(cmdData, len+2);
+      cmdData[len+2] = (crc_val & 0x00FF);//CRC16
+      cmdData[len+3] = (crc_val & 0xFF00) >> 8; //CRC16
+      
+      cmdData[len+4] = USBC_STOP1_BYTE; //Стоповый байт
+      cmdData[len+5] = USBC_STOP2_BYTE; //Стоповый байт        
+      
+      USBP_Send(cmdData,len+6); //Отправить ответ
       
       break;
-     case USBC_CMD_FLASH_BYTE_WRITE:
-//       
-//      addr = (USB_tx_buf[1]<<16) | (USB_tx_buf[2]<<8) | USB_tx_buf[3];
-//
-//      if ( xSemaphoreTake(extFlash_mutex, 100) == pdTRUE ) {
-//        EXT_Flash_ReWriteData(addr,&USB_cmd_buf[4], 1); //Записать данные   
-//        xSemaphoreGive(extFlash_mutex);
-        
-        //Формирование ответа
-//        memcpy(USB_tx_buf, USB_cmd_buf, 3);
-//        USB_tx_buf[0] = USB_cmd_buf[0]; //Команда
-//        USB_tx_buf[1] = USB_cmd_buf[1]; //Адрес
-//        USB_tx_buf[2] = USB_cmd_buf[2]; //Адрес
-//        USB_tx_buf[3] = USB_cmd_buf[3]; //Адрес
-        
-//        //Расчет CRC
-//        crc_val = crc16(USB_tx_buf,4);
-//        USB_tx_buf[4] = (crc_val & 0x00FF); //CRC16
-//        USB_tx_buf[5] = (crc_val & 0xFF00) >> 8; //CRC16
-//        
-//        USB_tx_buf[6] = USB_STOP_1; //Стоповый байт
-//        USB_tx_buf[7] = USB_STOP_2; //Стоповый байт        
-//        
-//        USB_Send(USB_tx_buf,8); //Отправить ответ
-//      }
       
-       break;
-     case USBC_CMD_FLASH_BYTE_READ:
-       
-//      addr = (USB_cmd_buf[1]<<16) | (USB_cmd_buf[2]<<8) | USB_cmd_buf[3];
-//
-//      if ( xSemaphoreTake(extFlash_mutex, 100) == pdTRUE ) {
-//        EXT_Flash_readData(addr, &USB_tx_buf[4], 1); //Читать данные из флеш
-//        xSemaphoreGive(extFlash_mutex);
-//        
-//        //Формирование ответа
-//        memcpy(USB_tx_buf, USB_cmd_buf, 3);
-////        USB_tx_buf[0] = USB_cmd_buf[0]; //Команда
-////        USB_tx_buf[1] = USB_cmd_buf[1]; //Адрес
-////        USB_tx_buf[2] = USB_cmd_buf[2]; //Адрес
-////        USB_tx_buf[3] = USB_cmd_buf[3]; //Адрес
-//        
-//        //Расчет CRC
-//        crc_val = crc16(USB_tx_buf,5);
-//        USB_tx_buf[5] = (crc_val & 0x00FF); //CRC16
-//        USB_tx_buf[6] = (crc_val & 0xFF00) >> 8; //CRC16
-//        
-//        USB_tx_buf[7] = USB_STOP_1; //Стоповый байт
-//        USB_tx_buf[8] = USB_STOP_2; //Стоповый байт        
-//        
-//        USB_Send(USB_tx_buf,9); //Отправить ответ
-//      }
+      //Change mode
+    case USBC_CMD_CHANGE_MODE:
+            
+      USBP_mode = cmdData[1]; //Change mode
+      
+      cmdData[0] = command; //Команда
+      cmdData[1] = USBC_RET_OK;
+      
+      crc_val = crc16(cmdData, 2);
+      cmdData[2] = (crc_val & 0x00FF);//CRC16
+      cmdData[3] = (crc_val & 0xFF00) >> 8; //CRC16
+      
+      cmdData[4] = USBC_STOP1_BYTE; //Стоповый байт
+      cmdData[5] = USBC_STOP2_BYTE; //Стоповый байт   
       
       break;
-     }
-
+        
+    }
   }else{
     
   }
@@ -201,28 +171,35 @@ void USBC_msg_proc()
 //Recive commnd process
 void USBC_Receive_proc(uint8_t *data, uint16_t len)
 {
-  if (USB_cmd_len <= USBC_CMD_BUF_LEN)
-    USB_cmd_len = 0;
-  
-  memcpy(&USB_cmd_buf[USB_cmd_len], data, len);
-  USB_cmd_len += len;
-  
-  for (int i=0; i<len; i++)
+  //Check current state
+  if (USBC_state != USBC_state_MSG_PROCESS)
   {
-    if (USBC_state == USBC_state_WAIT_STOP2)
-      if (data[i] == USB_STOP_2)
-      {
-        USBC_state = USBC_state_MSG_PROCESS;
-      }else{
-        USBC_state = USBC_state_WAIT_STOP1;
-      }
+    //Overflow protection
+    if (USBC_cmd_len + len > USBC_CMD_BUF_LEN)
+      USBC_cmd_len = 0;
     
-    if (USBC_state == USBC_state_WAIT_STOP1)
-      if (data[i] == USB_STOP_1)
-      {
-        USBC_state = USBC_state_WAIT_STOP2;
-      }else{
-        USBC_state = USBC_state_WAIT_STOP1;
-      }
+    //Command buffer copy
+    memcpy(&USBC_cmd_buf[USBC_cmd_len], data, len);
+    USBC_cmd_len += len;
+    
+    //Check end stop bytes in command
+    for (int i=0; i<len; i++)
+    {
+      if (USBC_state == USBC_state_WAIT_STOP2)
+        if (data[i] == USBC_STOP2_BYTE)
+        {
+          USBC_state = USBC_state_MSG_PROCESS;
+        }else{
+          USBC_state = USBC_state_WAIT_STOP1;
+        }
+      
+      if (USBC_state == USBC_state_WAIT_STOP1)
+        if (data[i] == USBC_STOP1_BYTE)
+        {
+          USBC_state = USBC_state_WAIT_STOP2;
+        }else{
+          USBC_state = USBC_state_WAIT_STOP1;
+        }
+    }
   }
 }

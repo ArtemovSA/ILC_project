@@ -49,10 +49,12 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
+#include "fatfs.h"
 
 /* USER CODE BEGIN Includes */
 
 #include "stm32f4xx_hal_flash_ex.h"
+#include "stm32f4xx_hal_sd.h"
 #include "fatfs.h"
 #include "FW_update.h"
 #include "deviceDefs.h"
@@ -135,13 +137,13 @@ int main(void)
   MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
   
-  goto jump_to_application;
+  //goto jump_to_application;
   
   //Init memory
   MEM_init(&hsram1, &hsram2, &hnand1);
   
   //Check nand
-  if (MEM_NAND_checkID() == HAL_OK)
+  if (MEM_NAND_checkID() == DEV_OK)
   {
     printf("# Nand check OK\r\n");
   }else{
@@ -163,7 +165,7 @@ int main(void)
   {
     printf("@ SD not inserted\r\n");
   }
-  
+
   //Metadata SD readed
   if (retStat == DEV_OK)
   {
@@ -320,13 +322,15 @@ static void MX_CRC_Init(void)
 /* SDIO init function */
 static void MX_SDIO_SD_Init(void)
 {
+
   hsd.Instance = SDIO;
   hsd.Init.ClockEdge = SDIO_CLOCK_EDGE_RISING;
   hsd.Init.ClockBypass = SDIO_CLOCK_BYPASS_DISABLE;
   hsd.Init.ClockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
-  hsd.Init.BusWide = SDIO_BUS_WIDE_4B;
-  hsd.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_ENABLE;
-  hsd.Init.ClockDiv = 64;
+  hsd.Init.BusWide = SDIO_BUS_WIDE_1B;
+  hsd.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
+  hsd.Init.ClockDiv = 50;
+
 }
 
 /** Configure pins as 
@@ -445,12 +449,12 @@ static void MX_FSMC_Init(void)
   hnand1.Init.Waitfeature = FSMC_NAND_PCC_WAIT_FEATURE_ENABLE;
   hnand1.Init.MemoryDataWidth = FSMC_NAND_PCC_MEM_BUS_WIDTH_8;
   hnand1.Init.EccComputation = FSMC_NAND_ECC_DISABLE;
-  hnand1.Init.ECCPageSize = FSMC_NAND_ECC_PAGE_SIZE_2048BYTE;
+  hnand1.Init.ECCPageSize = FSMC_NAND_ECC_PAGE_SIZE_256BYTE;
   hnand1.Init.TCLRSetupTime = 0;
   hnand1.Init.TARSetupTime = 0;
   /* hnand1.Config */
   hnand1.Config.PageSize = 2048;
-  hnand1.Config.SpareAreaSize = 128;
+  hnand1.Config.SpareAreaSize = 125000000;
   hnand1.Config.BlockSize = 64;
   hnand1.Config.BlockNbr = 1024;
   hnand1.Config.PlaneNbr = 1;
@@ -462,10 +466,10 @@ static void MX_FSMC_Init(void)
   ComSpaceTiming.HoldSetupTime = 252;
   ComSpaceTiming.HiZSetupTime = 252;
   /* AttSpaceTiming */
-  AttSpaceTiming.SetupTime = 1;
-  AttSpaceTiming.WaitSetupTime = 3;
+  AttSpaceTiming.SetupTime = 0;
+  AttSpaceTiming.WaitSetupTime = 2;
   AttSpaceTiming.HoldSetupTime = 2;
-  AttSpaceTiming.HiZSetupTime = 1;
+  AttSpaceTiming.HiZSetupTime = 0;
 
   if (HAL_NAND_Init(&hnand1, &ComSpaceTiming, &AttSpaceTiming) != HAL_OK)
   {

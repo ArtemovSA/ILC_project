@@ -14,7 +14,6 @@ uint32_t n;
 uint32_t num;
 uint8_t crc;
 uint64_t fwSize;
-char* str_p;
 
 //--------------------------------------------------------------------------------------------------
 //Erace Flash
@@ -54,12 +53,11 @@ DEV_Status_t FW_readInfodata(DEV_info_t* info)
 }
 //--------------------------------------------------------------------------------------------------
 //Read Next str
-static DEV_Status_t FW_readNextStr(char* str_p)
-{
-  uint8_t FW_buf[MEM_NAND_PAGE_SIZE];
-  
-  str_p = f_gets((char*)FW_buf, sizeof(FW_buf), &fileInf);// read current line
-  if (f_lseek(&fileInf,strlen(str_p) ) != FR_OK)// move to the next line
+static DEV_Status_t FW_readNextStr(FIL* fp, char* str_p, uint16_t len)
+{  
+  char* var;
+  f_gets(str_p, len, fp);// read current line
+  if (f_lseek(fp, strlen(str_p)) != FR_OK)// move to the next line
     return DEV_ERROR;
   
   return DEV_OK;
@@ -67,61 +65,62 @@ static DEV_Status_t FW_readNextStr(char* str_p)
 //--------------------------------------------------------------------------------------------------
 //Read card metadata
 DEV_Status_t FW_readCardMetadata(FW_metadata_t* metadata)
-{
-  char sdPath[4];	
+{    
+  char str[128];
   
   //Mount FS
-  if (f_mount(&filesystem, (TCHAR const*)sdPath, 1) != FR_OK) {
+  if (f_mount(&filesystem, SDPath, 1) != FR_OK) {
     printf("@ SD card not found \n\r");
     return DEV_NEXIST;
   }
   
   //Открыть файл информации
-  ret = f_open(&fileInf, FW_SD_INF_FILE_NAME, FA_READ);
+  ret = f_open(&fileInf, FW_SD_INF_FILE_NAME, FA_OPEN_EXISTING | FA_READ);
   
   //If inf file exist
   if (ret == FR_OK) {
-    
-    ret = f_open(&fileBin, FW_SD_INF_FILE_NAME, FA_READ);
-    if (ret == FR_OK) {
-     
+
       //Read cmd
-      if (FW_readNextStr(str_p) != DEV_OK)
+      if (FW_readNextStr(&fileInf, str, sizeof(str)) != DEV_OK)
         printf("@ Can't read inf \n\r");
       
-      sscanf(str_p, FW_CMD_PARCE, &num, &n);
+      sscanf(str, FW_CMD_PARCE, &num, &n);
       if (n > 0)
         metadata->FW_cmd = num;
       
       //Read version
-      if (FW_readNextStr(str_p) != DEV_OK)
+      if (FW_readNextStr(&fileInf, str, sizeof(str)) != DEV_OK)
         printf("@ Can't read inf \n\r");
       
-      sscanf(str_p, FW_VERSION_PARCE, &num, &n);
+      sscanf(str, FW_VERSION_PARCE, &num, &n);
       if (n > 0)
         metadata->FW_new_ver = num;
       
       //Read size
-      if (FW_readNextStr(str_p) != DEV_OK)
+      if (FW_readNextStr(&fileInf, str, sizeof(str)) != DEV_OK)
         printf("@ Can't read inf \n\r");
       
-      sscanf(str_p, FW_SIZE_PARCE, &num, &n);
+      sscanf(str, FW_SIZE_PARCE, &num, &n);
       if (n > 0)
         metadata->FW_size = num;
       
       //Read crc
-      if (FW_readNextStr(str_p) != DEV_OK)
+      if (FW_readNextStr(&fileInf, str, sizeof(str)) != DEV_OK)
         printf("@ Can't read inf \n\r");
       
-      sscanf(str_p, FW_CRC_PARCE, &num, &n);
+      sscanf(str, FW_CRC_PARCE, &num, &n);
       if (n > 0)
         metadata->FW_CRC = num;
       
-      return DEV_OK;
-    }else{
-      printf("@ File FW.bin not found \n\r");
+      ret = f_open(&fileBin, FW_SD_INF_FILE_NAME, FA_OPEN_EXISTING | FA_READ);
+      
+      if (ret == FR_OK) {
+        return DEV_OK;
+      }else{
+        printf("@ File FW.bin not found \n\r");
       return DEV_ERROR;
-    }
+      }
+      
   }else{
     printf("@ File FW.inf not found \n\r");
     return DEV_ERROR;

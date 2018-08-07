@@ -5,10 +5,8 @@
 #include "stdint.h"
 
 //Buffers len
-#define USBP_RX_BUF_LEN  50
-#define USBP_TX_BUF_LEN  50
-
-
+#define USBP_RX_BUF_LEN  64
+#define USBP_TX_BUF_LEN  64
 
 //USB modes
 typedef enum{
@@ -16,18 +14,8 @@ typedef enum{
   USBP_MODE_SCRIPT
 }USBP_mode_t;  
 
-//Returned values
-enum{
-  USBP_RET_OK = 1,
-  USBP_RET_ERROR,
-  USBP_RET_ADDR_ERR,
-  USBP_RET_OVERF,
-  USBP_RET_NANS,
-  USBP_RET_NEXIST
-};
-
-extern uint8_t USBP_state;
-extern USBP_mode_t USBP_mode; //USB modes
+//USBP mode
+extern volatile USBP_mode_t USBP_mode;
 
 //Отправить данные
 uint16_t USBP_Send(uint8_t* data, uint16_t len);

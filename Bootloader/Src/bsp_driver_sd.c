@@ -49,11 +49,9 @@
 #ifdef OLD_API
 /* kept to avoid issue when migrating old projects. */
 /* USER CODE BEGIN 0 */
-
 /* USER CODE END 0 */
 #else
 /* USER CODE BEGIN FirstSection */
-/* can be used to modify / undefine following code or add new definitions */
 /* USER CODE END FirstSection */
 /* Includes ------------------------------------------------------------------*/
 #include "bsp_driver_sd.h"
@@ -63,7 +61,6 @@
 extern SD_HandleTypeDef hsd;
 
 /* USER CODE BEGIN BeforeInitSection */
-/* can be used to modify / undefine following code or add code */
 /* USER CODE END BeforeInitSection */
 /**
   * @brief  Initializes the SD card device.
@@ -92,7 +89,6 @@ uint8_t BSP_SD_Init(void)
   return sd_state;
 }
 /* USER CODE BEGIN AfterInitSection */
-/* can be used to modify previous code / undefine following code / add code */
 /* USER CODE END AfterInitSection */
 
 /**
@@ -123,7 +119,6 @@ __weak void BSP_SD_DetectCallback(void)
 }
 
 /* USER CODE BEGIN BeforeReadBlocksSection */
-/* can be used to modify previous code / undefine following code / add code */
 /* USER CODE END BeforeReadBlocksSection */
 /**
   * @brief  Reads block(s) from a specified address in an SD card, in polling mode.
@@ -146,7 +141,6 @@ uint8_t BSP_SD_ReadBlocks(uint32_t *pData, uint32_t ReadAddr, uint32_t NumOfBloc
 }
 
 /* USER CODE BEGIN BeforeWriteBlocksSection */
-/* can be used to modify previous code / undefine following code / add code */
 /* USER CODE END BeforeWriteBlocksSection */
 /**
   * @brief  Writes block(s) to a specified address in an SD card, in polling mode. 
@@ -169,7 +163,6 @@ uint8_t BSP_SD_WriteBlocks(uint32_t *pData, uint32_t WriteAddr, uint32_t NumOfBl
 }
 
 /* USER CODE BEGIN BeforeReadDMABlocksSection */
-/* can be used to modify previous code / undefine following code / add code */
 /* USER CODE END BeforeReadDMABlocksSection */
 /**
   * @brief  Reads block(s) from a specified address in an SD card, in DMA mode.
@@ -192,7 +185,6 @@ uint8_t BSP_SD_ReadBlocks_DMA(uint32_t *pData, uint32_t ReadAddr, uint32_t NumOf
 }
 
 /* USER CODE BEGIN BeforeWriteDMABlocksSection */
-/* can be used to modify previous code / undefine following code / add code */
 /* USER CODE END BeforeWriteDMABlocksSection */
 /**
   * @brief  Writes block(s) to a specified address in an SD card, in DMA mode.
@@ -215,7 +207,6 @@ uint8_t BSP_SD_WriteBlocks_DMA(uint32_t *pData, uint32_t WriteAddr, uint32_t Num
 }
 
 /* USER CODE BEGIN BeforeEraseSection */
-/* can be used to modify previous code / undefine following code / add code */
 /* USER CODE END BeforeEraseSection */
 /**
   * @brief  Erases the specified memory area of the given SD card. 
@@ -236,7 +227,6 @@ uint8_t BSP_SD_Erase(uint32_t StartAddr, uint32_t EndAddr)
 }
 
 /* USER CODE BEGIN BeforeHandlersSection */
-/* can be used to modify previous code / undefine following code / add code */
 /* USER CODE END BeforeHandlersSection */
 /**
   * @brief  Handles SD card interrupt request.
@@ -285,6 +275,41 @@ void BSP_SD_GetCardInfo(HAL_SD_CardInfoTypeDef *CardInfo)
   /* Get SD card Information */
   HAL_SD_GetCardInfo(&hsd, CardInfo);
 }
+
+/* USER CODE BEGIN BeforeCallBacksSection */
+/* USER CODE END BeforeCallBacksSection */
+/**
+  * @brief SD Abort callbacks
+  * @param hsd: SD handle
+  * @retval None
+  */
+void HAL_SD_AbortCallback(SD_HandleTypeDef *hsd)
+{
+  BSP_SD_AbortCallback();
+}
+
+/**
+  * @brief Tx Transfer completed callback
+  * @param hsd: SD handle
+  * @retval None
+  */
+void HAL_SD_TxCpltCallback(SD_HandleTypeDef *hsd)
+{
+  BSP_SD_WriteCpltCallback();
+}
+
+/**
+  * @brief Rx Transfer completed callback
+  * @param hsd: SD handle
+  * @retval None
+  */
+void HAL_SD_RxCpltCallback(SD_HandleTypeDef *hsd)
+{
+  BSP_SD_ReadCpltCallback();
+}
+
+/* USER CODE BEGIN CallBacksSection_C */
+/* USER CODE END CallBacksSection_C */
 #endif
 
 /**
@@ -297,14 +322,12 @@ uint8_t BSP_SD_IsDetected(void)
   __IO uint8_t status = SD_PRESENT;
 
   /* USER CODE BEGIN 1 */
-  /* user code can be inserted here */
   /* USER CODE END 1 */    	
 
   return status;
 }
 
 /* USER CODE BEGIN AdditionalCode */
-/* user code can be inserted here */
 /* USER CODE END AdditionalCode */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -831,11 +831,10 @@ void startDebugTask(void const * argument)
   dns_init();
   DC_debugOut("DNS init OK\r\n");
   
-  CL_init();
+  CL_init(); //Init clock
 
   vTaskResume(EMS_taskHandle);
-  
-  
+
   //Инициализация задачи
   TASK_script_init(1);
   
