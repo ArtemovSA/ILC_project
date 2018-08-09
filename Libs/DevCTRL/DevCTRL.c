@@ -36,6 +36,17 @@ extern NAND_HandleTypeDef hnand1;
 //Get unic ID
 void DC_getUnicID();
 
+//LED task handle 
+xTaskHandle ledTask_handle;
+//LED task
+void vTASK_led(void *pvParameters);
+//LED out
+void DC_LedOut(LED_t led, uint8_t state);
+//Led status
+volatile ledState_t linkState = LED_OFF;
+volatile ledState_t stateState = LED_OFF;
+volatile ledState_t runState = LED_OFF;
+
 //--------------------------------------------------------------------------------------------------
 //Init
 void DC_init(osMessageQId *eventQueue)
@@ -80,7 +91,79 @@ void DC_init(osMessageQId *eventQueue)
     if (stat == HAL_TIMEOUT)
       DC_debugOut("# PCA9555 TIMEOUT\r\n");
   }
+  
+  //Start led task
+  xTaskCreate(vTASK_led,(char*)"TASK_led", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY, &ledTask_handle);
+}
+//--------------------------------------------------------------------------------------------------
+//LED task
+void vTASK_led(void *pvParameters)
+{
+  uint8_t slowCnt;
+  GPIO_PinState linkLedState = GPIO_PIN_RESET;
+  GPIO_PinState statLedState = GPIO_PIN_RESET;
+  GPIO_PinState runLedState = GPIO_PIN_RESET;
+  
+  while(1)
+  {
+    if (linkState == LED_PROC_ERROR)
+      DC_LedOut(LED_LINK, !linkLedState);
     
+    if (stateState == LED_PROC_ERROR)
+      DC_LedOut(LED_STATUS, !statLedState);
+    
+    if (runState == LED_PROC_ERROR)
+      DC_LedOut(LED_RUN, !runLedState);
+    
+    if (slowCnt >= 2)
+    {
+      if (linkState == LED_PROC_OK)
+        DC_LedOut(LED_LINK, !linkLedState);
+      
+      if (stateState == LED_PROC_OK)
+        DC_LedOut(LED_STATUS, !statLedState);
+      
+      if (runState == LED_PROC_OK)
+        DC_LedOut(LED_RUN, !runLedState);
+      
+    }else{
+      slowCnt++;
+    }
+    
+    vTaskDelay(500);
+  }
+}
+//--------------------------------------------------------------------------------------------------
+//LED out
+void DC_LedOut(LED_t led, uint8_t state)
+{
+  switch (led)
+  {
+  case LED_LINK: HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, (GPIO_PinState)state); break;
+  case LED_STATUS: HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, (GPIO_PinState)state); break;
+  case LED_RUN: HAL_GPIO_WritePin(LED3_GPIO_Port, LED3_Pin, (GPIO_PinState)state); break;
+  }
+}
+//--------------------------------------------------------------------------------------------------
+//LED blink
+void DC_LedBlink(LED_t led, uint16_t rate_Hz, uint16_t count)
+{
+  uint8_t state;
+  uint16_t delay = 1/rate_Hz/2;
+  count = count*2;
+  
+  while (count--)
+  {
+    if (state)
+    {
+      state = 0;
+    }else{
+      state = 1;
+    }
+
+    DC_LedOut(led, state);
+    vTaskDelay(delay);
+  }
 }
 //--------------------------------------------------------------------------------------------------
 //Get unic ID
@@ -209,39 +292,6 @@ DEV_Status_t DC_load_settings()
   //DC_debug_settingsOut();
   
   return DEV_OK;
-}
-//--------------------------------------------------------------------------------------------------
-//LED out
-void DC_LedOut(uint8_t led, uint8_t state)
-{
-  switch (led)
-  {
-  case 0: HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, (GPIO_PinState)state); break;
-  case 1: HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, (GPIO_PinState)state); break;
-  case 2: HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, (GPIO_PinState)state); break;
-  default: DC_debugOut("# Led num ERROR\r\n");
-  }
-}
-//--------------------------------------------------------------------------------------------------
-//LED blink
-void DC_LedBlink(uint8_t led, uint16_t rate_Hz, uint16_t count)
-{
-  uint8_t state;
-  uint16_t delay = 1/rate_Hz/2;
-  count = count*2;
-  
-  while (count--)
-  {
-    if (state)
-    {
-      state = 0;
-    }else{
-      state = 1;
-    }
-
-    DC_LedOut(led, state);
-    vTaskDelay(delay);
-  }
 }
 //--------------------------------------------------------------------------------------------------
 //Relay out

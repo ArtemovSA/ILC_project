@@ -59,6 +59,12 @@
 
 /* Private define ------------------------------------------------------------*/
 
+#define LED_LINK_Pin GPIO_PIN_13
+#define LED_LINK_GPIO_Port GPIOE
+#define LED_STATUS_Pin GPIO_PIN_14
+#define LED_STATUS_GPIO_Port GPIOE
+#define LED_RUN_Pin GPIO_PIN_15
+#define LED_RUN_GPIO_Port GPIOE
 #define SRAM_CE2_1_Pin GPIO_PIN_6
 #define SRAM_CE2_1_GPIO_Port GPIOG
 #define SRAM_CE2_2_Pin GPIO_PIN_7

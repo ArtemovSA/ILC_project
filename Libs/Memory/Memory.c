@@ -68,18 +68,55 @@ DEV_Status_t MEM_NAND_checkID()
 DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint16_t offset_addr, uint8_t *data, uint16_t len)
 {
   DEV_Status_t stat;
-  MEM_selectMem(MEM_ID_NAND); //Select memory
+  NAND_AddressTypeDef startBlockAddress = address;
+  uint32_t SRAMaddress = MEM_SRAM1_ADDR_BLOCK_BUF;
+  
+  startBlockAddress.Page = 0;
+  
+  //Enable sram write
+  if ((stat = (DEV_Status_t)HAL_SRAM_WriteOperation_Enable(MEM_hSRAM1)) != DEV_OK)
+    return stat;
+  
+  //Copy block to sram buffer
+  for (int i=0; i<MEM_NAND_BLOCK_SIZE; i++)
+  {
+    MEM_selectMem(MEM_ID_NAND); //Select memory
+    if ((stat = (DEV_Status_t)HAL_NAND_Read_Page_8b(MEM_hNAND1, &startBlockAddress, MEM_dataBuf, 1)) != DEV_OK)
+      return stat;
+    
+    MEM_selectMem(MEM_ID_SRAM1); //Select memory
+    if ((stat = (DEV_Status_t)HAL_SRAM_Write_8b(MEM_hSRAM1, &SRAMaddress, MEM_dataBuf, MEM_NAND_PAGE_SIZE)) != DEV_OK)
+      return stat;
+    SRAMaddress += MEM_NAND_BLOCK_SIZE;
+  }  
 
-  if ((stat = (DEV_Status_t)HAL_NAND_Erase_Block(MEM_hNAND1, &address)) != DEV_OK)
+  //Erace block NAND
+  MEM_selectMem(MEM_ID_NAND); //Select memory
+  if ((stat = (DEV_Status_t)HAL_NAND_Erase_Block(MEM_hNAND1, &startBlockAddress)) != DEV_OK)
     return stat;
   
-  memset(MEM_dataBuf, 0, sizeof(MEM_dataBuf));
-  memcpy((MEM_dataBuf+offset_addr), data, len);
+  //Write data
+  MEM_selectMem(MEM_ID_SRAM1); //Select memory
+  SRAMaddress += address.Page * MEM_NAND_PAGE_SIZE + offset_addr;
+  if ((stat = (DEV_Status_t)HAL_SRAM_Write_8b(MEM_hSRAM1, &SRAMaddress, data, len)) != DEV_OK)
+      return stat;
   
-  if ((stat = (DEV_Status_t)HAL_NAND_Write_Page_8b(MEM_hNAND1, &address, MEM_dataBuf, 1)) != DEV_OK)
-    return stat;
+  SRAMaddress = MEM_SRAM1_ADDR_BLOCK_BUF;
+    
+  //Copy block to nand
+  for (int i=0; i<MEM_NAND_BLOCK_SIZE; i++)
+  {
+    MEM_selectMem(MEM_ID_SRAM1); //Select memory
+    if ((stat = (DEV_Status_t)HAL_SRAM_Read_8b(MEM_hSRAM1, &SRAMaddress, MEM_dataBuf, MEM_NAND_PAGE_SIZE)) != DEV_OK)
+      return stat;
+    
+    MEM_selectMem(MEM_ID_NAND); //Select memory
+    if ((stat = (DEV_Status_t)HAL_NAND_Write_Page_8b(MEM_hNAND1, &startBlockAddress, MEM_dataBuf, 1)) != DEV_OK)
+      return stat;
+    SRAMaddress += MEM_NAND_BLOCK_SIZE;
+  }
   
-  return stat; 
+  return DEV_OK; 
 }
 //--------------------------------------------------------------------------------------------------
 //Read data NAND
@@ -112,7 +149,7 @@ DEV_Status_t MEM_SRAM_writeData(MEM_ID_t memID, uint32_t address, uint8_t *data,
   {
     sramHandle = MEM_hSRAM1;
   }else if(memID == MEM_ID_SRAM2) {
-    sramHandle = MEM_hSRAM1;
+    sramHandle = MEM_hSRAM2;
   }
 
   stat = (DEV_Status_t)HAL_SRAM_WriteOperation_Enable(sramHandle);

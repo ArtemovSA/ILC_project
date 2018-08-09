@@ -15,6 +15,7 @@ uint32_t num;
 uint8_t crc;
 uint64_t fwSize;
 
+extern void debugOut(char *str, ...);
 //--------------------------------------------------------------------------------------------------
 //Erace Flash
 DEV_Status_t FW_eraceFlash()
@@ -33,7 +34,7 @@ DEV_Status_t FW_eraceFlash()
   //Try erace sector
   if (HAL_FLASHEx_Erase(&EraseInitStruct, &SectorError) != HAL_OK)
   { 
-    printf("@ FLASH erace error\r\n");
+    debugOut("@ FLASH erace error\r\n");
     return DEV_ERROR;
   }
   
@@ -51,14 +52,17 @@ DEV_Status_t FW_readInfodata(DEV_info_t* info)
   
   return DEV_OK;
 }
+char* var;
+uint16_t strLEn;
 //--------------------------------------------------------------------------------------------------
 //Read Next str
 static DEV_Status_t FW_readNextStr(FIL* fp, char* str_p, uint16_t len)
 {  
-  char* var;
-  f_gets(str_p, len, fp);// read current line
-  if (f_lseek(fp, strlen(str_p)) != FR_OK)// move to the next line
-    return DEV_ERROR;
+  
+  var = f_gets(str_p, len, fp);// read current line
+  strLEn = strlen(str_p);
+  //if (f_lseek(fp, strLEn) != FR_OK)// move to the next line
+  //  return DEV_ERROR;
   
   return DEV_OK;
 }
@@ -70,7 +74,7 @@ DEV_Status_t FW_readCardMetadata(FW_metadata_t* metadata)
   
   //Mount FS
   if (f_mount(&filesystem, SDPath, 1) != FR_OK) {
-    printf("@ SD card not found \n\r");
+    debugOut("@ SD card not found \n\r");
     return DEV_NEXIST;
   }
   
@@ -82,7 +86,7 @@ DEV_Status_t FW_readCardMetadata(FW_metadata_t* metadata)
 
       //Read cmd
       if (FW_readNextStr(&fileInf, str, sizeof(str)) != DEV_OK)
-        printf("@ Can't read inf \n\r");
+        debugOut("@ Can't read inf \n\r");
       
       sscanf(str, FW_CMD_PARCE, &num, &n);
       if (n > 0)
@@ -90,7 +94,7 @@ DEV_Status_t FW_readCardMetadata(FW_metadata_t* metadata)
       
       //Read version
       if (FW_readNextStr(&fileInf, str, sizeof(str)) != DEV_OK)
-        printf("@ Can't read inf \n\r");
+        debugOut("@ Can't read inf \n\r");
       
       sscanf(str, FW_VERSION_PARCE, &num, &n);
       if (n > 0)
@@ -98,7 +102,7 @@ DEV_Status_t FW_readCardMetadata(FW_metadata_t* metadata)
       
       //Read size
       if (FW_readNextStr(&fileInf, str, sizeof(str)) != DEV_OK)
-        printf("@ Can't read inf \n\r");
+        debugOut("@ Can't read inf \n\r");
       
       sscanf(str, FW_SIZE_PARCE, &num, &n);
       if (n > 0)
@@ -106,23 +110,23 @@ DEV_Status_t FW_readCardMetadata(FW_metadata_t* metadata)
       
       //Read crc
       if (FW_readNextStr(&fileInf, str, sizeof(str)) != DEV_OK)
-        printf("@ Can't read inf \n\r");
+        debugOut("@ Can't read inf \n\r");
       
       sscanf(str, FW_CRC_PARCE, &num, &n);
       if (n > 0)
         metadata->FW_CRC = num;
       
-      ret = f_open(&fileBin, FW_SD_INF_FILE_NAME, FA_OPEN_EXISTING | FA_READ);
+      ret = f_open(&fileBin, FW_SD_BIN_FILE_NAME, FA_OPEN_EXISTING | FA_READ);
       
       if (ret == FR_OK) {
         return DEV_OK;
       }else{
-        printf("@ File FW.bin not found \n\r");
+        debugOut("@ File FW.bin not found \n\r");
       return DEV_ERROR;
       }
       
   }else{
-    printf("@ File FW.inf not found \n\r");
+    debugOut("@ File FW.inf not found \n\r");
     return DEV_ERROR;
   }
 }
@@ -152,7 +156,7 @@ DEV_Status_t FW_SDcardUpdate(FW_metadata_t* metadata)
       
       if (crc_val != metadata->FW_CRC)
       {
-        printf("@ CRC error\r\n");
+        debugOut("@ CRC error\r\n");
         return DEV_ERROR;
       }
     }
@@ -165,13 +169,13 @@ DEV_Status_t FW_SDcardUpdate(FW_metadata_t* metadata)
       {
         if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_BYTE, fwWritePoint, FW_buf[i]) != HAL_OK)
         {
-          printf("@ FLASH WRITE ERROR\r\n");
+          debugOut("@ FLASH WRITE ERROR\r\n");
           return DEV_ERROR;
         }
         
         if (fwWritePoint > metadata->FW_size)
         {
-          printf("@ BIG FILE\r\n");
+          debugOut("@ BIG FILE\r\n");
           return DEV_ERROR;
         }
         
@@ -193,7 +197,7 @@ DEV_Status_t FW_readNandMetadata(FW_metadata_t* metadata)
   //read metadata
   if (MEM_NAND_readData(addr, 0, (uint8_t*)metadata, sizeof(FW_metadata_t)) != DEV_OK)
   {
-    printf("@ NAND IO ERROR\r\n");
+    debugOut("@ NAND IO ERROR\r\n");
     return DEV_ERROR;
   }
   
@@ -214,7 +218,7 @@ DEV_Status_t FW_nandUpdate(FW_metadata_t* metadata)
   {
     if (MEM_NAND_readData(addr, 0, FW_buf, MEM_NAND_PAGE_SIZE) != DEV_OK)
     {
-      printf("@ NAND IO ERROR\r\n");
+      debugOut("@ NAND IO ERROR\r\n");
       return DEV_ERROR;
     }
     
@@ -224,7 +228,7 @@ DEV_Status_t FW_nandUpdate(FW_metadata_t* metadata)
   //Tail
   if (MEM_NAND_readData(addr, 0, FW_buf, tail) != DEV_OK)
   {
-    printf("@ NAND IO ERROR\r\n");
+    debugOut("@ NAND IO ERROR\r\n");
     return DEV_ERROR;
   }
   
@@ -233,14 +237,14 @@ DEV_Status_t FW_nandUpdate(FW_metadata_t* metadata)
   //Check CRC
   if (crc_val != metadata->FW_CRC)
   {
-    printf("@ CRC New FW inccorect\r\n");
+    debugOut("@ CRC New FW inccorect\r\n");
     return DEV_ERROR;
   }
   
   //Erace Flash
   if (FW_eraceFlash() != DEV_OK)
   {
-    printf("@ Can't erace\r\n");
+    debugOut("@ Can't erace\r\n");
     return DEV_ERROR;
   }
   
@@ -250,7 +254,7 @@ DEV_Status_t FW_nandUpdate(FW_metadata_t* metadata)
   {
     if (MEM_NAND_readData(addr, 0, FW_buf, MEM_NAND_PAGE_SIZE) != DEV_OK)
     {
-      printf("@ NAND IO ERROR\r\n");
+      debugOut("@ NAND IO ERROR\r\n");
       return DEV_ERROR;
     }
     
@@ -258,7 +262,7 @@ DEV_Status_t FW_nandUpdate(FW_metadata_t* metadata)
     {
       if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_BYTE, FW_IMAGE_START_ADDRESS+pageNum*MEM_NAND_PAGE_SIZE+i, FW_buf[i]) != HAL_OK)
       {
-        printf("@ FLASH WRITE ERROR\r\n");
+        debugOut("@ FLASH WRITE ERROR\r\n");
         return DEV_ERROR;
       }
     }
@@ -267,7 +271,7 @@ DEV_Status_t FW_nandUpdate(FW_metadata_t* metadata)
   //Tail
   if (MEM_NAND_readData(addr, 0,  FW_buf, tail) != DEV_OK)
   {
-    printf("@ NAND IO ERROR\r\n");
+    debugOut("@ NAND IO ERROR\r\n");
     return DEV_ERROR;
   }
   
@@ -275,7 +279,7 @@ DEV_Status_t FW_nandUpdate(FW_metadata_t* metadata)
   {
     if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_BYTE, FW_IMAGE_START_ADDRESS+pages*MEM_NAND_PAGE_SIZE+i, FW_buf[i]) != HAL_OK)
     {
-      printf("@ FLASH WRITE ERROR\r\n");
+      debugOut("@ FLASH WRITE ERROR\r\n");
       return DEV_ERROR;
     }
   }

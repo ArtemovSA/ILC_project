@@ -78,8 +78,8 @@ void EMS_init()
 //  uint8_t testBuffer[16] = "SD write success";
 //  char path[] = "testfile.txt";
 //  uint32_t testBytes;
-  
-  //Init log file on sd
+//  
+//  Init log file on sd
 //  if(FATFS_LinkDriver(&SD_Driver, SDPath) == 0)
 //  {    
 //    if(f_mount(&fileSystem, (TCHAR const*)SDPath, 1) == FR_OK)

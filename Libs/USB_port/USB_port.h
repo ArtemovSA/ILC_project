@@ -17,6 +17,8 @@ typedef enum{
 //USBP mode
 extern volatile USBP_mode_t USBP_mode;
 
+//init
+void USBP_init();
 //Отправить данные
 uint16_t USBP_Send(uint8_t* data, uint16_t len);
 //Получить данные

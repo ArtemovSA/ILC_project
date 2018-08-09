@@ -48,6 +48,21 @@ void vUSBC_task(void *pvParameters)
   }
 }
 //--------------------------------------------------------------------------------------------------
+//Send payload
+void USBC_sendPayload(uint8_t* payload, uint16_t len)
+{
+  uint16_t crc_val; //Значение CRC
+  //Расчет CRC
+  crc_val = crc16(payload, len);
+  payload[len] = (crc_val & 0x00FF);//CRC16
+  payload[len+1] = (crc_val & 0xFF00) >> 8; //CRC16
+  
+  payload[len+2] = USBC_STOP1_BYTE; //Стоповый байт
+  payload[len+3] = USBC_STOP2_BYTE; //Стоповый байт        
+  
+  USBP_Send(payload,len+4); //Отправить ответ
+}
+//--------------------------------------------------------------------------------------------------
 //Command process
 void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
 {
@@ -74,19 +89,25 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
       DC_debugOut((char*)&cmdData[1]);
       break;
       
+      //Connection check
+    case USBC_CMD_CONN_CHECK:
+      cmdData[0] = command; //Команда
+      cmdData[1] = USBC_RET_OK;
+      
+      //Send payload
+      USBC_sendPayload(cmdData, 2);
+      break;
+      
       //Write
     case USBC_CMD_FLASH_WRITE:
       
-      block = (cmdData[1]<<8) | cmdData[2];
-      page = (cmdData[3]<<8) | cmdData[4];
+      addrNAND.Block = (cmdData[1]<<8) | cmdData[2];
+      addrNAND.Page = (cmdData[3]<<8) | cmdData[4];
+      addrNAND.Plane = 0;
       offset = (cmdData[5]<<8) | cmdData[6];
       len = (cmdData[7]<<8) | cmdData[8];
       
       if ( xSemaphoreTake(muxNAND, 100) == pdTRUE ) {
-        
-        addrNAND.Plane = 0;
-        addrNAND.Block = block;
-        addrNAND.Page = page;
         
         //Try write
         if (MEM_NAND_writeData(addrNAND, offset, &cmdData[9], len) == DEV_OK)
@@ -100,68 +121,59 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
         
         xSemaphoreGive(muxNAND);
         
-        //Расчет CRC
-        crc_val = crc16(cmdData, 2);
-        cmdData[2] = (crc_val & 0x00FF);//CRC16
-        cmdData[3] = (crc_val & 0xFF00) >> 8; //CRC16
-        
-        cmdData[4] = USBC_STOP1_BYTE; //Стоповый байт
-        cmdData[5] = USBC_STOP2_BYTE; //Стоповый байт        
-        
-        USBP_Send(cmdData,6); //Отправить ответ
-        
-      }
-      break;
-      
-      //Read
-    case USBC_CMD_FLASH_READ:
-      
-      block = (cmdData[1]<<8) | cmdData[2];
-      page = (cmdData[3]<<8) | cmdData[4];
-      offset = (cmdData[5]<<8) | cmdData[6];
-      len = (cmdData[7]<<8) | cmdData[8];
-      
-      //Try read
-      if (MEM_NAND_readData(addrNAND, offset, &cmdData[2], len) == DEV_OK)
-      {
-        cmdData[0] = command; //Команда
-        cmdData[1] = USBC_RET_OK;
       }else{
         cmdData[0] = command; //Команда
         cmdData[1] = USBC_RET_ERROR; 
       }
       
-      xSemaphoreGive(muxNAND);
+      USBC_sendPayload(cmdData, 2); //Send payload
+      break;
       
-      //Расчет CRC
-      crc_val = crc16(cmdData, len+2);
-      cmdData[len+2] = (crc_val & 0x00FF);//CRC16
-      cmdData[len+3] = (crc_val & 0xFF00) >> 8; //CRC16
+      //Read
+    case USBC_CMD_FLASH_READ:
       
-      cmdData[len+4] = USBC_STOP1_BYTE; //Стоповый байт
-      cmdData[len+5] = USBC_STOP2_BYTE; //Стоповый байт        
+      addrNAND.Block = (cmdData[1]<<8) | cmdData[2];
+      addrNAND.Page = (cmdData[3]<<8) | cmdData[4];
+      addrNAND.Plane = 0;
+      offset = (cmdData[5]<<8) | cmdData[6];
+      len = (cmdData[7]<<8) | cmdData[8];
       
-      USBP_Send(cmdData,len+6); //Отправить ответ
+      if ( xSemaphoreTake(muxNAND, 100) == pdTRUE ) {
+        //Try read
+        if (MEM_NAND_readData(addrNAND, offset, &cmdData[2], len) == DEV_OK)
+        {
+          cmdData[0] = command; //Команда
+          cmdData[1] = USBC_RET_OK;
+        }else{
+          cmdData[0] = command; //Команда
+          cmdData[1] = USBC_RET_ERROR; 
+        }
+        
+        xSemaphoreGive(muxNAND);
+        
+        USBC_sendPayload(cmdData, len+2);//Send payload
+        
+      }else{
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_ERROR;
+        
+        USBC_sendPayload(cmdData, len+2);//Send payload
+      }
       
       break;
       
       //Change mode
     case USBC_CMD_CHANGE_MODE:
-            
-      USBP_mode = cmdData[1]; //Change mode
+      
+      USBP_mode = (USBP_mode_t)cmdData[1]; //Change mode
       
       cmdData[0] = command; //Команда
       cmdData[1] = USBC_RET_OK;
       
-      crc_val = crc16(cmdData, 2);
-      cmdData[2] = (crc_val & 0x00FF);//CRC16
-      cmdData[3] = (crc_val & 0xFF00) >> 8; //CRC16
-      
-      cmdData[4] = USBC_STOP1_BYTE; //Стоповый байт
-      cmdData[5] = USBC_STOP2_BYTE; //Стоповый байт   
+      USBC_sendPayload(cmdData, 2);//Send payload
       
       break;
-        
+      
     }
   }else{
     

@@ -28,9 +28,9 @@ void MEM_init(SRAM_HandleTypeDef *sram1, SRAM_HandleTypeDef *sram2, NAND_HandleT
 
 //NAND
 #define MEM_NAND_PAGE_SIZE      0x800UL                 //2048 bytes
-#define MEM_NAND_BLOCK_SIZE     0x1000UL                // in pages
-#define MEM_NAND_PLANE_SIZE     0x400000UL              // in blocks
-#define MEM_NAND_MEMORY_SIZE    0x400000UL              // in blocks
+#define MEM_NAND_BLOCK_SIZE     0x40UL                  // in pages
+#define MEM_NAND_PLANE_SIZE     0x400UL                 // in blocks
+#define MEM_NAND_MEMORY_SIZE    0x8000000UL              
 #define MEM_NAND_DEV_ID         0xDA                    // default id
                                                       //plane, block, page
 #define MEM_NAND_ADDR_INFO      (NAND_AddressTypeDef) {0, 0, 0}         //Info page
@@ -56,11 +56,12 @@ DEV_Status_t MEM_NAND_readData(NAND_AddressTypeDef address, uint16_t offset_addr
 
 #define MEM_SRAM1_MEMORY_SIZE    0xFA000
 #define MEM_SRAM1_ADDR_SCRIPT1   0x0000
+#define MEM_SRAM1_ADDR_BLOCK_BUF 0xDA000
 
 //***************************************SRAM2 mem map**********************************************
 
 #define MEM_SRAM2_MEMORY_SIZE    0xFA000
-#define MEM_SRAM1_ADDR_SCRIPT2   0x0000
+#define MEM_SRAM2_ADDR_SCRIPT2   0x0000
 
 //***************************************SRAM functions*********************************************
 

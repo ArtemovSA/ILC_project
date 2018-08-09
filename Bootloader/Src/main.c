@@ -59,6 +59,8 @@
 #include "FW_update.h"
 #include "deviceDefs.h"
 #include "Memory.h"
+#include <stdarg.h>
+#include "stdbool.h"
 
 uint32_t ApplicationAddress = FW_IMAGE_START_ADDRESS;
 uint32_t JumpAddress;
@@ -100,6 +102,12 @@ FW_metadata_t metadataNAND; //FW metadata NAND
 DEV_info_t DEV_info; //dev info struct
 DEV_Status_t retStat; //Return status
 
+char strBuffer[512];
+//Out debug data
+//arg: str - string for out
+void debugOut(char *str, ...);
+void delay(uint32_t time_delay);
+
 /* USER CODE END 0 */
 
 /**
@@ -135,7 +143,13 @@ int main(void)
   MX_CRC_Init();
   MX_SDIO_SD_Init();
   MX_FATFS_Init();
+  
   /* USER CODE BEGIN 2 */
+  
+  //LED out
+  HAL_GPIO_WritePin(LED_LINK_GPIO_Port, LED_LINK_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(LED_RUN_GPIO_Port, LED_RUN_Pin, GPIO_PIN_SET);
   
   //goto jump_to_application;
   
@@ -145,15 +159,15 @@ int main(void)
   //Check nand
   if (MEM_NAND_checkID() == DEV_OK)
   {
-    printf("# Nand check OK\r\n");
+    debugOut("# Nand check OK\r\n");
   }else{
-    printf("# Nand check ERROR\r\n");
+    debugOut("# Nand check ERROR\r\n");
   }
   
   //Read info data
   if (FW_readInfodata(&DEV_info) != DEV_OK)
   {
-    printf("@ NAND info read ERROR\r\n");
+    debugOut("@ NAND info read ERROR\r\n");
     goto jump_to_application;
   }
   
@@ -163,7 +177,7 @@ int main(void)
   //SD card not found
   if (retStat == DEV_NEXIST)
   {
-    printf("@ SD not inserted\r\n");
+    debugOut("@ SD not inserted\r\n");
   }
 
   //Metadata SD readed
@@ -174,10 +188,10 @@ int main(void)
     {
       if (metadataSD.FW_new_ver > DEV_info.SW_version)
       {
-        printf("@ SD new version SW:%d\r\n", metadataSD.FW_new_ver);
+        debugOut("@ SD new version SW:%d\r\n", metadataSD.FW_new_ver);
         //SD card update
         if (FW_SDcardUpdate(&metadataSD) != DEV_OK)
-          printf("@ SD update error\r\n");
+          debugOut("@ SD update error\r\n");
         goto jump_to_application;
       }
     }
@@ -185,10 +199,10 @@ int main(void)
     //Force update FW
     if (metadataSD.FW_cmd == FW_REWRITE_FW)
     {
-      printf("@ SD force update SW:%d\r\n", metadataSD.FW_new_ver);
+      debugOut("@ SD force update SW:%d\r\n", metadataSD.FW_new_ver);
       //SD card update
       if (FW_SDcardUpdate(&metadataSD) != DEV_OK)
-        printf("@ SD update error\r\n");
+        debugOut("@ SD update error\r\n");
       goto jump_to_application;
     }
   }
@@ -201,10 +215,10 @@ int main(void)
     {
       if (metadataNAND.FW_new_ver > DEV_info.SW_version)
       {
-        printf("@ NAND new version SW:%d\r\n", metadataSD.FW_new_ver);
+        debugOut("@ NAND new version SW:%d\r\n", metadataSD.FW_new_ver);
         //Nand update
         if (FW_nandUpdate(&metadataNAND) != DEV_OK)
-          printf("@ NAND update error\r\n");
+          debugOut("@ NAND update error\r\n");
         goto jump_to_application;
       }
     }
@@ -212,24 +226,30 @@ int main(void)
     //Force update FW
     if (metadataNAND.FW_cmd == FW_REWRITE_FW)
     {
-      printf("@ NAND force update SW:%d\r\n", metadataSD.FW_new_ver);
+      debugOut("@ NAND force update SW:%d\r\n", metadataSD.FW_new_ver);
       //Nand update
       if (FW_nandUpdate(&metadataNAND) != DEV_OK)
-        printf("@ NAND update error\r\n");
+        debugOut("@ NAND update error\r\n");
       goto jump_to_application;
     }
     
   }
   
-  printf("@ Go to start\r\n");
+  debugOut("@ Go to start\r\n");
   
   //Jump to main program
 jump_to_application:
-  printf("@ Load FW\r\n");
   JumpAddress = *( uint32_t* )( ApplicationAddress + 4 );
   Jump_To_Application = ( pFunction )JumpAddress;
   uint32_t Stack = *( uint32_t* ) ApplicationAddress;
   __set_MSP( Stack );
+  
+  delay(16800000);
+  
+  //LED out
+  HAL_GPIO_WritePin(LED_LINK_GPIO_Port, LED_LINK_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LED_RUN_GPIO_Port, LED_RUN_Pin, GPIO_PIN_RESET);
 
   Jump_To_Application(); 
   
@@ -325,7 +345,7 @@ static void MX_SDIO_SD_Init(void)
 
   hsd.Instance = SDIO;
   hsd.Init.ClockEdge = SDIO_CLOCK_EDGE_RISING;
-  hsd.Init.ClockBypass = SDIO_CLOCK_BYPASS_DISABLE;
+  hsd.Init.ClockBypass = SDIO_CLOCK_BYPASS_ENABLE;
   hsd.Init.ClockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
   hsd.Init.BusWide = SDIO_BUS_WIDE_1B;
   hsd.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
@@ -355,7 +375,17 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOE, LED_LINK_Pin|LED_STATUS_Pin|LED_RUN_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOG, SRAM_CE2_1_Pin|SRAM_CE2_2_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : LED_LINK_Pin LED_STATUS_Pin LED_RUN_Pin */
+  GPIO_InitStruct.Pin = LED_LINK_Pin|LED_STATUS_Pin|LED_RUN_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pins : SRAM_CE2_1_Pin SRAM_CE2_2_Pin */
   GPIO_InitStruct.Pin = SRAM_CE2_1_Pin|SRAM_CE2_2_Pin;
@@ -545,3 +575,32 @@ void assert_failed(uint8_t* file, uint32_t line)
   */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+//--------------------------------------------------------------------------------------------------
+//Out debug data
+//arg: str - string for out
+void debugOut(char *str, ...)
+{  
+  va_list args;
+  va_start(args, str);
+  va_end(args);
+  
+  vsprintf(strBuffer, str, args);
+  va_end(args);
+  
+  if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) ? true : false)
+  {
+    //taskENTER_CRITICAL();
+    //printf(strBuffer);
+    //taskEXIT_CRITICAL();
+  }
+
+  va_end(args);
+}
+void delay(uint32_t time_delay)
+{	
+    while(time_delay--)
+    {
+      asm("nop");
+    }
+}

@@ -4,7 +4,7 @@
 
 #include "stdint.h"
 
-#define USBC_CMD_BUF_LEN        128
+#define USBC_CMD_BUF_LEN        300
 #define USBC_STOP1_BYTE         0x54
 #define USBC_STOP2_BYTE         0x55
 
@@ -17,15 +17,16 @@ enum{
 
 //Commands
 enum{
-  USBC_CMD_DEBUG = 0,
-  USBC_CMD_FLASH_WRITE,
-  USBC_CMD_FLASH_READ,
-  USBC_CMD_CHANGE_MODE
+  USBC_CMD_DEBUG = 0,   //Debug command
+  USBC_CMD_CONN_CHECK,  //Connection check
+  USBC_CMD_FLASH_WRITE, //Write data to NAND
+  USBC_CMD_FLASH_READ,  //Read data from NAND
+  USBC_CMD_CHANGE_MODE  //Change mode
 };
 
 //Returned values
 enum{
-  USBC_RET_OK = 1,
+  USBC_RET_OK = 0,
   USBC_RET_ERROR,
   USBC_RET_ADDR_ERR,
   USBC_RET_OVERF,
@@ -33,6 +34,8 @@ enum{
   USBC_RET_NEXIST
 };
 
+//USB command init
+void USBC_init(uint8_t priority);
 //Recive commnd process
 void USBC_Receive_proc(uint8_t *data, uint16_t len);
 

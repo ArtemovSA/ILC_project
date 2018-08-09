@@ -120,12 +120,28 @@ uint8_t DC_getCurrentTaskID();
 
 //**********************************Digital IO******************************************************
 
-//LED blink
-void DC_LedBlink(uint8_t led, uint16_t rate_Hz, uint16_t count);
-//LED out
-void DC_LedOut(uint8_t led, uint8_t state);
+//LEDs
+typedef enum{
+  LED_LINK = 0,
+  LED_STATUS,
+  LED_RUN
+}LED_t;
+
+//Status out
+typedef enum{
+  LED_OFF = 0,
+  LED_PROC_OK,
+  LED_PROC_ERROR
+}ledState_t;
+
+//Led status
+extern volatile ledState_t linkState;
+extern volatile ledState_t stateState;
+extern volatile ledState_t runState;
+
 //Relay out
 HAL_StatusTypeDef DC_relayOut(uint8_t relNum, uint8_t state);
+
 
 
 #endif

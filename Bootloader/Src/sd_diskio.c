@@ -61,7 +61,7 @@
 #elif defined(SD_DATATIMEOUT)
 #define SD_TIMEOUT SD_DATATIMEOUT
 #else
-#define SD_TIMEOUT 10 * 1000
+#define SD_TIMEOUT 30 * 1000
 #endif
 
 #define SD_DEFAULT_BLOCK_SIZE 512
