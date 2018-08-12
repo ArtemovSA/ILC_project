@@ -69,7 +69,7 @@ DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint16_t offset_add
 {
   DEV_Status_t stat;
   NAND_AddressTypeDef startBlockAddress = address;
-  uint32_t SRAMaddress = MEM_SRAM1_ADDR_BLOCK_BUF;
+  uint32_t* SRAMaddress_p = (uint32_t*)MEM_SRAM1_ADDR_BLOCK_BUF;
   
   startBlockAddress.Page = 0;
   
@@ -85,9 +85,9 @@ DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint16_t offset_add
       return stat;
     
     MEM_selectMem(MEM_ID_SRAM1); //Select memory
-    if ((stat = (DEV_Status_t)HAL_SRAM_Write_8b(MEM_hSRAM1, &SRAMaddress, MEM_dataBuf, MEM_NAND_PAGE_SIZE)) != DEV_OK)
+    if ((stat = (DEV_Status_t)HAL_SRAM_Write_8b(MEM_hSRAM1, SRAMaddress_p, MEM_dataBuf, MEM_NAND_PAGE_SIZE)) != DEV_OK)
       return stat;
-    SRAMaddress += MEM_NAND_BLOCK_SIZE;
+    SRAMaddress_p += MEM_NAND_PAGE_SIZE;
   }  
 
   //Erace block NAND
@@ -97,24 +97,28 @@ DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint16_t offset_add
   
   //Write data
   MEM_selectMem(MEM_ID_SRAM1); //Select memory
-  SRAMaddress += address.Page * MEM_NAND_PAGE_SIZE + offset_addr;
-  if ((stat = (DEV_Status_t)HAL_SRAM_Write_8b(MEM_hSRAM1, &SRAMaddress, data, len)) != DEV_OK)
+  SRAMaddress_p = (uint32_t*)(MEM_SRAM1_ADDR_BLOCK_BUF + address.Page * MEM_NAND_PAGE_SIZE + offset_addr);
+  if ((stat = (DEV_Status_t)HAL_SRAM_Write_8b(MEM_hSRAM1, SRAMaddress_p, data, len)) != DEV_OK)
       return stat;
   
-  SRAMaddress = MEM_SRAM1_ADDR_BLOCK_BUF;
+  SRAMaddress_p = (uint32_t*)MEM_SRAM1_ADDR_BLOCK_BUF;
     
   //Copy block to nand
   for (int i=0; i<MEM_NAND_BLOCK_SIZE; i++)
   {
     MEM_selectMem(MEM_ID_SRAM1); //Select memory
-    if ((stat = (DEV_Status_t)HAL_SRAM_Read_8b(MEM_hSRAM1, &SRAMaddress, MEM_dataBuf, MEM_NAND_PAGE_SIZE)) != DEV_OK)
+    if ((stat = (DEV_Status_t)HAL_SRAM_Read_8b(MEM_hSRAM1, SRAMaddress_p, MEM_dataBuf, MEM_NAND_PAGE_SIZE)) != DEV_OK)
       return stat;
     
     MEM_selectMem(MEM_ID_NAND); //Select memory
     if ((stat = (DEV_Status_t)HAL_NAND_Write_Page_8b(MEM_hNAND1, &startBlockAddress, MEM_dataBuf, 1)) != DEV_OK)
       return stat;
-    SRAMaddress += MEM_NAND_BLOCK_SIZE;
+    SRAMaddress_p += MEM_NAND_PAGE_SIZE;
   }
+  
+  //Disable sram write
+  if ((stat = (DEV_Status_t)HAL_SRAM_WriteOperation_Disable(MEM_hSRAM1)) != DEV_OK)
+    return stat;
   
   return DEV_OK; 
 }

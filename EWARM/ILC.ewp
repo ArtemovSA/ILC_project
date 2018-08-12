@@ -77,7 +77,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>7.80.3.12143</state>
+          <state>7.80.4.12487</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -769,7 +769,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$/stm32f407xx_flash.icf</state>
+          <state>$PROJ_DIR$\stm32f407xE.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>

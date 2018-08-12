@@ -54,9 +54,10 @@ DEV_Status_t MEM_NAND_readData(NAND_AddressTypeDef address, uint16_t offset_addr
 
 //***************************************SRAM1 mem map**********************************************
 
-#define MEM_SRAM1_MEMORY_SIZE    0xFA000
-#define MEM_SRAM1_ADDR_SCRIPT1   0x0000
-#define MEM_SRAM1_ADDR_BLOCK_BUF 0xDA000
+#define MEM_SRAM1_ADDR           0x60000000UL
+#define MEM_SRAM1_MEMORY_SIZE    0xFA000UL
+#define MEM_SRAM1_ADDR_SCRIPT1   0x0000UL + MEM_SRAM1_ADDR
+#define MEM_SRAM1_ADDR_BLOCK_BUF 0xDA000UL + MEM_SRAM1_ADDR
 
 //***************************************SRAM2 mem map**********************************************
 
