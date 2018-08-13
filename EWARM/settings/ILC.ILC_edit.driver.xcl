@@ -20,8 +20,6 @@
 
 "--drv_catch_exceptions=0x000" 
 
-"--drv_communication=USB:#select" 
-
 
 
 
