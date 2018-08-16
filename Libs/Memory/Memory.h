@@ -5,10 +5,10 @@
 #include "deviceDefs.h"
 
 //Gpio macros
-#define MEM_EN_SRAM1_ON    HAL_GPIO_WritePin(SRAM_CE2_1_GPIO_Port, SRAM_CE2_1_Pin, GPIO_PIN_SET)
-#define MEM_EN_SRAM1_OFF   HAL_GPIO_WritePin(SRAM_CE2_1_GPIO_Port, SRAM_CE2_1_Pin, GPIO_PIN_RESET)
-#define MEM_EN_SRAM2_ON    HAL_GPIO_WritePin(SRAM_CE2_2_GPIO_Port, SRAM_CE2_2_Pin, GPIO_PIN_SET)
-#define MEM_EN_SRAM2_OFF   HAL_GPIO_WritePin(SRAM_CE2_2_GPIO_Port, SRAM_CE2_2_Pin, GPIO_PIN_RESET)
+#define MEM_EN_SRAM1_ON    HAL_GPIO_WritePin(SRAM_CE2_2_GPIO_Port, SRAM_CE2_2_Pin, GPIO_PIN_SET)
+#define MEM_EN_SRAM1_OFF   HAL_GPIO_WritePin(SRAM_CE2_2_GPIO_Port, SRAM_CE2_2_Pin, GPIO_PIN_RESET)
+#define MEM_EN_SRAM2_ON    HAL_GPIO_WritePin(SRAM_CE2_1_GPIO_Port, SRAM_CE2_1_Pin, GPIO_PIN_SET)
+#define MEM_EN_SRAM2_OFF   HAL_GPIO_WritePin(SRAM_CE2_1_GPIO_Port, SRAM_CE2_1_Pin, GPIO_PIN_RESET)
 
 //***************************************Memory work************************************************
 
@@ -27,9 +27,9 @@ void MEM_init(SRAM_HandleTypeDef *sram1, SRAM_HandleTypeDef *sram2, NAND_HandleT
 //***************************************Mem map***********************************************
 
 //NAND
-#define MEM_NAND_PAGE_SIZE      0x800UL                 //2048 bytes
-#define MEM_NAND_BLOCK_SIZE     0x40UL                  // in pages
-#define MEM_NAND_PLANE_SIZE     0x400UL                 // in blocks
+#define MEM_NAND_PAGE_SIZE      2048                    //2048 bytes
+#define MEM_NAND_BLOCK_SIZE     0x40                    // in pages
+#define MEM_NAND_PLANE_SIZE     0x400                   // in blocks
 #define MEM_NAND_MEMORY_SIZE    0x8000000UL              
 #define MEM_NAND_DEV_ID         0xDA                    // default id
                                                       //plane, block, page
@@ -54,13 +54,16 @@ DEV_Status_t MEM_NAND_readData(NAND_AddressTypeDef address, uint16_t offset_addr
 
 //***************************************SRAM1 mem map**********************************************
 
-#define MEM_SRAM1_ADDR           0x80000000UL
+//Bank 1
+#define MEM_SRAM1_ADDR           0x60000000ULL
 #define MEM_SRAM1_MEMORY_SIZE    0xFA000UL
-#define MEM_SRAM1_ADDR_SCRIPT1   0x0000UL + MEM_SRAM1_ADDR
-#define MEM_SRAM1_ADDR_BLOCK_BUF 0xDA000UL + MEM_SRAM1_ADDR
+#define MEM_SRAM1_ADDR_SCRIPT1   0x60000000ULL
+#define MEM_SRAM1_ADDR_BLOCK_BUF 0x600DA000ULL
 
 //***************************************SRAM2 mem map**********************************************
 
+//Bank 3
+#define MEM_SRAM2_ADDR           0x80000000UL
 #define MEM_SRAM2_MEMORY_SIZE    0xFA000
 #define MEM_SRAM2_ADDR_SCRIPT2   0x0000
 

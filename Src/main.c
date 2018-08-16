@@ -835,7 +835,7 @@ void startDebugTask(void const * argument)
   IP4_ADDR(&ipaddr, DC_set.serverDNS[0], DC_set.serverDNS[1], DC_set.serverDNS[2], DC_set.serverDNS[3]);
   dns_setserver(0, &ipaddr);
   dns_init();
-  DC_debugOut("DNS init OK\r\n");
+  DC_debugOut("# DNS init OK\r\n");
   
   CL_init(); //Init clock
 

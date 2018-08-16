@@ -30,7 +30,7 @@ HAL_StatusTypeDef CL_init()
     
     vTaskDelay(1000);
   }
-  DC_debugOut("NTP client enabled\r\n");
+  DC_debugOut("# NTP client enabled\r\n");
 #endif
 
   return HAL_OK;

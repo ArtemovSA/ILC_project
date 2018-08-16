@@ -69,10 +69,11 @@ DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint16_t offset_add
 {
   DEV_Status_t stat;
   NAND_AddressTypeDef startBlockAddress = address;
-  uint32_t* SRAMaddress_p = (uint32_t*)MEM_SRAM1_ADDR_BLOCK_BUF;
+  uint32_t* SRAMaddress_p = (uint32_t*)(MEM_SRAM1_ADDR_BLOCK_BUF);
   
   startBlockAddress.Page = 0;
   
+  MEM_selectMem(MEM_ID_SRAM1); //Select memory
   //Enable sram write
   if ((stat = (DEV_Status_t)HAL_SRAM_WriteOperation_Enable(MEM_hSRAM1)) != DEV_OK)
     return stat;
@@ -87,7 +88,9 @@ DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint16_t offset_add
     MEM_selectMem(MEM_ID_SRAM1); //Select memory
     if ((stat = (DEV_Status_t)HAL_SRAM_Write_8b(MEM_hSRAM1, SRAMaddress_p, MEM_dataBuf, MEM_NAND_PAGE_SIZE)) != DEV_OK)
       return stat;
-    SRAMaddress_p += MEM_NAND_PAGE_SIZE;
+    
+    startBlockAddress.Page++;
+    SRAMaddress_p = (uint32_t*)((uint32_t)SRAMaddress_p+MEM_NAND_PAGE_SIZE);
   }  
 
   //Erace block NAND
@@ -101,7 +104,8 @@ DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint16_t offset_add
   if ((stat = (DEV_Status_t)HAL_SRAM_Write_8b(MEM_hSRAM1, SRAMaddress_p, data, len)) != DEV_OK)
       return stat;
   
-  SRAMaddress_p = (uint32_t*)MEM_SRAM1_ADDR_BLOCK_BUF;
+  SRAMaddress_p = (uint32_t*)(MEM_SRAM1_ADDR_BLOCK_BUF);
+  startBlockAddress.Page = 0;
     
   //Copy block to nand
   for (int i=0; i<MEM_NAND_BLOCK_SIZE; i++)
@@ -113,9 +117,12 @@ DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint16_t offset_add
     MEM_selectMem(MEM_ID_NAND); //Select memory
     if ((stat = (DEV_Status_t)HAL_NAND_Write_Page_8b(MEM_hNAND1, &startBlockAddress, MEM_dataBuf, 1)) != DEV_OK)
       return stat;
-    SRAMaddress_p += MEM_NAND_PAGE_SIZE;
+    
+    startBlockAddress.Page++;
+    SRAMaddress_p = (uint32_t*)((uint32_t)SRAMaddress_p+MEM_NAND_PAGE_SIZE);
   }
   
+  MEM_selectMem(MEM_ID_SRAM1); //Select memory
   //Disable sram write
   if ((stat = (DEV_Status_t)HAL_SRAM_WriteOperation_Disable(MEM_hSRAM1)) != DEV_OK)
     return stat;
@@ -134,7 +141,7 @@ DEV_Status_t MEM_NAND_readData(NAND_AddressTypeDef address, uint16_t offset_addr
   if (stat != DEV_OK)
     return stat;
   
-  memcpy((data+offset_addr), MEM_dataBuf, len);
+  memcpy(data, (MEM_dataBuf+offset_addr), len);
   
   return DEV_OK; 
 }

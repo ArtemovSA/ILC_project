@@ -62,7 +62,7 @@ extern char DC_unic_idStr[13]; //Unic id str
 
 //**********************************Settings*****************************************************
 
-#define DC_SET_MAGICKEY 0x01
+#define DC_SET_MAGICKEY 0x02
 
 typedef struct {
   
