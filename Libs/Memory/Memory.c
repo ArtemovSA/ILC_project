@@ -123,11 +123,12 @@ DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint16_t offset_add
   }
   
   MEM_selectMem(MEM_ID_SRAM1); //Select memory
+  
   //Disable sram write
   if ((stat = (DEV_Status_t)HAL_SRAM_WriteOperation_Disable(MEM_hSRAM1)) != DEV_OK)
     return stat;
   
-  return DEV_OK; 
+  return DEV_OK;
 }
 //--------------------------------------------------------------------------------------------------
 //Read data NAND

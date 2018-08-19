@@ -174,6 +174,42 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
       
       break;
       
+      //Load script
+    case USBC_CMD_SCRYPT_LOAD:
+      
+      uint16_t partNum = ADD(cmdData[0], cmdData[1]);
+      uint16_t partLen = ADD(cmdData[2], cmdData[3]);
+      
+      addrNAND.Block = (cmdData[1]<<8) | cmdData[2];
+      addrNAND.Page = (cmdData[3]<<8) | cmdData[4];
+      addrNAND.Plane = 0;
+      
+      USBC_LOAD_PART_LEN
+      
+      if ( xSemaphoreTake(muxNAND, 100) == pdTRUE ) {
+        
+        //Try write
+        if (MEM_NAND_writeData(addrNAND, offset, &cmdData[9], len) == DEV_OK)
+        {
+          cmdData[0] = command; //Команда
+          cmdData[1] = USBC_RET_OK;
+        }else{
+          cmdData[0] = command; //Команда
+          cmdData[1] = USBC_RET_ERROR; 
+        }
+        
+        xSemaphoreGive(muxNAND);
+      }
+      
+      USBC_sendPayload(cmdData, 2);//Send payload
+      
+      break;
+      
+      //Start Scrypt
+    case USBC_CMD_SCRYPT_START:
+      
+      break;
+      
     }
   }else{
     

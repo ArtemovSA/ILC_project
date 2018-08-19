@@ -29,9 +29,7 @@ typedef struct {
 
 //Структура ошибки выполнения
 typedef struct{
-  uint8_t type_dev;     //Тип устройства
-  uint8_t adr_sw;       //Адрес
-  uint8_t adr_port;     //Порт
+  uint8_t source;
   uint8_t error_code;   //Код ошибки
   char thread_name[30]; //Имя потока
 }PM_error_t;

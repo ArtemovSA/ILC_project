@@ -5,7 +5,7 @@
 #include "USB_ctrl.h"
 
 //USBP mode
-volatile USBP_mode_t USBP_mode;
+volatile USBP_mode_t USBP_mode = USBP_MODE_CMD;
 
 //Recive buffers
 uint8_t USBP_rx_buf[USBP_RX_BUF_LEN];
@@ -59,6 +59,11 @@ static void USBP_runtime( TimerHandle_t xTimer )
       
     }
     
+    //Debug mode
+    if (USBP_mode == USBP_MODE_DEBUG)
+    {
+      
+    }    
   }
 
 }

@@ -42,8 +42,8 @@ extern char DC_unic_idStr[13]; //Unic id str
 //***********************************Default settings***********************************************
 
 //TCP/IP Ethernet
-#define DC_DEF_DEV_IP_ADDR              {192,168,1,55}
-#define DC_DEF_GW_IP_ADDR               {192,168,1,1}
+#define DC_DEF_DEV_IP_ADDR              {192,168,31,55}
+#define DC_DEF_GW_IP_ADDR               {192,168,31,1}
 #define DC_DEF_NET_MASK                 {255,255,255,0}
 #define DC_DEF_NTP_SERVER               "ntp1.stratum2.ru"
 #define DC_DEF_DNS                      {8,8,8,8}
@@ -59,6 +59,7 @@ extern char DC_unic_idStr[13]; //Unic id str
 
 //EMS
 #define DC_DEF_EMS_OUT_PERIOD           5 //sec
+#define DC_DEF_EMS_SEND_EN              1 //Разрешить передачу данных
 
 //**********************************Settings*****************************************************
 
@@ -85,7 +86,11 @@ typedef struct {
   uint8_t MQTT_qos;
   
   //EMS
-  uint16_t EMS_out_period;
+  uint16_t EMS_out_period; //Send period
+  uint8_t EMS_autoSendEn; //Enable periodic send
+  
+  //Python VM
+  uint8_t VM_autoStartEn; //Enable autostart script
   
   //Settings struct
   V9203_settings_t V9203_ch_set[DC_V9203_COUNT_CHANNELS];

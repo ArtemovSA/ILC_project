@@ -91,13 +91,6 @@ typedef struct{
   uint8_t len;
 } PY_var_MODEM_CALLBACK_t;
 
-//RF_CALLBACK
-typedef struct{
-  uint8_t rf_addr;
-  char rx_buf[256];
-  uint8_t len;
-} PY_var_RF_CALLBACK_t;
-
 //------------------------------------------------------------------------------
 
 extern PY_scryptData_t PY_main_script; //Основной скрипт

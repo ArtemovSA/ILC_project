@@ -34,6 +34,7 @@ char PM_str_buf[PM_STRING_SIZE]; //Global string buffer
 
 //Error description
 const PM_error_codes_t PM_error_codes[PM_ERROR_CODE_LEN] = {
+  
   //Errors
   {0x00, "All ok"},
   {0xFF, "General no result"},

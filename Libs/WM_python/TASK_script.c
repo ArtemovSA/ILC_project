@@ -21,7 +21,6 @@ PY_var_SMS_CALLBACK_t PY_var_SMS_CALLBACK;
 PY_var_MQTT_CALLBACK_t PY_var_MQTT_CALLBACK;
 PY_var_GPIO_CALLBACK_t PY_var_GPIO_CALLBACK;
 PY_var_MODEM_CALLBACK_t PY_var_MODEM_CALLBACK;
-PY_var_RF_CALLBACK_t PY_var_RF_CALLBACK;
 
 //Структура функций Callback
 PY_callback_t PY_callback[PY_COUNT_CALLBACKS] = {
@@ -29,7 +28,6 @@ PY_callback_t PY_callback[PY_COUNT_CALLBACKS] = {
   {0 , DEF_PY_MQTT_CALLBACK, PY_CALLBACK_EMPTY, (void *)&PY_var_MQTT_CALLBACK},
   {0 , DEF_PY_GPIO_CALLBACK, PY_CALLBACK_EMPTY, (void *)&PY_var_GPIO_CALLBACK},
   {0 , DEF_PY_MODEM_CALLBACK, PY_CALLBACK_EMPTY, (void *)&PY_var_MODEM_CALLBACK},
-  {0 , DEF_PY_RF_CALLBACK, PY_CALLBACK_EMPTY, (void *)&PY_var_RF_CALLBACK}
 };
 
 static void PY_TimerHandler( TimerHandle_t xTimer ); //Таймер
@@ -39,36 +37,39 @@ void vTASK_script(void *pvParameters) {
   
   PmReturn_t retval = PM_RET_OK; //Return value
   PY_task = PY_SCRIPT_NLOAD;
-  NAND_AddressTypeDef PY_WM_data_addr = MEM_NAND_ADDR_WM_DATA;
-  
-  //Read description data
-  if (MEM_NAND_readData(PY_WM_data_addr, 0, (uint8_t*)&PY_scryptData, sizeof(PY_scryptData_t)) != DEV_OK)
-  {
-    DC_debugOut("Can't read WM descr from NAND\r\n");
-    vTaskResume( script_handle );
-  }else{
-    
-    //Copy from NAND to SRAM
-    if (MEM_NAND_to_SRAM(PY_scryptData.memoryID, MEM_SRAM_SCRYPT_ADDR, PY_WM_data_addr, sizeof(PY_scryptData_t), PY_scryptData.len) != DEV_OK)
-    {
-      DC_debugOut("Can't read WM script from NAND\r\n");
-      vTaskResume( script_handle );
-    }
-    
-    //Check CRC in SRAM
-    if ( MEM_checkCRC8_SRAM(PY_scryptData.memoryID, PY_scryptData.crc, MEM_SRAM_SCRYPT_ADDR, PY_scryptData.len) != DEV_OK)
-    {
-      DC_debugOut("CRC WM ERROR\r\n");
-      vTaskResume( script_handle );
-    }
-  }
-  
+  NAND_AddressTypeDef PY_VM_data_addr = MEM_NAND_ADDR_VM_DATA;
+
   while (1) {
+    
+    //Task pause
+    vTaskSuspend(script_handle);
+      
+    //Read description data
+    if (MEM_NAND_readData(PY_VM_data_addr, 0, (uint8_t*)&PY_scryptData, sizeof(PY_scryptData_t)) != DEV_OK)
+    {
+      DC_debugOut("Can't read VM descr from NAND\r\n");
+      vTaskResume( script_handle );
+    }else{
+      
+      //Copy from NAND to SRAM
+      if (MEM_NAND_to_SRAM(PY_scryptData.memoryID, MEM_SRAM2_SCRYPT_ADDR, PY_VM_data_addr, sizeof(PY_scryptData_t), PY_scryptData.len) != DEV_OK)
+      {
+        DC_debugOut("Can't read VM script from NAND\r\n");
+        vTaskResume( script_handle );
+      }
+      
+      //Check CRC in SRAM
+      if ( MEM_checkCRC8_SRAM(PY_scryptData.memoryID, PY_scryptData.crc, MEM_SRAM2_SCRYPT_ADDR, PY_scryptData.len) != DEV_OK)
+      {
+        DC_debugOut("CRC VM ERROR\r\n");
+        vTaskResume( script_handle );
+      }
+    }
+
     
     xTimerStart( PY_timer, 0 ); //Запустить таймер
     //Инициализировать скрипт
-
-    retval = pm_init(PY_heap, PM_HEAP_SIZE, (PmMemSpace_t)PY_scryptData.memoryID, MEM_SRAM_SCRYPT_ADDR);
+    retval = pm_init(PY_heap, PM_HEAP_SIZE, (PmMemSpace_t)PY_scryptData.memoryID, MEM_SRAM2_SCRYPT_ADDR);
     retval = pm_run((uint8_t*)PY_scryptData.ModuleName);
     
     vTaskDelay(50); //Задержка на обработку

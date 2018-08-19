@@ -11,7 +11,7 @@ extern RTC_HandleTypeDef hrtc;
 
 //------------------------------------------------------------------------------------------------
 //Init clock
-HAL_StatusTypeDef CL_init()
+DEV_Status_t CL_init()
 {  
 #ifdef CL_USE_NTP 
   
@@ -33,7 +33,7 @@ HAL_StatusTypeDef CL_init()
   DC_debugOut("# NTP client enabled\r\n");
 #endif
 
-  return HAL_OK;
+  return DEV_OK;
 }
 //------------------------------------------------------------------------------------------------
 //Set system timestamp
@@ -62,7 +62,7 @@ void CL_setSystem_Timestamp(uint32_t sec)
 }
 //------------------------------------------------------------------------------------------------
 //Get system timestamp
-HAL_StatusTypeDef CL_getSystem_Timestamp(time_t *timestamp)
+DEV_Status_t CL_getSystem_Timestamp(time_t *timestamp)
 {
   RTC_TimeTypeDef currentTime;
   RTC_DateTypeDef currentDate;
@@ -81,5 +81,27 @@ HAL_StatusTypeDef CL_getSystem_Timestamp(time_t *timestamp)
   
   *timestamp = mktime(&currTime);
   
-  return HAL_OK;
+  return DEV_OK;
+}
+//------------------------------------------------------------------------------------------------
+//Get format date time
+DEV_Status_t CL_getFormat_DateTime(char* buf)
+{
+  RTC_TimeTypeDef currentTime;
+  RTC_DateTypeDef currentDate;
+  struct tm currTime;
+
+  HAL_RTC_GetTime(&hrtc, &currentTime, RTC_FORMAT_BIN);
+  HAL_RTC_GetDate(&hrtc, &currentDate, RTC_FORMAT_BIN);
+  
+  currTime.tm_year = currentDate.Year + 100;  // In fact: 2000 + 18 - 1900
+  currTime.tm_mday = currentDate.Date;
+  currTime.tm_mon  = currentDate.Month - 1;
+  
+  currTime.tm_hour = currentTime.Hours;
+  currTime.tm_min  = currentTime.Minutes;
+  
+  strftime(buf, 26, "%Y-%m-%d %H:%M:%S", &currTime);
+  
+  return DEV_OK;
 }

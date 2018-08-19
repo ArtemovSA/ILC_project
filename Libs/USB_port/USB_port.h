@@ -11,6 +11,7 @@
 //USB modes
 typedef enum{
   USBP_MODE_CMD = 0,
+  USBP_MODE_DEBUG,
   USBP_MODE_SCRIPT
 }USBP_mode_t;  
 

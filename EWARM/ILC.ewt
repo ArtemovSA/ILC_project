@@ -1488,7 +1488,7 @@
       </file>
     </group>
     <group>
-      <name>WM_python</name>
+      <name>VM_python</name>
       <group>
         <name>Pymite</name>
         <group>

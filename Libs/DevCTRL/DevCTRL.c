@@ -9,7 +9,10 @@
 #include "PCA9555.h"
 #include "deviceDefs.h"
 #include "Task_transfer.h"
+#include "fatfs.h"
 #include "stm32f4xx_hal_gpio.h"
+#include "Clock.h"
+#include "USB_port.h"
 
 //default variables
 const uint8_t DC_const_dev_ip_addr[] = DC_DEF_DEV_IP_ADDR;
@@ -46,6 +49,10 @@ void DC_LedOut(LED_t led, uint8_t state);
 volatile ledState_t linkState = LED_OFF;
 volatile ledState_t stateState = LED_OFF;
 volatile ledState_t runState = LED_OFF;
+//Fat variables
+FRESULT FATFS_res;
+FATFS FATFS_Obj;
+FIL LOG_file;
 
 //--------------------------------------------------------------------------------------------------
 //Init
@@ -92,9 +99,50 @@ void DC_init(osMessageQId *eventQueue)
       DC_debugOut("# PCA9555 TIMEOUT\r\n");
   }
   
+  //Log init
+//  FATFS_res = f_mount(&FATFS_Obj, "0", 1);
+//  if (FATFS_res != FR_OK)
+//  {
+//    DC_debugOut("# Mount error %d\r\n", FATFS_res);
+//  }
+  
   //Start led task
   xTaskCreate(vTASK_led,(char*)"TASK_led", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY, &ledTask_handle);
 }
+//--------------------------------------------------------------------------------------------------
+//Log data
+void DC_log(char *str, ...)
+{
+  char datetime[50];
+  va_list args;
+  va_start(args, str);
+  va_end(args);
+  
+  vsprintf(strBuffer, str, args);
+  va_end(args);
+  
+  
+  //Get format date time
+  if (CL_getFormat_DateTime(datetime) == DEV_OK)
+  {
+    strcat(strBuffer,";");
+    strcat(strBuffer, datetime);
+    strcat(strBuffer, "\r\n");
+
+    FATFS_res = f_open(&LOG_file, "LOG.txt", FA_WRITE | FA_OPEN_ALWAYS);
+    if (FATFS_res != FR_OK)
+    {
+      DC_debugOut("# File log error%d\r\n", FATFS_res);
+    }
+    FATFS_res = f_lseek(&LOG_file, f_size(&LOG_file));
+    
+    f_printf(&LOG_file, strBuffer);
+    f_close(&LOG_file);
+  }
+  
+  va_end(args);
+}
+
 //--------------------------------------------------------------------------------------------------
 //LED task
 void vTASK_led(void *pvParameters)
@@ -196,7 +244,14 @@ void DC_debugOut(char *str, ...)
     printf(strBuffer);
     //taskEXIT_CRITICAL();
   }
-
+  
+  //Debug mode
+  if (USBP_mode == USBP_MODE_DEBUG)
+  {
+    //Отправить данные
+    USBP_Send((uint8_t*)strBuffer, strlen(strBuffer));
+  }
+  
   va_end(args);
 }
 //--------------------------------------------------------------------------------------------------
@@ -277,6 +332,7 @@ DEV_Status_t DC_load_settings()
   
   //EMS
   DC_set.EMS_out_period = DC_DEF_EMS_OUT_PERIOD;
+  DC_set.EMS_autoSendEn = DC_DEF_EMS_SEND_EN;
   
   //V9203 set settings
   for (int i=0; i<DC_V9203_COUNT_CHANNELS; i++)

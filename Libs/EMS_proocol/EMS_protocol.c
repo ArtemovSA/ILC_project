@@ -59,7 +59,7 @@ void EMS_init()
     uint8_t broc_ip;
     NW_getIP_byDomen(DC_set.MQTT_broc_domen, &broc_ip);
     devMQTT_connect(&broc_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
-    DC_debugOut("# MQTT connection server by Domen#: %s OK\r\n", DC_set.MQTT_broc_domen);
+    DC_debugOut("# MQTT connection server by Domen#: %s OK\r\r\n", DC_set.MQTT_broc_domen);
   }
 
   //JSON init
@@ -84,19 +84,19 @@ void EMS_init()
 //  {    
 //    if(f_mount(&fileSystem, (TCHAR const*)SDPath, 1) == FR_OK)
 //    {
-//      DC_debugOut("# Mount OK\r\n");
+//      DC_debugOut("# Mount OK\r\r\n");
 //      if (f_open(&testFile, "testfile.txt", FA_WRITE | FA_CREATE_ALWAYS) == FR_OK)
 //      {
 //        res = f_write(&testFile, testBuffer, 16, &testBytes);
 //        res = f_close(&testFile);
 //      }
 //    }else{
-//      DC_debugOut("# Mount error\r\n");
+//      DC_debugOut("# Mount error\r\r\n");
 //    }
 //  }else{
 //    if(f_mkfs((TCHAR const*)SDPath, FM_FAT32, 512, 0, 0) == FR_OK)
 //    {
-//      DC_debugOut("# SD format OK\r\n");
+//      DC_debugOut("# SD format OK\r\r\n");
 //    }
 //  }
 }
@@ -163,7 +163,7 @@ HAL_StatusTypeDef EMS_ctrlCallback(uint8_t* data, uint16_t len)
     const char *error_ptr = cJSON_GetErrorPtr();
     if (error_ptr != NULL)
     {
-      DC_debugOut("# JSON parce Error before: %s\n", error_ptr);
+      DC_debugOut("# JSON parce Error before: %s\r\n", error_ptr);
     }
     return HAL_ERROR;
   }
@@ -171,7 +171,7 @@ HAL_StatusTypeDef EMS_ctrlCallback(uint8_t* data, uint16_t len)
   //Check child empty
   if (ctrl_json->child == NULL)
   {
-    DC_debugOut("# JSON message empty\r\n");
+    DC_debugOut("# JSON message empty\r\r\n");
     return HAL_ERROR;
   }    
   
@@ -192,7 +192,7 @@ HAL_StatusTypeDef EMS_setMain_set(uint8_t* data, uint16_t len)
     const char *error_ptr = cJSON_GetErrorPtr();
     if (error_ptr != NULL)
     {
-      DC_debugOut("# JSON parce Error before: %s\n", error_ptr);
+      DC_debugOut("# JSON parce Error before: %s\r\n", error_ptr);
     }
     return HAL_ERROR;
   }
@@ -200,7 +200,7 @@ HAL_StatusTypeDef EMS_setMain_set(uint8_t* data, uint16_t len)
   //Check child empty
   if (set_json->child == NULL)
   {
-    DC_debugOut("# JSON message empty\r\n");
+    DC_debugOut("# JSON message empty\r\r\n");
     return HAL_ERROR;
   }    
   
@@ -272,9 +272,9 @@ HAL_StatusTypeDef EMS_setMain_set(uint8_t* data, uint16_t len)
   if (DC_writeSet(&settings, MEM_NAND_ADDR_SETTINGS) == DEV_OK)
   {
     DC_set = settings; //Copy new settings
-    DC_debugOut(" # JSON settings set OK\r\n");
+    DC_debugOut(" # JSON settings set OK\r\r\n");
   }else{
-    DC_debugOut(" # JSON settings set ERROR\r\n");
+    DC_debugOut(" # JSON settings set ERROR\r\r\n");
   }
   
   return HAL_OK;
@@ -365,7 +365,7 @@ HAL_StatusTypeDef EMS_setCalibrate(uint8_t* data, uint16_t len)
     const char *error_ptr = cJSON_GetErrorPtr();
     if (error_ptr != NULL)
     {
-      DC_debugOut("# JSON parce Error before: %s\n", error_ptr);
+      DC_debugOut("# JSON parce Error before: %s\r\n", error_ptr);
     }
     return HAL_ERROR;
   }
@@ -373,7 +373,7 @@ HAL_StatusTypeDef EMS_setCalibrate(uint8_t* data, uint16_t len)
   //Check child empty
   if (cal_json->child == NULL)
   {
-    DC_debugOut("# JSON message empty\r\n");
+    DC_debugOut("# JSON message empty\r\r\n");
     return HAL_ERROR;
   }
   
@@ -385,7 +385,7 @@ HAL_StatusTypeDef EMS_setCalibrate(uint8_t* data, uint16_t len)
   //Check channel num
   if ((channelNum > DC_V9203_COUNT_CHANNELS) || (channelNum == 0))
   {
-    DC_debugOut("# Channel number out of range\r\n");
+    DC_debugOut("# Channel number out of range\r\r\n");
     return HAL_ERROR;
   }
 
@@ -394,21 +394,21 @@ HAL_StatusTypeDef EMS_setCalibrate(uint8_t* data, uint16_t len)
   //Set phaseA calibrate
   if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASEA_NAME, &DC_set.V9203_ch_set[channelNum].calTotalPhaseA) != HAL_OK)
   {
-    DC_debugOut("# Phase Total A calibrate error\r\n");
+    DC_debugOut("# Phase Total A calibrate error\r\r\n");
     return HAL_ERROR;
   }
   
   //Set phaseB calibrate
   if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASEB_NAME, &DC_set.V9203_ch_set[channelNum].calTotalPhaseB) != HAL_OK)
   {
-    DC_debugOut("# Phase B calibrate error\r\n");
+    DC_debugOut("# Phase B calibrate error\r\r\n");
     return HAL_ERROR;
   }
   
   //Set phaseC calibrate
   if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASEC_NAME, &DC_set.V9203_ch_set[channelNum].calTotalPhaseC) != HAL_OK)
   {
-    DC_debugOut("# Phase C calibrate error\r\n");
+    DC_debugOut("# Phase C calibrate error\r\r\n");
     return HAL_ERROR;
   }
   
@@ -417,21 +417,21 @@ HAL_StatusTypeDef EMS_setCalibrate(uint8_t* data, uint16_t len)
   //Set phaseA calibrate
   if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASEA_NAME, &DC_set.V9203_ch_set[channelNum].calFundPhaseA) != HAL_OK)
   {
-    DC_debugOut("# Phase Total A calibrate error\r\n");
+    DC_debugOut("# Phase Total A calibrate error\r\r\n");
     return HAL_ERROR;
   }
   
   //Set phaseB calibrate
   if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASEB_NAME, &DC_set.V9203_ch_set[channelNum].calFundPhaseB) != HAL_OK)
   {
-    DC_debugOut("# Phase B calibrate error\r\n");
+    DC_debugOut("# Phase B calibrate error\r\r\n");
     return HAL_ERROR;
   }
   
   //Set phaseC calibrate
   if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASEC_NAME, &DC_set.V9203_ch_set[channelNum].calFundPhaseC) != HAL_OK)
   {
-    DC_debugOut("# Phase C calibrate error\r\n");
+    DC_debugOut("# Phase C calibrate error\r\r\n");
     return HAL_ERROR;
   }
   
@@ -453,11 +453,11 @@ void EMS_callBack(uint16_t topic_ID, uint8_t* data, uint16_t len)
 {
     switch (topic_ID)
     {
-    case EMS_TOPID_ATTR_MAIN_SET: DC_debugOut("# CALL ATTR MAIN\r\n"); taskENTER_CRITICAL(); EMS_setMain_set(data, len); taskEXIT_CRITICAL(); break;
-    case EMS_TOPID_ATTR_CALIBR: DC_debugOut("# CALL ATTR CALIBRATE\r\n"); taskENTER_CRITICAL(); EMS_setCalibrate(data, len); taskEXIT_CRITICAL(); break;
-    case EMS_TOPID_CTRL: DC_debugOut("# CALL CTRL\r\n"); taskENTER_CRITICAL(); EMS_ctrlCallback(data, len); taskEXIT_CRITICAL(); break;
-    case EMS_TOPID_DEBUG: DC_debugOut("# CALL DEBUG\r\n"); break;
-    default: DC_debugOut("# CALL NON TOPIC\r\n");
+    case EMS_TOPID_ATTR_MAIN_SET: DC_debugOut("# CALL ATTR MAIN\r\r\n"); taskENTER_CRITICAL(); EMS_setMain_set(data, len); taskEXIT_CRITICAL(); break;
+    case EMS_TOPID_ATTR_CALIBR: DC_debugOut("# CALL ATTR CALIBRATE\r\r\n"); taskENTER_CRITICAL(); EMS_setCalibrate(data, len); taskEXIT_CRITICAL(); break;
+    case EMS_TOPID_CTRL: DC_debugOut("# CALL CTRL\r\r\n"); taskENTER_CRITICAL(); EMS_ctrlCallback(data, len); taskEXIT_CRITICAL(); break;
+    case EMS_TOPID_DEBUG: DC_debugOut("# CALL DEBUG\r\r\n"); break;
+    default: DC_debugOut("# CALL NON TOPIC\r\r\n");
     }
 }
 //------------------------------------------------------------------------------
@@ -563,7 +563,7 @@ void EMS_sendChannelVars(uint8_t channel_num)
       uint8_t broc_ip;
       NW_getIP_byDomen(DC_set.MQTT_broc_domen, &broc_ip);
       devMQTT_connect(&broc_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
-      DC_debugOut("# MQTT connection server by Domen#: %s OK\r\n", DC_set.MQTT_broc_domen);
+      DC_debugOut("# MQTT connection server by Domen#: %s OK\r\r\n", DC_set.MQTT_broc_domen);
     }
   }
   
@@ -573,14 +573,14 @@ void EMS_sendChannelVars(uint8_t channel_num)
 //Debug out counter outputs variables
 void EMS_ChannelDebugOut(uint8_t channel)
 {
-  DC_debugOut("@ ch %d FREQ: %2f | RMSNI: %2f | CONSSP: %2f | COSFIS: %2f\r\n", channel, meshChan[channel].FREQ, meshChan[channel].RMSNI, meshChan[channel].CONSSP, meshChan[channel].COSFIS);
-  DC_debugOut("@ ch %d RMSU A: %2f | RMSU B: %2f | RMSU C: %2f\r\n", channel, meshChan[channel].phaseA.RMSV, meshChan[channel].phaseB.RMSV, meshChan[channel].phaseC.RMSV);
-  DC_debugOut("@ ch %d RMSI A: %2f | RMSI B: %2f | RMSI C: %2f\r\n", channel, meshChan[channel].phaseA.RMSI, meshChan[channel].phaseB.RMSI, meshChan[channel].phaseC.RMSI);
-  DC_debugOut("@ ch %d RMSP A: %2f | RMSP B: %2f | RMSP C: %2f\r\n", channel, meshChan[channel].phaseA.RMSP, meshChan[channel].phaseB.RMSP, meshChan[channel].phaseC.RMSP);
-  DC_debugOut("@ ch %d RMSRP A: %2f | RMSRP B: %2f | RMSRP C: %2f\r\n", channel, meshChan[channel].phaseA.RMSRP, meshChan[channel].phaseB.RMSRP, meshChan[channel].phaseC.RMSRP);
-  DC_debugOut("@ ch %d CONSSP A: %lld | CONSSP B: %lld | CONSSP C: %lld\r\n", channel, meshChan[channel].phaseA.CONSSP, meshChan[channel].phaseB.CONSSP, meshChan[channel].phaseC.CONSSP);
-  DC_debugOut("@ ch %d CONSP A: %lld | CONSP B: %lld | CONSP C: %lld\r\n", channel, meshChan[channel].phaseA.CONSP, meshChan[channel].phaseB.CONSP, meshChan[channel].phaseC.CONSP);
-  DC_debugOut("@ ch %d CONSRP A: %lld | CONSRP B: %lld | CONSRP C: %lld\r\n", channel, meshChan[channel].phaseA.CONSRP, meshChan[channel].phaseB.CONSRP, meshChan[channel].phaseC.CONSRP);
+  DC_debugOut("@ ch %d FREQ: %2f | RMSNI: %2f | CONSSP: %2f | COSFIS: %2f\r\r\n", channel, meshChan[channel].FREQ, meshChan[channel].RMSNI, meshChan[channel].CONSSP, meshChan[channel].COSFIS);
+  DC_debugOut("@ ch %d RMSU A: %2f | RMSU B: %2f | RMSU C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSV, meshChan[channel].phaseB.RMSV, meshChan[channel].phaseC.RMSV);
+  DC_debugOut("@ ch %d RMSI A: %2f | RMSI B: %2f | RMSI C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSI, meshChan[channel].phaseB.RMSI, meshChan[channel].phaseC.RMSI);
+  DC_debugOut("@ ch %d RMSP A: %2f | RMSP B: %2f | RMSP C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSP, meshChan[channel].phaseB.RMSP, meshChan[channel].phaseC.RMSP);
+  DC_debugOut("@ ch %d RMSRP A: %2f | RMSRP B: %2f | RMSRP C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSRP, meshChan[channel].phaseB.RMSRP, meshChan[channel].phaseC.RMSRP);
+  DC_debugOut("@ ch %d CONSSP A: %lld | CONSSP B: %lld | CONSSP C: %lld\r\r\n", channel, meshChan[channel].phaseA.CONSSP, meshChan[channel].phaseB.CONSSP, meshChan[channel].phaseC.CONSSP);
+  DC_debugOut("@ ch %d CONSP A: %lld | CONSP B: %lld | CONSP C: %lld\r\r\n", channel, meshChan[channel].phaseA.CONSP, meshChan[channel].phaseB.CONSP, meshChan[channel].phaseC.CONSP);
+  DC_debugOut("@ ch %d CONSRP A: %lld | CONSRP B: %lld | CONSRP C: %lld\r\r\n", channel, meshChan[channel].phaseA.CONSRP, meshChan[channel].phaseB.CONSRP, meshChan[channel].phaseC.CONSRP);
 }
 
 //******************************************************************************
@@ -677,9 +677,13 @@ void startEMS_task(void const * argument)
     vTaskDelay(DC_set.EMS_out_period*1000);
     //vTaskDelayUntil( &xLastWakeTime, (const TickType_t) DC_set.EMS_out_period*1000);
     
-    for (int i=0; i < DC_V9203_COUNT_CHANNELS; i++)
+    if (DC_set.EMS_autoSendEn == 1)
     {
-      EMS_sendChannelVars(i);//Send vars
+      for (int i=0; i < DC_V9203_COUNT_CHANNELS; i++)
+      {
+        EMS_sendChannelVars(i);//Send vars
+      }
     }
+    
   }
 }

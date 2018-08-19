@@ -28,20 +28,19 @@ void MEM_init(SRAM_HandleTypeDef *sram1, SRAM_HandleTypeDef *sram2, NAND_HandleT
 
 //NAND
 #define MEM_NAND_PAGE_SIZE      2048                    //2048 bytes
-#define MEM_NAND_BLOCK_SIZE     0x40                    // in pages
-#define MEM_NAND_PLANE_SIZE     0x400                   // in blocks
+#define MEM_NAND_BLOCK_SIZE     64                      // in pages
+#define MEM_NAND_PLANE_SIZE     1024                    // in blocks
 #define MEM_NAND_MEMORY_SIZE    0x8000000UL              
 #define MEM_NAND_DEV_ID         0xDA                    // default id
-                                                      //plane, block, page
+
+                                                      //page, plane, block
 #define MEM_NAND_ADDR_INFO      (NAND_AddressTypeDef) {0, 0, 0}         //Info page
 #define MEM_NAND_ADDR_SETTINGS  (NAND_AddressTypeDef) {0, 0, 1}         //Main settings
 #define MEM_NAND_ADDR_LOG       (NAND_AddressTypeDef) {0, 0, 2}         //Start log data
 #define MEM_NAND_ADDR_FW_META   (NAND_AddressTypeDef) {0, 0, 10}        //Nand FW metadata
 #define MEM_NAND_ADDR_FW        (NAND_AddressTypeDef) {0, 0, 11}        //FW space 8 blocks by 128kB on 1024kB
-#define MEM_NAND_ADDR_WM_DATA   (NAND_AddressTypeDef) {0, 1, 0}         //Wirtual mashine data
+#define MEM_NAND_ADDR_VM_DATA   (NAND_AddressTypeDef) {0, 0, 3}         //Virtual mashine data
 
-//SRAM
-#define MEM_SRAM_SCRYPT_ADDR    0x0
 
 //***************************************NAND functions*********************************************
 
@@ -57,7 +56,6 @@ DEV_Status_t MEM_NAND_readData(NAND_AddressTypeDef address, uint16_t offset_addr
 //Bank 1
 #define MEM_SRAM1_ADDR           0x60000000ULL
 #define MEM_SRAM1_MEMORY_SIZE    0xFA000UL
-#define MEM_SRAM1_ADDR_SCRIPT1   0x60000000ULL
 #define MEM_SRAM1_ADDR_BLOCK_BUF 0x600DA000ULL
 
 //***************************************SRAM2 mem map**********************************************
@@ -65,7 +63,7 @@ DEV_Status_t MEM_NAND_readData(NAND_AddressTypeDef address, uint16_t offset_addr
 //Bank 3
 #define MEM_SRAM2_ADDR           0x80000000UL
 #define MEM_SRAM2_MEMORY_SIZE    0xFA000
-#define MEM_SRAM2_ADDR_SCRIPT2   0x0000
+#define MEM_SRAM2_SCRYPT_ADDR    0x00000
 
 //***************************************SRAM functions*********************************************
 

@@ -147,7 +147,7 @@ SemaphoreHandle_t muxUSB;
   *
   * @retval None
   */
-int main(void)
+ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
@@ -227,9 +227,9 @@ int main(void)
   CL_taskHandle = osThreadCreate(osThread(CL_task), NULL);
 
   /* definition and creation of EMS_task */
-  //osThreadDef(EMS_task, startEMS_task, osPriorityIdle, 0, 1536);
-  //EMS_taskHandle = osThreadCreate(osThread(EMS_task), NULL);
-  //vTaskSuspend(EMS_taskHandle);
+  osThreadDef(EMS_task, startEMS_task, osPriorityIdle, 0, 1536);
+  EMS_taskHandle = osThreadCreate(osThread(EMS_task), NULL);
+  vTaskSuspend(EMS_taskHandle);
   
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -819,6 +819,7 @@ void startDebugTask(void const * argument)
 {  
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
+  //USBP_mode = USBP_MODE_DEBUG;
 
   /* USER CODE BEGIN 5 */
   DC_init(&debug_TTqueueHandle);
@@ -839,8 +840,9 @@ void startDebugTask(void const * argument)
   
   CL_init(); //Init clock
 
+  USBP_mode = USBP_MODE_CMD;
   
-  //vTaskResume(EMS_taskHandle);
+  vTaskResume(EMS_taskHandle);
     
   //Инициализация задачи
   //TASK_script_init(1);
@@ -851,8 +853,6 @@ void startDebugTask(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-    
-    
 
 //    for (int i=1; i < 5; i++)
 //    {
