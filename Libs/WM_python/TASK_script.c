@@ -10,7 +10,6 @@ xQueueHandle queue_script_commands; //Очередь комманд
 uint8_t PY_task; //Выполнение задачи скрипта
 uint32_t PY_script_addr; //Адрес скрипта
 NAND_AddressTypeDef PY_script_struct_addr; //Метаданные виртуальной машины
-PY_scryptData_t PY_scryptData; //Описание скрипта
 
 uint8_t PY_callback_queue[PY_COUNT_CALLBACKS]; //Очередь callback
 uint8_t PY_callback_queue_len; //Длина очереди
@@ -38,60 +37,62 @@ void vTASK_script(void *pvParameters) {
   PmReturn_t retval = PM_RET_OK; //Return value
   PY_task = PY_SCRIPT_NLOAD;
   NAND_AddressTypeDef PY_VM_data_addr = MEM_NAND_ADDR_VM_DATA;
+  PmMemSpace_t PY_memspace;
 
   while (1) {
     
     //Task pause
     vTaskSuspend(script_handle);
-      
-    //Read description data
-    if (MEM_NAND_readData(PY_VM_data_addr, 0, (uint8_t*)&PY_scryptData, sizeof(PY_scryptData_t)) != DEV_OK)
+    
+    //Copy from NAND to SRAM
+    if (MEM_NAND_to_SRAM(DC_set.PY_scryptData.memID, MEM_SRAM1_SCRYPT_ADDR, PY_VM_data_addr, sizeof(PY_scryptData_t), DC_set.PY_scryptData.len) == DEV_OK)
     {
-      DC_debugOut("Can't read VM descr from NAND\r\n");
-      vTaskResume( script_handle );
-    }else{
-      
-      //Copy from NAND to SRAM
-      if (MEM_NAND_to_SRAM(PY_scryptData.memoryID, MEM_SRAM2_SCRYPT_ADDR, PY_VM_data_addr, sizeof(PY_scryptData_t), PY_scryptData.len) != DEV_OK)
-      {
-        DC_debugOut("Can't read VM script from NAND\r\n");
-        vTaskResume( script_handle );
-      }
-      
       //Check CRC in SRAM
-      if ( MEM_checkCRC8_SRAM(PY_scryptData.memoryID, PY_scryptData.crc, MEM_SRAM2_SCRYPT_ADDR, PY_scryptData.len) != DEV_OK)
+      if (MEM_checkCRC16_SRAM(DC_set.PY_scryptData.memID, DC_set.PY_scryptData.crc, MEM_SRAM1_SCRYPT_ADDR, DC_set.PY_scryptData.len) == DEV_OK)
       {
-        DC_debugOut("CRC VM ERROR\r\n");
-        vTaskResume( script_handle );
-      }
-    }
-
-    
-    xTimerStart( PY_timer, 0 ); //Запустить таймер
-    //Инициализировать скрипт
-    retval = pm_init(PY_heap, PM_HEAP_SIZE, (PmMemSpace_t)PY_scryptData.memoryID, MEM_SRAM2_SCRYPT_ADDR);
-    retval = pm_run((uint8_t*)PY_scryptData.ModuleName);
-    
-    vTaskDelay(50); //Задержка на обработку
-    xTimerStop( PY_timer, 0 ); //Остановить таймер
-    
-    //Остановить скрипт, если ошибка
-    if (retval != PM_RET_OK) {
-      
-      //Отправить сообщение об ошибке
-      for (int i=0; i<PM_ERROR_CODE_LEN; i++){
-        if (PM_error_codes[i].error_code == retval) {
-          DC_debugOut("PY Error #%02X - %s", retval, PM_error_codes[i].description);
-          break;
+        xTimerStart( PY_timer, 0 ); //Запустить таймер
+        
+        if (DC_set.PY_scryptData.memID == MEM_ID_SRAM1)
+          PY_memspace = MEMSPACE_SRAM1;
+        if (DC_set.PY_scryptData.memID == MEM_ID_SRAM2)
+          PY_memspace = MEMSPACE_SRAM2;
+        
+        //Инициализировать скрипт
+        DC_set.PY_scryptData.status = PY_SCRIPT_START;
+        uint8_t const * scrypt_p = (uint8_t const *) MEM_SRAM1_SCRYPT_ADDR;
+        retval = pm_init(PY_heap, PM_HEAP_SIZE, PY_memspace, (uint8_t const *)scrypt_p);
+        retval = pm_run((uint8_t*)DC_set.PY_scryptData.Name);
+        
+        vTaskDelay(50); //Задержка на обработку
+        xTimerStop( PY_timer, 0 ); //Остановить таймер
+        
+        //Остановить скрипт, если ошибка
+        if (retval != PM_RET_OK) {
+          
+          //Отправить сообщение об ошибке
+          for (int i=0; i<PM_ERROR_CODE_LEN; i++){
+            if (PM_error_codes[i].error_code == retval) {
+              DC_debugOut("PY Error #%02X - %s\r\n", retval, PM_error_codes[i].description);
+              break;
+            }
+          }
+          
+          DC_debugOut("Script stopped");
+          DC_set.PY_scryptData.status = PY_SCRIPT_ERROR;
         }
+        
+        //Очистить список callback
+        for (int i=0; i<PY_COUNT_CALLBACKS; i++) {
+          PY_callback[i].callback_status = PY_CALLBACK_EMPTY;
+        }
+        
+      }else{//Check CRC in SRAM
+        DC_debugOut("CRC VM ERROR\r\n");
+        DC_set.PY_scryptData.status = PY_SCRIPT_ERROR;
       }
-      
-      DC_debugOut("Script stopped");
-    }
-    
-    //Очистить список callback
-    for (int i=0; i<PY_COUNT_CALLBACKS; i++) {
-      PY_callback[i].callback_status = PY_CALLBACK_EMPTY;
+    }else{//Copy from NAND to SRAM
+      DC_debugOut("Can't read VM script from NAND\r\n");
+      DC_set.PY_scryptData.status = PY_SCRIPT_ERROR;
     }
 
   }
@@ -121,4 +122,22 @@ int PY_get_callbackID() {
   if (PY_callback_queue_len > 0)
       return PY_callback_queue[--PY_callback_queue_len];
   return -1;
+}
+//----------------------------------------------------------------------------------------------------
+//Старт скрипта
+DEV_Status_t PY_startScript()
+{
+  uint8_t tryCounter = 100;
+  
+  //Task start
+  vTaskResume(script_handle);
+  
+  while(tryCounter--)
+  {
+    if (DC_set.PY_scryptData.status != PY_SCRIPT_NLOAD)
+      return DEV_OK;
+    vTaskDelay(100);
+  }
+  
+  return DEV_ERROR;
 }

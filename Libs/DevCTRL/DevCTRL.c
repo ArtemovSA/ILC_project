@@ -334,6 +334,10 @@ DEV_Status_t DC_load_settings()
   DC_set.EMS_out_period = DC_DEF_EMS_OUT_PERIOD;
   DC_set.EMS_autoSendEn = DC_DEF_EMS_SEND_EN;
   
+  //Py
+  strcpy(DC_set.PY_scryptData.Name, DC_DEF_PY_NAME);
+  DC_set.PY_scryptData.memID = DC_DEF_PY_MEM;
+    
   //V9203 set settings
   for (int i=0; i<DC_V9203_COUNT_CHANNELS; i++)
     V9203_setDefaultReg(i, &DC_set.V9203_ch_set[i]);

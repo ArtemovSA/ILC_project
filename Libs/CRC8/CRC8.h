@@ -4,6 +4,6 @@
 
 #include "stdint.h"
 
-uint8_t crc8(const uint8_t *addr, uint16_t len, uint8_t crc_init); 
+void crc8calc(uint8_t *crc, const uint8_t *addr, uint16_t len);
 
 #endif

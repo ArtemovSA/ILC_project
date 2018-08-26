@@ -10,13 +10,16 @@
 
 //Variables
 uint8_t USBC_cmd_buf[USBC_CMD_BUF_LEN]; //CMD buffer
-uint8_t USBC_cmd_len; //Длина команды
+uint16_t USBC_cmd_len; //Длина команды
 uint8_t USBC_state = USBC_state_WAIT_STOP1; //state
 
 //Semaphores
 extern xSemaphoreHandle muxNAND;
+extern xSemaphoreHandle muxSRAM1;
+extern xSemaphoreHandle muxSRAM2;
 //Task handle
 xTaskHandle USBC_handle;
+extern xTaskHandle script_handle; //Хендл скрипта
 
 //Command process
 void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen);
@@ -51,9 +54,9 @@ void vUSBC_task(void *pvParameters)
 //Send payload
 void USBC_sendPayload(uint8_t* payload, uint16_t len)
 {
-  uint16_t crc_val; //Значение CRC
+  uint16_t crc_val = 0; //Значение CRC
   //Расчет CRC
-  crc_val = crc16(payload, len);
+  crc16calc(&crc_val, payload, len);
   payload[len] = (crc_val & 0x00FF);//CRC16
   payload[len+1] = (crc_val & 0xFF00) >> 8; //CRC16
   
@@ -72,10 +75,16 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
   uint16_t offset; //Смещение
   uint16_t len; //Длина
   uint8_t command; //Command current
+  uint8_t status; //Command status
   NAND_AddressTypeDef addrNAND; //Nand address
+  DEV_Status_t retStatus;
+  
+  uint16_t partNum;
+  uint16_t partLen;
   
   //Calc CRC16
-  crc_val = crc16(cmdData, cmdLen-2);
+  crc_val = 0;
+  crc16calc(&crc_val, cmdData, cmdLen-2);
   
   //If CRC OK
   if (crc_val == 0x0000) {
@@ -177,28 +186,53 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
       //Load script
     case USBC_CMD_SCRYPT_LOAD:
       
-      uint16_t partNum = ADD(cmdData[0], cmdData[1]);
-      uint16_t partLen = ADD(cmdData[2], cmdData[3]);
+      status = cmdData[1];
       
-      addrNAND.Block = (cmdData[1]<<8) | cmdData[2];
-      addrNAND.Page = (cmdData[3]<<8) | cmdData[4];
-      addrNAND.Plane = 0;
-      
-      USBC_LOAD_PART_LEN
-      
-      if ( xSemaphoreTake(muxNAND, 100) == pdTRUE ) {
+      //Start status pack have scrypt information
+      if (status == USBC_STAT_EXEC_START)
+      {
+        DC_set.PY_scryptData.len = ADD(cmdData[2], cmdData[3]);
+        DC_set.PY_scryptData.crc = ADD(cmdData[4], cmdData[5]);
+        memcpy(DC_set.PY_scryptData.Name, &cmdData[6], 20);
+        retStatus = DEV_OK;
+       
+      }else{
         
-        //Try write
-        if (MEM_NAND_writeData(addrNAND, offset, &cmdData[9], len) == DEV_OK)
-        {
-          cmdData[0] = command; //Команда
-          cmdData[1] = USBC_RET_OK;
-        }else{
-          cmdData[0] = command; //Команда
-          cmdData[1] = USBC_RET_ERROR; 
+        partNum = ADD(cmdData[2], cmdData[3]);
+        partLen = ADD(cmdData[4], cmdData[5]);
+        
+        if ( xSemaphoreTake(muxSRAM1, 100) == pdTRUE ) {
+          
+          retStatus = MEM_SRAM_writeData(MEM_ID_SRAM1, MEM_SRAM1_SCRYPT_LOAD_ADDR+partNum*USBC_LOAD_PART_LEN , &cmdData[6], partLen);
+          xSemaphoreGive(muxSRAM1);
         }
         
-        xSemaphoreGive(muxNAND);
+        //Return continue command
+        if(status == USBC_STAT_EXEC_END) //End command
+        {
+          addrNAND = MEM_NAND_ADDR_VM_DATA;
+          
+          if ( xSemaphoreTake(muxNAND, 100) == pdTRUE ) {
+            MEM_NAND_eraceBlock(addrNAND);//Erace Block NAND
+            retStatus = MEM_SRAM_to_NAND(MEM_ID_SRAM1, MEM_SRAM1_SCRYPT_LOAD_ADDR, addrNAND, partNum*USBC_LOAD_PART_LEN + partLen);//Copy from SRAM to NAND
+            
+            //Check CRC
+            if (retStatus == DEV_OK)
+              retStatus = MEM_NAND_checkCRC16(addrNAND, DC_set.PY_scryptData.crc, DC_set.PY_scryptData.len); //Check CRC16 in NAND
+
+            xSemaphoreGive(muxNAND);
+            
+          }
+        }
+      }
+      
+      if (retStatus == DEV_OK)
+      {
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_OK;
+      }else{
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_ERROR; 
       }
       
       USBC_sendPayload(cmdData, 2);//Send payload
@@ -207,6 +241,20 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
       
       //Start Scrypt
     case USBC_CMD_SCRYPT_START:
+      
+      //Старт скрипта
+      if (PY_startScript() == DEV_OK)
+      {
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_OK;
+        cmdData[2] = (uint8_t)DC_set.PY_scryptData.status;
+      }else{
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_ERROR;
+        cmdData[2] = (uint8_t)DC_set.PY_scryptData.status;
+      }
+      
+      USBC_sendPayload(cmdData, 3);//Send payload
       
       break;
       

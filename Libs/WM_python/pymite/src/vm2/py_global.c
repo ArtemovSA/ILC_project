@@ -172,7 +172,7 @@ global_init(void)
     gVmGlobal.threadList = (pPmList_t)pobj;
 
     /* Init the PmImgPaths with std image info */
-    gVmGlobal.imgPaths.memspace[0] = MEMSPACE_PROG;
+    gVmGlobal.imgPaths.memspace[0] = MEMSPACE_SRAM1; //MEMSPACE_RAM;
     gVmGlobal.imgPaths.pimg[0] = (uint8_t *)&stdlib_img;
     gVmGlobal.imgPaths.pathcount = 1;
 

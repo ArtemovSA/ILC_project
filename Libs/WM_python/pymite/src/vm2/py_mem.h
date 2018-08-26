@@ -33,7 +33,6 @@
 typedef enum PmMemSpace_e
 {
     MEMSPACE_RAM = 0,
-    MEMSPACE_PROG,
     MEMSPACE_SRAM1,
     MEMSPACE_SRAM2
 } PmMemSpace_t, *pPmMemSpace_t;

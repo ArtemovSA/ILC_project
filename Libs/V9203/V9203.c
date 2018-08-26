@@ -48,7 +48,7 @@ HAL_StatusTypeDef V9203_initDev(uint8_t channel, V9203_settings_t *settings)
   
   if (try_count == 0x0)
   {
-    DC_debugOut(" #V9203 INIT CH:%d  ERROR\r\n", channel);
+    DC_debugOut("# V9203 INIT CH:%d  ERROR\r\n", channel);
     return HAL_ERROR;
   }
   

@@ -17,14 +17,15 @@ typedef enum {
   PY_SCRIPT_STOP,       //Скрипт остановлен
   PY_SCRIPT_START,      //Скрипт запущен 
   PY_SCRIPT_ERROR       //Ошибочный скрипт
-} PY_scryptMode;
+} PY_scryptStatus;
 
 //Структура описания скрипта в памяти
 typedef struct{
-  uint32_t len;         //Длина скрипта
-  uint16_t crc;         //CRC16
-  MEM_ID_t memoryID;    //Тип использованной памяти
-  char ModuleName[20];  //Start module name
+  uint32_t len;                 //Длина скрипта
+  uint16_t crc;                 //CRC16
+  MEM_ID_t memID;               //Тип использованной памяти
+  char Name[20];                //Start name
+  PY_scryptStatus status;       //Status
 } PY_scryptData_t;
 
 //Настройки названий callback
@@ -101,6 +102,7 @@ extern PY_callback_t PY_callback[PY_COUNT_CALLBACKS]; //Название функций Callbac
 void TASK_script_init(uint8_t priority); //Инициализация задачи
 void PY_StartScript(uint8_t nub_script); //Запустить скрипт
 int PY_get_callbackID(); //Получить из очереди 
-void PY_add_callbackID(uint8_t id_callback); //Добавить очередь 
+void PY_add_callbackID(uint8_t id_callback); //Добавить очередь
+DEV_Status_t PY_startScript(); //Старт скрипта
 
 #endif

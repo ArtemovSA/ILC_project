@@ -6,7 +6,7 @@
 
 #define USBC_CMD_BUF_LEN        300
 #define USBC_LOAD_PART_LEN      256
-#define USBC_STOP1_BYTE         0x54
+#define USBC_STOP1_BYTE         0x50
 #define USBC_STOP2_BYTE         0x55
 
 //USB states
@@ -28,6 +28,13 @@ enum{
   USBC_CMD_SCRYPT_STOP,         //Stop script
   USBC_CMD_SET_SETTINGS,        //Set settings
   USBC_CMD_SET_CALIBRATE,       //Set CALIBRATE
+};
+
+//Command status
+enum{
+  USBC_STAT_EXEC_END = 0,       //End command
+  USBC_STAT_EXEC_START,         //Start command
+  USBC_STAT_EXEC_CONT           //Continue command
 };
 
 //Settings List

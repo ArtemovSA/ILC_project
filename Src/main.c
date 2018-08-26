@@ -819,7 +819,6 @@ void startDebugTask(void const * argument)
 {  
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
-  //USBP_mode = USBP_MODE_DEBUG;
 
   /* USER CODE BEGIN 5 */
   DC_init(&debug_TTqueueHandle);
@@ -845,7 +844,7 @@ void startDebugTask(void const * argument)
   vTaskResume(EMS_taskHandle);
     
   //Инициализация задачи
-  //TASK_script_init(1);
+  TASK_script_init(2);
   
   //devMQTT_connect(DC_set.MQTT_broc_ip[DC_set.MQTT_activeBrock], DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
   

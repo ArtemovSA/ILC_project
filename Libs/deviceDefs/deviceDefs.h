@@ -7,8 +7,8 @@
 #define LO(x) (x & 0x00FF)
 #define HI16(x) (x & 0xFFFF0000)>>16
 #define LO16(x) (x & 0x0000FFFF)
-#define ADD(x,y) (x<<8)|(y)
-#define ADD16(x,y) (x<<16)|(y)
+#define ADD(x,y) 0x0UL|(x<<8)|(y)
+#define ADD16(x,y) 0x0ULL|(x<<16)|(y)
 #define max(a,b) ((a) > (b) ? (a) : (b))
 #define HIGH_LEVEL 1
 #define LOW_LEVEL  0
@@ -18,6 +18,7 @@ typedef enum
 {
   DEV_OK       = 0,             //Комманда выполнена
   DEV_ERROR,                    //Неизвестная ошибка
+  DEV_CRC_ERROR,                //Ошибка контрольной суммы
   DEV_BUSY,                     //Ресурс занят
   DEV_TIMEOUT,                  //Таймаут
   DEV_NEXIST,                   //Ресурс не существует

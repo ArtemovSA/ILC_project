@@ -4,6 +4,7 @@
 #include "stm32f4xx_hal.h"
 #include "deviceDefs.h"
 #include "V9203.h"
+#include "TASK_script.h"
 
 //***********************************Device data****************************************************
 
@@ -42,8 +43,8 @@ extern char DC_unic_idStr[13]; //Unic id str
 //***********************************Default settings***********************************************
 
 //TCP/IP Ethernet
-#define DC_DEF_DEV_IP_ADDR              {192,168,31,55}
-#define DC_DEF_GW_IP_ADDR               {192,168,31,1}
+#define DC_DEF_DEV_IP_ADDR              {192,168,1,55}
+#define DC_DEF_GW_IP_ADDR               {192,168,1,1}
 #define DC_DEF_NET_MASK                 {255,255,255,0}
 #define DC_DEF_NTP_SERVER               "ntp1.stratum2.ru"
 #define DC_DEF_DNS                      {8,8,8,8}
@@ -60,6 +61,10 @@ extern char DC_unic_idStr[13]; //Unic id str
 //EMS
 #define DC_DEF_EMS_OUT_PERIOD           5 //sec
 #define DC_DEF_EMS_SEND_EN              1 //Разрешить передачу данных
+
+//Python
+#define DC_DEF_PY_NAME                  "main"          //Имя старта скрипта
+#define DC_DEF_PY_MEM                   MEM_ID_SRAM1    //Память скрипта
 
 //**********************************Settings*****************************************************
 
@@ -91,6 +96,7 @@ typedef struct {
   
   //Python VM
   uint8_t VM_autoStartEn; //Enable autostart script
+  PY_scryptData_t PY_scryptData; //Описание скрипта
   
   //Settings struct
   V9203_settings_t V9203_ch_set[DC_V9203_COUNT_CHANNELS];

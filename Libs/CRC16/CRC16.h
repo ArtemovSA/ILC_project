@@ -4,7 +4,7 @@
 
 #include "stdint.h"
 
-uint16_t crc16(const void *data, unsigned data_size); 
+void crc16calc(uint16_t *crc, const uint8_t *addr, uint16_t len);
 
 #endif
 

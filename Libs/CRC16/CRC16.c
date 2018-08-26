@@ -37,13 +37,8 @@ static const uint16_t crc16_table[256] =
 0x8201,0x42C0,0x4380,0x8341,0x4100,0x81C1,0x8081,0x4040
 };
 
-uint16_t crc16 (const void *data, unsigned data_size)
-{
-  if (!data || !data_size)
-    return 0;
-  unsigned short crc = 0;
-  unsigned char* buf = (unsigned char*)data;
-  while (data_size--)
-    crc = (crc >> 8) ^ crc16_table[(unsigned char)crc ^ *buf++];
-  return crc;
+void crc16calc(uint16_t *crc, const uint8_t *addr, uint16_t len)
+{  
+  while (len--)
+    *crc = (*crc >> 8) ^ crc16_table[(uint8_t)*crc ^ *addr++];
 }

@@ -94,21 +94,19 @@ plat_memGetByte(PmMemSpace_t memspace, uint8_t const **paddr)
     b = **paddr;
     *paddr += 1;
     return b;
-  case MEMSPACE_PROG:
-    b = **paddr;
-    *paddr += 1;
-    return b;    
   case MEMSPACE_SRAM1:
-    xSemaphoreTake(muxSRAM1, portMAX_DELAY );
-    MEM_SRAM_readData(MEM_ID_SRAM1, (uint32_t)(*paddr), &b, 1); //Read data SRAM
-    xSemaphoreGive(muxSRAM1);
-    *paddr += 1;
+    if ( xSemaphoreTake(muxSRAM1, 100) == pdTRUE ) {
+      MEM_SRAM_readData(MEM_ID_SRAM1, (uint32_t)(*paddr), &b, 1); //Read data SRAM
+      xSemaphoreGive(muxSRAM1);
+      *paddr += 1;
+    }
     return b;
   case MEMSPACE_SRAM2:
-    xSemaphoreTake(muxSRAM2, portMAX_DELAY );
-    MEM_SRAM_readData(MEM_ID_SRAM2, (uint32_t)(*paddr), &b, 1); //Read data SRAM
-    xSemaphoreGive(muxSRAM2);
-    *paddr += 1;
+    if ( xSemaphoreTake(muxSRAM2, 100) == pdTRUE ) {
+      MEM_SRAM_readData(MEM_ID_SRAM2, (uint32_t)(*paddr), &b, 1); //Read data SRAM
+      xSemaphoreGive(muxSRAM2);
+      *paddr += 1;
+    }
     return b;
   default:
     return 0;
