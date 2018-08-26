@@ -25,9 +25,7 @@
 # ver = "0.1"            # XXX compile date & platform?
 # Example: sys.version = '2.4.1 (#1, Feb 26 2006, 16:26:36) \n[GCC 4.0.0 20041026 (Apple Computer, Inc. build 4061)]'
 
-
 maxint = 0x7FFFFFFF     # 2147483647
-
 
 def exit(val):
     """__NATIVE__

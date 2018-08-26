@@ -8,6 +8,7 @@
 #include "string.h"
 #include "TASK_script.h"
 #include "DevCTRL.h"
+#include "stm32f4xx_hal.h"
 
 char str_buf[256]; //Global buffer
 

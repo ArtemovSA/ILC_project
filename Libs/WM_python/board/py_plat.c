@@ -27,6 +27,7 @@
 #include "string.h"
 #include "USB_ctrl.h"
 #include "USB_port.h"
+#include "DevCTRL.h"
 
 extern SemaphoreHandle_t muxSRAM1;
 extern SemaphoreHandle_t muxSRAM2;
@@ -57,7 +58,7 @@ const PM_error_codes_t PM_error_codes[PM_ERROR_CODE_LEN] = {
   {0xEB, "Syntax error"},
   {0xEC, "System error"},
   {0xED, "Type error"},
-  {0xED, "Value error"},
+  {0xEE, "Value error"},
   {0xEF, "Stop iteration"},
   {0xF0, "Warning"}
 };
@@ -144,6 +145,8 @@ plat_putByte(uint8_t b)
   //Режим работы с коммандной строкой питона
   if (USBP_mode == USBP_MODE_SCRIPT) {
     USBP_Send(&b,1);
+  }else{
+    DC_debugOut(&b);
   }
   
   return retval;

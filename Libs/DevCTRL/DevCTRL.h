@@ -43,8 +43,8 @@ extern char DC_unic_idStr[13]; //Unic id str
 //***********************************Default settings***********************************************
 
 //TCP/IP Ethernet
-#define DC_DEF_DEV_IP_ADDR              {192,168,1,55}
-#define DC_DEF_GW_IP_ADDR               {192,168,1,1}
+#define DC_DEF_DEV_IP_ADDR              {192,168,31,55}
+#define DC_DEF_GW_IP_ADDR               {192,168,31,1}
 #define DC_DEF_NET_MASK                 {255,255,255,0}
 #define DC_DEF_NTP_SERVER               "ntp1.stratum2.ru"
 #define DC_DEF_DNS                      {8,8,8,8}
@@ -68,7 +68,7 @@ extern char DC_unic_idStr[13]; //Unic id str
 
 //**********************************Settings*****************************************************
 
-#define DC_SET_MAGICKEY 0x02
+#define DC_SET_MAGICKEY 0x01
 
 typedef struct {
   
@@ -152,6 +152,8 @@ extern volatile ledState_t runState;
 
 //Relay out
 HAL_StatusTypeDef DC_relayOut(uint8_t relNum, uint8_t state);
+//LED out
+void DC_LedOut(LED_t led, uint8_t state);
 
 
 

@@ -43,8 +43,6 @@ void DC_getUnicID();
 xTaskHandle ledTask_handle;
 //LED task
 void vTASK_led(void *pvParameters);
-//LED out
-void DC_LedOut(LED_t led, uint8_t state);
 //Led status
 volatile ledState_t linkState = LED_OFF;
 volatile ledState_t stateState = LED_OFF;

@@ -151,7 +151,7 @@ DEV_Status_t FW_SDcardUpdate(FW_metadata_t* metadata)
       
       while (f_read(&fileBin, FW_buf, sizeof(FW_buf), &readBytes))
       {
-         crc_val = crc8(FW_buf, readBytes, crc_val);
+        crc8calc(&crc_val, FW_buf, readBytes);
       }
       
       if (crc_val != metadata->FW_CRC)
@@ -222,7 +222,7 @@ DEV_Status_t FW_nandUpdate(FW_metadata_t* metadata)
       return DEV_ERROR;
     }
     
-    crc_val = crc8( FW_buf, MEM_NAND_PAGE_SIZE, crc_val);
+    crc8calc(&crc_val, FW_buf, MEM_NAND_PAGE_SIZE);
   }
   
   //Tail
@@ -232,7 +232,7 @@ DEV_Status_t FW_nandUpdate(FW_metadata_t* metadata)
     return DEV_ERROR;
   }
   
-  crc_val = crc8( FW_buf, tail, crc_val);
+  crc8calc(&crc_val, FW_buf, tail);
   
   //Check CRC
   if (crc_val != metadata->FW_CRC)

@@ -61,24 +61,40 @@ void vTASK_script(void *pvParameters) {
         DC_set.PY_scryptData.status = PY_SCRIPT_START;
         uint8_t const * scrypt_p = (uint8_t const *) MEM_SRAM1_SCRYPT_ADDR;
         retval = pm_init(PY_heap, PM_HEAP_SIZE, PY_memspace, (uint8_t const *)scrypt_p);
-        retval = pm_run((uint8_t*)DC_set.PY_scryptData.Name);
         
-        vTaskDelay(50); //Задержка на обработку
-        xTimerStop( PY_timer, 0 ); //Остановить таймер
-        
-        //Остановить скрипт, если ошибка
         if (retval != PM_RET_OK) {
           
           //Отправить сообщение об ошибке
           for (int i=0; i<PM_ERROR_CODE_LEN; i++){
             if (PM_error_codes[i].error_code == retval) {
-              DC_debugOut("PY Error #%02X - %s\r\n", retval, PM_error_codes[i].description);
+              DC_debugOut("% PY init error #0x%02X - %s\r\n", retval, PM_error_codes[i].description);
               break;
             }
           }
           
-          DC_debugOut("Script stopped");
           DC_set.PY_scryptData.status = PY_SCRIPT_ERROR;
+          
+        }else{
+          
+          retval = pm_run((uint8_t*)DC_set.PY_scryptData.Name);
+          
+          vTaskDelay(50); //Задержка на обработку
+          xTimerStop( PY_timer, 0 ); //Остановить таймер
+          
+          //Остановить скрипт, если ошибка
+          if (retval != PM_RET_OK) {
+            
+            //Отправить сообщение об ошибке
+            for (int i=0; i<PM_ERROR_CODE_LEN; i++){
+              if (PM_error_codes[i].error_code == retval) {
+                DC_debugOut("% PY start error #0x%02X - %s\r\n", retval, PM_error_codes[i].description);
+                break;
+              }
+            }
+            
+            DC_debugOut("% Script stopped\r\n");
+            DC_set.PY_scryptData.status = PY_SCRIPT_ERROR;
+          }
         }
         
         //Очистить список callback
@@ -87,11 +103,11 @@ void vTASK_script(void *pvParameters) {
         }
         
       }else{//Check CRC in SRAM
-        DC_debugOut("CRC VM ERROR\r\n");
+        DC_debugOut("% CRC VM ERROR\r\n");
         DC_set.PY_scryptData.status = PY_SCRIPT_ERROR;
       }
     }else{//Copy from NAND to SRAM
-      DC_debugOut("Can't read VM script from NAND\r\n");
+      DC_debugOut("% Can't read VM script from NAND\r\n");
       DC_set.PY_scryptData.status = PY_SCRIPT_ERROR;
     }
 

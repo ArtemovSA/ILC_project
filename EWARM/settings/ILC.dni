@@ -11,12 +11,12 @@ ByteLimit=50
 [StLinkDriver]
 CStepIntDis=_ 0
 LeaveTargetRunning=_ 0
-stlinkserialNo=40450487
+stlinkserialNo=30303031
 stlinkfoundProbes=
 stlinkResetStyle=0
 stlinkResetStrategy=1
 [DebugChecksum]
-Checksum=-288371375
+Checksum=-2012646809
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -165,15 +165,6 @@ ShowTimeLog=1
 SumEnabled=0
 ShowTimeSum=1
 SumSortOrder=0
-[Disassemble mode]
-mode=0
-[Breakpoints2]
-Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\V9203\V9203.c}.508.3" 0 0 1 "" 0 "" 0
-Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Src\stm32f4xx_it.c}.74.3" 0 0 1 "" 0 "" 0
-Bp2=_ 0 "EMUL_DATA" "USBP_RX_BUF_LEN" 0 0 0 0 4294967295
-Bp3=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\WM_python\TASK_script.c}.63.9" 0 0 1 "" 0 "" 0
-Bp4=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\WM_python\TASK_script.c}.73.20" 0 0 1 "" 0 "" 0
-Count=5
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -181,12 +172,6 @@ Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
-[Aliases]
-A0=_ "C:\Users\Sergey\Desktop\INS\ILC\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c" ""
-A1=_ "C:\Users\Sergey\Desktop\INS\ILC\Middlewares\Third_Party\FreeRTOS\Source\tasks.c" ""
-A2=_ "C:\Users\Sergey\Desktop\INS\ILC\Src\main.c" ""
-Count=3
-SuppressDialog=0
 [DriverProfiling]
 Enabled=0
 Mode=3
@@ -197,3 +182,21 @@ Exclusions=
 Enabled=0
 [CallStackStripe]
 ShowTiming=1
+[Disassemble mode]
+mode=0
+[Breakpoints2]
+Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\V9203\V9203.c}.508.3" 0 0 1 "" 0 "" 0
+Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Src\stm32f4xx_it.c}.74.3" 0 0 1 "" 0 "" 0
+Bp2=_ 0 "EMUL_DATA" "USBP_RX_BUF_LEN" 0 0 0 0 4294967295
+Bp3=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\WM_python\TASK_script.c}.81.11" 0 0 1 "" 0 "" 0
+Bp4=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\WM_python\conversion\inc\py_std_native.c}.323.9" 0 0 1 "" 0 "" 0
+Bp5=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\WM_python\TASK_script.c}.79.11" 0 0 1 "" 0 "" 0
+Bp6=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_pm.c}.85.5" 0 0 1 "" 0 "" 0
+Bp7=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\WM_python\board\py_plat.c}.143.14" 0 0 1 "" 0 "" 0
+Count=8
+[Aliases]
+A0=_ "C:\Users\Sergey\Desktop\INS\ILC\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c" ""
+A1=_ "C:\Users\Sergey\Desktop\INS\ILC\Middlewares\Third_Party\FreeRTOS\Source\tasks.c" ""
+A2=_ "C:\Users\Sergey\Desktop\INS\ILC\Src\main.c" ""
+Count=3
+SuppressDialog=0
