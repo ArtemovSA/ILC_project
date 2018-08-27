@@ -176,15 +176,19 @@ plat_reportError(PmReturn_t result)
         if (PM_error_codes[i].error_code == result) {
           sprintf(buf, "\n\rError #%02X - %s",result, PM_error_codes[i].description);
           USBP_Send((uint8_t*)buf,strlen(buf));
+          DC_debugOut(buf);
           break;
         }
       }
       sprintf(buf,"  Release: 0x%02X\n\r", gVmGlobal.errVmRelease);
       USBP_Send((uint8_t*)buf,strlen(buf));
+      DC_debugOut(buf);
       sprintf(buf,"  FileId:  0x%02X\n\r", gVmGlobal.errFileId);
       USBP_Send((uint8_t*)buf,strlen(buf));
+      DC_debugOut(buf);
       sprintf(buf,"  LineNum: %d\n\r", gVmGlobal.errLineNum);
       USBP_Send((uint8_t*)buf,strlen(buf));
+      DC_debugOut(buf);
     }
     
     /* Print traceback */
@@ -195,6 +199,7 @@ plat_reportError(PmReturn_t result)
 
         sprintf(buf,"Traceback (top first):\n\r");
         USBP_Send((uint8_t*)buf,strlen(buf));
+        DC_debugOut(buf);
 
         /* Get the top frame */
         pframe = (pPmObj_t)gVmGlobal.pthread->pframe;
@@ -210,6 +215,7 @@ plat_reportError(PmReturn_t result)
             {
                 sprintf(buf,"  Unable to get native func name.\n\r");
                 USBP_Send((uint8_t*)buf,strlen(buf));
+                DC_debugOut(buf);
                 return;
             }
             else
@@ -217,6 +223,7 @@ plat_reportError(PmReturn_t result)
               
               sprintf(buf,"  %s() __NATIVE__\n\r", ((pPmString_t)pstr)->val);
               USBP_Send((uint8_t*)buf,strlen(buf));
+              DC_debugOut(buf);
             }
 
             /* Get the frame that called the native frame */
@@ -235,9 +242,11 @@ plat_reportError(PmReturn_t result)
 
             sprintf(buf,"  %s()\n\r", ((pPmString_t)pstr)->val);
             USBP_Send((uint8_t*)buf,strlen(buf));
+            DC_debugOut(buf);
         }
         
         sprintf(buf,"  <module>.\n\r");
         USBP_Send((uint8_t*)buf,strlen(buf));
+        DC_debugOut(buf);
     }
 }
