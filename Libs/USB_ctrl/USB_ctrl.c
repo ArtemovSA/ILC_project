@@ -65,6 +65,7 @@ void USBC_sendPayload(uint8_t* payload, uint16_t len)
   
   USBP_Send(payload,len+4); //Отправить ответ
 }
+DEV_Status_t retStatus;
 //--------------------------------------------------------------------------------------------------
 //Command process
 void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
@@ -77,7 +78,7 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
   uint8_t command; //Command current
   uint8_t status; //Command status
   NAND_AddressTypeDef addrNAND; //Nand address
-  DEV_Status_t retStatus;
+  
   
   uint16_t partNum;
   uint16_t partLen;

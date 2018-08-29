@@ -77,7 +77,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>7.80.3.12143</state>
+          <state>7.80.4.12487</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -1355,22 +1355,16 @@
           </file>
         </group>
         <group>
-          <name>scripts</name>
+          <name>Std_lib</name>
           <file>
             <name>$PROJ_DIR$\..\Libs\WM_python\conversion\inc\py_std.h</name>
           </file>
           <file>
             <name>$PROJ_DIR$\..\Libs\WM_python\conversion\inc\py_std_native.c</name>
           </file>
-          <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\conversion\inc\py_usr.h</name>
-          </file>
-          <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\conversion\inc\py_usr_native.c</name>
-          </file>
         </group>
         <group>
-          <name>WM</name>
+          <name>VM</name>
           <file>
             <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_bytearray.c</name>
           </file>

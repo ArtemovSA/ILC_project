@@ -109,6 +109,10 @@ plat_memGetByte(PmMemSpace_t memspace, uint8_t const **paddr)
       *paddr += 1;
     }
     return b;
+  case MEMSPACE_PROG:
+    b = **paddr;
+    *paddr += 1;
+    return b;
   default:
     return 0;
   }

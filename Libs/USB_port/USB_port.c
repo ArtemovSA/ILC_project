@@ -25,7 +25,7 @@ static void USBP_runtime( TimerHandle_t xTimer );
 void USBP_init()
 {
   USBP_timer = xTimerCreate( "USBP_Timer", 1, pdTRUE, (void*)0, USBP_runtime );
-  xTimerStart( USBP_timer, 30);
+  xTimerStart( USBP_timer, 20);
 }
 //--------------------------------------------------------------------------------------------------
 //Отправить данные

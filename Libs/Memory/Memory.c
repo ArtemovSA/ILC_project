@@ -310,8 +310,8 @@ DEV_Status_t MEM_NAND_to_SRAM(MEM_ID_t memoryID, uint32_t addrSRAM, NAND_Address
     if ((stat = MEM_SRAM_writeData(memoryID, addrSRAM, MEM_dataBuf, MEM_NAND_PAGE_SIZE)) != DEV_OK) //Write data SRAM
       return stat;
     
-    relativeAddrNAND.Page = addrNAND.Page + i;
-    addrSRAM += MEM_NAND_PAGE_SIZE*i;
+    relativeAddrNAND.Page += 1;
+    addrSRAM += MEM_NAND_PAGE_SIZE;
   }
   
   //Copy tail
@@ -344,9 +344,12 @@ DEV_Status_t MEM_SRAM_to_NAND(MEM_ID_t memoryID, uint32_t addrSRAM, NAND_Address
       return stat;
     
     if (addrNAND.Page < MEM_NAND_BLOCK_SIZE)
+    {
       addrNAND.Page++;
-    else
+      addrSRAM += MEM_NAND_PAGE_SIZE;
+    }else{
       return DEV_ERROR;
+    }
   }
   
   //Copy tail
