@@ -23,7 +23,8 @@ typedef enum
   DEV_TIMEOUT,                  //Таймаут
   DEV_NEXIST,                   //Ресурс не существует
   DEV_CON_ERROR,                //Ошибка соединения
-  DEV_VAL_ERROR                 //Ошибка значения
+  DEV_VAL_ERROR,                //Ошибка значения
+  DEV_ALREADY                   //Уже выполнено, существует
 } DEV_Status_t;
 
 //Device info struct

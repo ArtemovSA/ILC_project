@@ -1,4 +1,4 @@
-"D:\Sergey\ILC_project\Libs\WM_python\pymite\src\vm2\py_dict.c"
+"D:\Sergey\ILC_project\Libs\VM_python\pymite\src\vm\py_dict.c"
 -std=c99
 -ferror-limit=100
 -I
@@ -80,15 +80,15 @@ D:\Sergey\ILC_project\EWARM\..\Libs\FW_update
 -I
 D:\Sergey\ILC_project\EWARM\..\Libs\USB_ctrl
 -I
-D:\Sergey\ILC_project\EWARM\..\Libs\WM_python\conversion\inc
+D:\Sergey\ILC_project\EWARM\..\Libs\VM_python\conversion\inc
 -I
-D:\Sergey\ILC_project\EWARM\..\Libs\WM_python\pymite\src\vm2
+D:\Sergey\ILC_project\EWARM\..\Libs\VM_python\board
 -I
-D:\Sergey\ILC_project\EWARM\..\Libs\WM_python\board
--I
-D:\Sergey\ILC_project\EWARM\..\Libs\WM_python
+D:\Sergey\ILC_project\EWARM\..\Libs\VM_python
 -I
 D:\Sergey\ILC_project\EWARM\..\Libs\USB_port
+-I
+D:\Sergey\ILC_project\EWARM\..\Libs\VM_python\pymite\src\vm
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -I
@@ -174,15 +174,15 @@ D:\Sergey\ILC_project\Libs\FW_update
 -I
 D:\Sergey\ILC_project\Libs\USB_ctrl
 -I
-D:\Sergey\ILC_project\Libs\WM_python\conversion\inc
+D:\Sergey\ILC_project\Libs\VM_python\conversion\inc
 -I
-D:\Sergey\ILC_project\Libs\WM_python\pymite\src\vm2
+D:\Sergey\ILC_project\Libs\VM_python\board
 -I
-D:\Sergey\ILC_project\Libs\WM_python\board
--I
-D:\Sergey\ILC_project\Libs\WM_python
+D:\Sergey\ILC_project\Libs\VM_python
 -I
 D:\Sergey\ILC_project\Libs\USB_port
+-I
+D:\Sergey\ILC_project\Libs\VM_python\pymite\src\vm
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -DUSE_HAL_DRIVER=1

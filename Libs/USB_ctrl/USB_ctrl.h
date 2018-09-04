@@ -26,6 +26,7 @@ enum{
   USBC_CMD_SCRYPT_LOAD,         //Load script
   USBC_CMD_SCRYPT_START,        //Start script
   USBC_CMD_SCRYPT_STOP,         //Stop script
+  USBC_CMD_SCRYPT_PAUSE,        //Pause script
   USBC_CMD_SET_SETTINGS,        //Set settings
   USBC_CMD_SET_CALIBRATE,       //Set CALIBRATE
 };
@@ -63,7 +64,8 @@ enum{
   USBC_RET_ADDR_ERR,
   USBC_RET_OVERF,
   USBC_RET_NANS,
-  USBC_RET_NEXIST
+  USBC_RET_NEXIST,
+  USBC_RET_ALREADY
 };
 
 //USB command init

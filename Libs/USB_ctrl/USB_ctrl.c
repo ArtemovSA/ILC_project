@@ -259,6 +259,42 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
       
       break;
       
+    case USBC_CMD_SCRYPT_STOP:
+      
+      //Стоп скрипта
+      if (PY_stopScript() == DEV_OK)
+      {
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_OK;
+        cmdData[2] = (uint8_t)DC_set.PY_scryptData.status;
+      }else{
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_ERROR;
+        cmdData[2] = (uint8_t)DC_set.PY_scryptData.status;
+      }
+      
+      USBC_sendPayload(cmdData, 3);//Send payload
+            
+      break;
+      
+    case USBC_CMD_SCRYPT_PAUSE:
+      
+      //Пауза скрипта
+      if (PY_pauseScript() == DEV_OK)
+      {
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_OK;
+        cmdData[2] = (uint8_t)DC_set.PY_scryptData.status;
+      }else{
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_ERROR;
+        cmdData[2] = (uint8_t)DC_set.PY_scryptData.status;
+      }
+      
+      USBC_sendPayload(cmdData, 3);//Send payload
+            
+      break;
+      
     }
   }else{
     

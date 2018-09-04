@@ -215,7 +215,7 @@ SemaphoreHandle_t muxUSB;
   debugTaskHandle = osThreadCreate(osThread(debugTask), NULL);
 
   /* definition and creation of WM_task */
-  osThreadDef(WM_task, startWM_task, osPriorityIdle, 0, 256);
+  osThreadDef(WM_task, startWM_task, osPriorityIdle, 0, 512);
   WM_taskHandle = osThreadCreate(osThread(WM_task), NULL);
 
   /* definition and creation of PW_task */
@@ -844,7 +844,7 @@ void startDebugTask(void const * argument)
   vTaskResume(EMS_taskHandle);
     
   //Инициализация задачи
-  TASK_script_init(2);
+  TASK_script_init(0);
   
   //devMQTT_connect(DC_set.MQTT_broc_ip[DC_set.MQTT_activeBrock], DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
   

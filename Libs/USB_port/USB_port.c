@@ -43,27 +43,28 @@ uint16_t USBP_Recive(uint8_t* data, uint16_t len)
 //Recive runtime
 static void USBP_runtime( TimerHandle_t xTimer )
 {      
-  uint16_t len = USBP_Recive(USBP_rx_buf, USBP_RX_BUF_LEN);
+  uint16_t len;
   
-  if (len > 0)
+  //Scrypt mode
+  if (USBP_mode != USBP_MODE_SCRIPT)
   {
-    //Cmd mode
-    if (USBP_mode == USBP_MODE_CMD)
-    {
-      USBC_Receive_proc(USBP_rx_buf, len);//Recive commnd process
-    }
     
-    //Scrypt mode
-    if (USBP_mode == USBP_MODE_SCRIPT)
-    {
-      
-    }
+    len = USBP_Recive(USBP_rx_buf, USBP_RX_BUF_LEN);
     
-    //Debug mode
-    if (USBP_mode == USBP_MODE_DEBUG)
+    if (len > 0)
     {
+      //Cmd mode
+      if (USBP_mode == USBP_MODE_CMD)
+      {
+        USBC_Receive_proc(USBP_rx_buf, len);//Recive commnd process
+      }
       
-    }    
+      //Debug mode
+      if (USBP_mode == USBP_MODE_DEBUG)
+      {
+        
+      }    
+    }
   }
   
 }

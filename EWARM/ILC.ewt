@@ -1494,180 +1494,183 @@
         <group>
           <name>board</name>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\board\py_plat.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\board\py_plat.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\board\py_plat.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\board\py_plat.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\board\py_pmfeatures.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\board\py_pmfeatures.h</name>
           </file>
         </group>
         <group>
-          <name>Std_lib</name>
+          <name>Libs</name>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\conversion\inc\py_std.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\conversion\inc\py_std.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\conversion\inc\py_std_native.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\conversion\inc\py_std_native.c</name>
+          </file>
+          <file>
+            <name>$PROJ_DIR$\..\Libs\VM_python\conversion\inc\py_usr_native.c</name>
           </file>
         </group>
         <group>
           <name>VM</name>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_bytearray.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_bytearray.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_bytearray.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_bytearray.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_class.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_class.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_class.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_class.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_codeobj.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_codeobj.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_codeobj.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_codeobj.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_dict.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_dict.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_dict.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_dict.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_float.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_float.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_float.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_float.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_frame.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_frame.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_frame.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_frame.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_func.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_func.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_func.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_func.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_global.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_global.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_global.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_global.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_heap.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_heap.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_heap.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_heap.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_img.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_img.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_img.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_img.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_int.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_int.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_int.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_int.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_interp.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_interp.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_interp.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_interp.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_list.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_list.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_list.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_list.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_mem.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_mem.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_mem.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_mem.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_module.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_module.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_module.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_module.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_obj.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_obj.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_obj.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_obj.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_plat_interface.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_plat_interface.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_pm.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_pm.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_pm.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_pm.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_pmEmptyPlatformDefs.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_pmEmptyPlatformDefs.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_pmFeatureDependencies.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_pmFeatureDependencies.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_seglist.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_seglist.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_seglist.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_seglist.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_seq.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_seq.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_seq.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_seq.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_sli.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_sli.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_sli.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_sli.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_strobj.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_strobj.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_strobj.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_strobj.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_thread.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_thread.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_thread.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_thread.h</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_tuple.c</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_tuple.c</name>
           </file>
           <file>
-            <name>$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_tuple.h</name>
+            <name>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm\py_tuple.h</name>
           </file>
         </group>
       </group>
       <file>
-        <name>$PROJ_DIR$\..\Libs\WM_python\TASK_script.c</name>
+        <name>$PROJ_DIR$\..\Libs\VM_python\TASK_script.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\Libs\WM_python\TASK_script.h</name>
+        <name>$PROJ_DIR$\..\Libs\VM_python\TASK_script.h</name>
       </file>
     </group>
     <file>
