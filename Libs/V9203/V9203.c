@@ -792,15 +792,13 @@ float V9203_getCOSfi(uint8_t channel, V9203_line_t line)
 //Clear P consamption
 HAL_StatusTypeDef V9203_clearPCons(uint8_t channel, V9203_line_t line)
 {
-  uint64_t value = 0;
   uint16_t regAddrHI, regAddrLO;
-  uint32_t regDataHI, regDataLO;
   
   //Check channel
   if (channel > DC_V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
-    return 0;
+    return HAL_ERROR;
   }
   
   //Get register address
@@ -810,7 +808,7 @@ HAL_StatusTypeDef V9203_clearPCons(uint8_t channel, V9203_line_t line)
   case LINE_B: regAddrHI = RegEGYPBH; regAddrLO = RegEGYPBL; break;
   case LINE_C: regAddrHI = RegEGYPCH; regAddrLO = RegEGYPCL; break;
   case LINE_S: regAddrHI = RegEGYPS0H; regAddrLO = RegEGYPS0L;  break;
-  default: DC_debugOut("# Line num ERROR\r\n"); return -1;
+  default: DC_debugOut("# Line num ERROR\r\n"); return HAL_ERROR;
   }
 
   if (V9203_wr_flash(channel, regAddrHI, 0) != HAL_OK)
@@ -831,15 +829,13 @@ HAL_StatusTypeDef V9203_clearPCons(uint8_t channel, V9203_line_t line)
 //Clear Q consamption
 HAL_StatusTypeDef V9203_clearQCons(uint8_t channel, V9203_line_t line)
 {
-  uint64_t value = 0;
   uint16_t regAddrHI, regAddrLO;
-  uint32_t regDataHI, regDataLO;
   
   //Check channel
   if (channel > DC_V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
-    return 0;
+    return HAL_ERROR;
   }
   
   //Get register address
@@ -849,7 +845,7 @@ HAL_StatusTypeDef V9203_clearQCons(uint8_t channel, V9203_line_t line)
   case LINE_B: regAddrHI = RegEGYQBH; regAddrLO = RegEGYQBL; break;
   case LINE_C: regAddrHI = RegEGYQCH; regAddrLO = RegEGYQCL; break;
   case LINE_S: regAddrHI = RegEGYQS0H; regAddrLO = RegEGYQS0L;  break;
-  default: DC_debugOut("# Line num ERROR\r\n"); return -1;
+  default: DC_debugOut("# Line num ERROR\r\n"); return HAL_ERROR;
   }
 
   if (V9203_wr_flash(channel, regAddrHI, 0) != HAL_OK)
@@ -870,15 +866,13 @@ HAL_StatusTypeDef V9203_clearQCons(uint8_t channel, V9203_line_t line)
 //Clear S consamption
 HAL_StatusTypeDef V9203_clearSCons(uint8_t channel, V9203_line_t line)
 {
-  uint64_t value = 0;
   uint16_t regAddrHI, regAddrLO;
-  uint32_t regDataHI, regDataLO;
   
   //Check channel
   if (channel > DC_V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
-    return 0;
+    return HAL_ERROR;
   }
   
   //Get register address
@@ -888,7 +882,7 @@ HAL_StatusTypeDef V9203_clearSCons(uint8_t channel, V9203_line_t line)
   case LINE_B: regAddrHI = RegEGYAPPBH; regAddrLO = RegEGYAPPBL; break;
   case LINE_C: regAddrHI = RegEGYAPPCH; regAddrLO = RegEGYAPPCL; break;
   case LINE_S: regAddrHI = RegEGYAPPSH; regAddrLO = RegEGYAPPSL;  break;
-  default: DC_debugOut("# Line num ERROR\r\n"); return -1;
+  default: DC_debugOut("# Line num ERROR\r\n"); return HAL_ERROR;
   }
 
   if (V9203_wr_flash(channel, regAddrHI, 0) != HAL_OK)

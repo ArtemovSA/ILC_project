@@ -28,7 +28,9 @@ enum{
   USBC_CMD_SCRYPT_STOP,         //Stop script
   USBC_CMD_SCRYPT_PAUSE,        //Pause script
   USBC_CMD_SET_SETTINGS,        //Set settings
+  USBC_CMD_ASSIGN_SETTINGS,     //Assign settings
   USBC_CMD_SET_CALIBRATE,       //Set CALIBRATE
+  USBC_CMD_SYSTEM_RESET,        //Reset system
 };
 
 //Command status
@@ -36,25 +38,6 @@ enum{
   USBC_STAT_EXEC_END = 0,       //End command
   USBC_STAT_EXEC_START,         //Start command
   USBC_STAT_EXEC_CONT           //Continue command
-};
-
-//Settings List
-enum{
-  USBC_SET_NET_DEV_IP = 1,
-  USBC_SET_NET_GW_IP,
-  USBC_SET_NET_MASK,
-  USBC_SET_NTP_DOMEN,
-  USBC_SET_NET_DNS_IP,
-  USBC_SET_MQTT_IP,
-  USBC_SET_MQTT_DOMEN,
-  USBC_SET_MQTT_CH,
-  USBC_SET_MQTT_PORT,
-  USBC_SET_MQTT_USER,
-  USBC_SET_MQTT_PASS,
-  USBC_SET_MQTT_QOS,
-  USBC_SET_EMS_PERIOD,
-  USBC_SET_EMS_AUTO_SEND,
-  USBC_SET_VM_AUTO_START
 };
 
 //Returned values

@@ -824,8 +824,8 @@ void startDebugTask(void const * argument)
   DC_init(&debug_TTqueueHandle);
   
   /* init code for LWIP */
-  MX_LWIP_Init(DC_set.net_dev_ip_addr, DC_set.net_mask, DC_set.net_gw_ip_addr);
-  
+  MX_LWIP_Init(DC_set.net_dev_ip_addr, DC_set.net_mask, DC_set.net_gw_ip_addr, DC_set.net_DHCP_en);
+   
   //USB
   USBP_init();
   USBC_init(1);

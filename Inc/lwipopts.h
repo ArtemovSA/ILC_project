@@ -144,6 +144,8 @@
 /*----- Value in opt.h for CHECKSUM_CHECK_ICMP6: 1 -----*/
 #define CHECKSUM_CHECK_ICMP6 0
    
+#define LWIP_DHCP 1
+   
 /*-----------------------------------------------------------------------------*/
 /* USER CODE BEGIN 1 */
 

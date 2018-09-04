@@ -23,9 +23,10 @@ const char DC_const_NTP_server_name[] = DC_DEF_NTP_SERVER;
 const char DC_const_serverDNS[] = DC_DEF_DNS;
 
 //Var
-DC_set_t DC_set; //Device settings
-uint32_t DC_unicID[3]; //Unic ID
-char DC_unic_idef[36]; //Unic idef
+DC_set_t DC_set;        //Device settings
+DC_set_t DC_tempSet;    //Temp data settings
+uint32_t DC_unicID[3];  //Unic ID
+char DC_unic_idef[36];  //Unic idef
 char DC_unic_idStr[13]; //Unic id str
 osMessageQId *DC_eventQueue; //Event queue
 char strBuffer[1024];
@@ -312,6 +313,7 @@ DEV_Status_t DC_load_settings()
 
   //Set default
   //Network
+  DC_set.net_DHCP_en = DC_DEF_DEV_DHCP_EN;
   memcpy(DC_set.net_dev_ip_addr, DC_const_dev_ip_addr, 4);
   memcpy(DC_set.net_gw_ip_addr, DC_const_gw_ip_addr, 4);
   memcpy(DC_set.net_mask, DC_const_net_mask, 4);
@@ -333,6 +335,7 @@ DEV_Status_t DC_load_settings()
   DC_set.EMS_autoSendEn = DC_DEF_EMS_SEND_EN;
   
   //Py
+  DC_set.VM_autoStartEn = DC_DEF_PY_AUTOSTART;
   strcpy(DC_set.PY_scryptData.Name, DC_DEF_PY_NAME);
   DC_set.PY_scryptData.memID = DC_DEF_PY_MEM;
     
@@ -350,6 +353,86 @@ DEV_Status_t DC_load_settings()
   //DC_debug_settingsOut();
   
   return DEV_OK;
+}
+//--------------------------------------------------------------------------------------------------
+//Assign setting parametr
+DEV_Status_t DC_assignSettings()
+{
+  NAND_AddressTypeDef addr = MEM_NAND_ADDR_SETTINGS;
+  
+  //Set magic key
+  DC_tempSet.magicKey = DC_SET_MAGICKEY+1;
+
+  return DC_writeSet(&DC_tempSet ,addr); //Write settings
+}
+//--------------------------------------------------------------------------------------------------
+//System reset
+void DC_systemReset()
+{
+  DC_LedOut(LED_LINK, 1);
+  DC_LedOut(LED_STATUS, 1);
+  DC_LedOut(LED_RUN, 1);
+  vTaskDelay(500);
+  NVIC_SystemReset();
+}
+//--------------------------------------------------------------------------------------------------
+//Set setting parametr
+DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint16_t len)
+{
+  switch(setID)
+  {
+  case DC_SET_NET_DHCP_EN:
+    DC_tempSet.net_DHCP_en = *data;
+    return DEV_OK;
+    break;
+    
+  case DC_SET_NET_DEV_IP:
+    if (len == 4)
+    {
+      memcpy(DC_tempSet.net_dev_ip_addr, data, 4);
+      DC_debug_ipAdrrOut("* Witten dev IP: ", DC_tempSet.net_dev_ip_addr);
+      return DEV_OK;
+    }
+    break;
+    
+  case DC_SET_NET_GW_IP:
+    if (len == 4)
+    {
+      memcpy(DC_tempSet.net_gw_ip_addr, data, 4);
+      DC_debug_ipAdrrOut("* Witten gateway IP: ", DC_tempSet.net_dev_ip_addr);
+      return DEV_OK;
+    }
+    break;
+      
+  case DC_SET_NET_MASK:
+    if (len == 4)
+    {
+      memcpy(DC_tempSet.net_mask, data, 4);
+      DC_debug_ipAdrrOut("* Witten net mask: ", DC_tempSet.net_dev_ip_addr);
+      return DEV_OK;
+    }
+    break;
+    
+  case DC_SET_NTP_DOMEN:
+    if (len <= sizeof(DC_tempSet.netNTP_server))
+    {
+      memcpy(DC_tempSet.netNTP_server, data, len);
+      DC_debugOut("* Witten NTP domen: %s", DC_tempSet.netNTP_server);
+      return DEV_OK;
+    }
+    break;
+
+  case DC_SET_NET_DNS_IP:
+    if (len == 4)
+    {
+      memcpy(DC_tempSet.serverDNS, data, 4);
+      DC_debug_ipAdrrOut("* Witten DNS server: ", DC_tempSet.net_dev_ip_addr);
+      return DEV_OK;
+    }
+    break;
+    
+  }
+  return DEV_ERROR;
 }
 //--------------------------------------------------------------------------------------------------
 //Relay out

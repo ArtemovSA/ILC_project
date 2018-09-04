@@ -43,6 +43,7 @@ extern char DC_unic_idStr[13]; //Unic id str
 //***********************************Default settings***********************************************
 
 //TCP/IP Ethernet
+#define DC_DEF_DEV_DHCP_EN              0
 #define DC_DEF_DEV_IP_ADDR              {192,168,31,55}
 #define DC_DEF_GW_IP_ADDR               {192,168,31,1}
 #define DC_DEF_NET_MASK                 {255,255,255,0}
@@ -63,10 +64,31 @@ extern char DC_unic_idStr[13]; //Unic id str
 #define DC_DEF_EMS_SEND_EN              1 //Разрешить передачу данных
 
 //Python
+#define DC_DEF_PY_AUTOSTART             0
 #define DC_DEF_PY_NAME                  "main"          //Имя старта скрипта
 #define DC_DEF_PY_MEM                   MEM_ID_SRAM1    //Память скрипта
 
 //**********************************Settings*****************************************************
+
+//Settings List
+typedef enum{
+  DC_SET_NET_DHCP_EN = 1,
+  DC_SET_NET_DEV_IP,
+  DC_SET_NET_GW_IP,
+  DC_SET_NET_MASK,
+  DC_SET_NTP_DOMEN,
+  DC_SET_NET_DNS_IP,
+  DC_SET_MQTT_IP,
+  DC_SET_MQTT_DOMEN,
+  DC_SET_MQTT_CH,
+  DC_SET_MQTT_PORT,
+  DC_SET_MQTT_USER,
+  DC_SET_MQTT_PASS,
+  DC_SET_MQTT_QOS,
+  DC_SET_EMS_PERIOD,
+  DC_SET_EMS_AUTO_SEND,
+  DC_SET_VM_AUTO_START
+}DC_settingID_t;
 
 #define DC_SET_MAGICKEY 0x01
 
@@ -75,6 +97,7 @@ typedef struct {
   uint8_t magicKey;
   
   //TCP/IP Ethernet
+  uint8_t net_DHCP_en;
   uint8_t net_dev_ip_addr[4];
   uint8_t net_gw_ip_addr[4];
   uint8_t net_mask[4];
@@ -120,12 +143,18 @@ typedef struct
 
 //Init
 void DC_init();
+//System reset
+void DC_systemReset();
 //Out debug data
 void DC_debugOut(char *str, ...);
 //IP out
 void DC_debug_ipAdrrOut(char *text, uint8_t *ip);
 //Load settings
 DEV_Status_t DC_load_settings();
+//Assign setting parametr
+DEV_Status_t DC_assignSettings();
+//Set setting parametr
+DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint16_t len);
 //User function Get Current task ID 
 uint8_t DC_getCurrentTaskID();
 

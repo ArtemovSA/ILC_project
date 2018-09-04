@@ -71,8 +71,6 @@ DEV_Status_t retStatus;
 void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
 {
   uint16_t crc_val; //Значение CRC
-  uint16_t block; //Адрес блока
-  uint16_t page; //Адрес страницы
   uint16_t offset; //Смещение
   uint16_t len; //Длина
   uint8_t command; //Command current
@@ -295,6 +293,52 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
             
       break;
       
+      //Установка настроек
+    case USBC_CMD_SET_SETTINGS:
+      
+      len = (cmdData[0]<<8) | cmdData[1];
+      
+      //Set setting parametr
+      if (DC_setSetParam((DC_settingID_t)cmdData[2], &cmdData[3], len) == DEV_OK)
+      {
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_OK;
+      }else{
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_ERROR;
+      }
+      
+      USBC_sendPayload(cmdData, 2);//Send payload
+      
+      break;
+      
+      //Применить настройки
+    case USBC_CMD_ASSIGN_SETTINGS:
+      
+      //Assign setting parametr
+      if (DC_assignSettings() == DEV_OK)
+      {
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_OK;
+      }else{
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_ERROR;
+      }
+      
+      USBC_sendPayload(cmdData, 2);//Send payload
+      
+      break;
+      
+      //Сброс
+    case USBC_CMD_SYSTEM_RESET:
+      
+      cmdData[0] = command; //Команда
+      cmdData[1] = USBC_RET_OK;
+      USBC_sendPayload(cmdData, 2);//Send payload
+      
+      //System reset
+      DC_systemReset();      
+      break;
     }
   }else{
     
