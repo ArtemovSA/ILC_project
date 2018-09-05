@@ -139,6 +139,16 @@ void MX_LWIP_Init(uint8_t* ipAddr, uint8_t* netMask, uint8_t* gatewayIP, uint8_t
   /* USER CODE END 3 */
 }
 
+bool MX_LWIP_getIP(uint8_t *ip)
+{
+  ip[0] = ip4_addr1(&gnetif.ip_addr);
+  ip[1] = ip4_addr2(&gnetif.ip_addr);
+  ip[2] = ip4_addr3(&gnetif.ip_addr);
+  ip[3] = ip4_addr4(&gnetif.ip_addr);
+  
+  return true;
+}
+
 #ifdef USE_OBSOLETE_USER_CODE_SECTION_4
 /* Kept to help code migration. (See new 4_1, 4_2... sections) */
 /* Avoid to use this user section which will become obsolete. */

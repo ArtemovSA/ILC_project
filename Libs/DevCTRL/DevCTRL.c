@@ -335,7 +335,7 @@ DEV_Status_t DC_load_settings()
   DC_set.EMS_autoSendEn = DC_DEF_EMS_SEND_EN;
   
   //Py
-  DC_set.VM_autoStartEn = DC_DEF_PY_AUTOSTART;
+  DC_set.PY_autoStartEn = DC_DEF_PY_AUTOSTART;
   strcpy(DC_set.PY_scryptData.Name, DC_DEF_PY_NAME);
   DC_set.PY_scryptData.memID = DC_DEF_PY_MEM;
     
@@ -377,12 +377,13 @@ void DC_systemReset()
 }
 //--------------------------------------------------------------------------------------------------
 //Set setting parametr
-DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint16_t len)
+DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint8_t len)
 {
   switch(setID)
   {
   case DC_SET_NET_DHCP_EN:
     DC_tempSet.net_DHCP_en = *data;
+    DC_debugOut("DHCP enable: %d", DC_tempSet.net_DHCP_en);
     return DEV_OK;
     break;
     
@@ -431,8 +432,170 @@ DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint16_t len)
     }
     break;
     
+  case DC_SET_MQTT_IP:
+    if (len == 4)
+    {
+      memcpy(DC_tempSet.MQTT_broc_ip, data, 4);
+      DC_debug_ipAdrrOut("* Witten MQTT ip: ", DC_tempSet.MQTT_broc_ip);
+      return DEV_OK;
+    }
+    break;
+    
+  case DC_SET_MQTT_DOMEN:
+    if (len <= sizeof(DC_tempSet.MQTT_broc_domen))
+    {
+      memcpy(DC_tempSet.MQTT_broc_domen, data, len);
+      DC_debugOut("* Witten MQTT domen: %s", DC_tempSet.MQTT_broc_domen);
+      return DEV_OK;
+    }
+    break;
+    
+  case DC_SET_MQTT_CH:
+    DC_tempSet.MQTT_broc_ch = *data;
+    DC_debugOut("Setted channel: %d", DC_tempSet.MQTT_broc_ch);
+    return DEV_OK;
+    break;
+    
+  case DC_SET_MQTT_PORT:
+    if (len == 2)
+    {
+      memcpy((uint8_t*)DC_tempSet.MQTT_port, data, 2);
+      DC_debugOut("* Witten MQTT port: %d", DC_tempSet.MQTT_port);
+      return DEV_OK;
+    }
+    break;
+    
+  case DC_SET_MQTT_USER:
+    if (len <= sizeof(DC_tempSet.MQTT_user))
+    {
+      memcpy(DC_tempSet.MQTT_user, data, len);
+      DC_debugOut("* Witten MQTT user: %s", DC_tempSet.MQTT_user);
+      return DEV_OK;
+    }
+    break;
+    
+  case DC_SET_MQTT_QOS:
+    if (len == 1)
+    {
+      DC_tempSet.MQTT_qos = *data;
+      DC_debugOut("* Witten MQTT QoS: %d", DC_tempSet.MQTT_qos);
+      return DEV_OK;
+    }
+    break;
+    
+  case DC_SET_EMS_PERIOD:
+    if (len == 2)
+    {
+      memcpy((uint8_t*)DC_tempSet.EMS_out_period, data, 2);
+      DC_debugOut("* Witten EMS period: %d", DC_tempSet.EMS_out_period);
+      return DEV_OK;
+    }
+    break;
+    
+  case DC_SET_EMS_AUTO_SEND:
+    if (len == 1)
+    {
+      DC_tempSet.EMS_autoSendEn = *data;
+      DC_debugOut("* Witten EMS enable: %d", DC_tempSet.EMS_autoSendEn);
+      return DEV_OK;
+    }
+    break;
+    
+  case DC_SET_VM_AUTO_START:
+    if (len == 1)
+    {
+      DC_tempSet.PY_autoStartEn = *data;
+      DC_debugOut("* Witten PY autostart: %d", DC_tempSet.PY_autoStartEn);
+      return DEV_OK;
+    }
+    break;
+    
   }
   return DEV_ERROR;
+}
+//--------------------------------------------------------------------------------------------------
+//Get setting param
+DEV_Status_t DC_getSetParam(DC_settingID_t setID, uint8_t* data, uint8_t* len)
+{
+  switch(setID)
+  {
+  case DC_SET_NET_DHCP_EN:
+    *len = 1;
+    *data = DC_set.net_DHCP_en;
+    break;
+    
+  case DC_SET_NET_DEV_IP:
+    *len = 4;
+    memcpy(data, DC_set.net_dev_ip_addr, 4);
+    break;
+    
+  case DC_SET_NET_GW_IP:
+    *len = 4;
+    memcpy(data, DC_set.net_gw_ip_addr, 4);
+    break;
+      
+  case DC_SET_NET_MASK:
+    *len = 4;
+    memcpy(data, DC_set.net_mask, 4);
+    break;
+    
+  case DC_SET_NTP_DOMEN:
+    *len = sizeof(DC_set.netNTP_server);
+    memcpy(data, DC_set.netNTP_server, sizeof(DC_set.netNTP_server));
+    break;
+
+  case DC_SET_NET_DNS_IP:
+    *len = 4;
+    memcpy(data, DC_set.serverDNS, 4);
+    break;
+    
+  case DC_SET_MQTT_IP:
+    *len = 4;
+    memcpy(data, DC_set.MQTT_broc_ip, 4);
+    break;
+    
+  case DC_SET_MQTT_DOMEN:
+    *len = sizeof(DC_set.MQTT_broc_domen);
+    memcpy(data, DC_set.MQTT_broc_domen, sizeof(DC_set.MQTT_broc_domen));
+    break;
+    
+  case DC_SET_MQTT_CH:
+    *len = 1;
+    *data = DC_set.MQTT_broc_ch;
+    break;
+    
+  case DC_SET_MQTT_PORT:
+    *len = 2;
+    memcpy(data, (uint8_t*)DC_set.MQTT_port, 2);
+    break;
+    
+  case DC_SET_MQTT_USER:
+    *len = sizeof(DC_set.MQTT_user);
+    memcpy(data, DC_set.MQTT_user, sizeof(DC_set.MQTT_user));
+    break;
+    
+  case DC_SET_MQTT_QOS:
+    *len = 1;
+    *data = DC_set.MQTT_qos;
+    break;
+    
+  case DC_SET_EMS_PERIOD:
+    *len = 2;
+    memcpy(data, (uint8_t*)DC_set.EMS_out_period, 2);
+    break;
+    
+  case DC_SET_EMS_AUTO_SEND:
+    *len = 1;
+    *data = DC_set.EMS_autoSendEn;
+    break;
+    
+  case DC_SET_VM_AUTO_START:
+    *len = 1;
+    *data = DC_set.PY_autoStartEn;
+    break;
+  }
+  
+  return DEV_OK;  
 }
 //--------------------------------------------------------------------------------------------------
 //Relay out

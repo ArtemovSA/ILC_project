@@ -28,7 +28,9 @@ enum{
   USBC_CMD_SCRYPT_STOP,         //Stop script
   USBC_CMD_SCRYPT_PAUSE,        //Pause script
   USBC_CMD_SET_SETTINGS,        //Set settings
+  USBC_CMD_GET_SETTINGS,        //Get settings
   USBC_CMD_ASSIGN_SETTINGS,     //Assign settings
+  USBC_CMD_DEFAULT_SETTINGS,    //Set default settings
   USBC_CMD_SET_CALIBRATE,       //Set CALIBRATE
   USBC_CMD_SYSTEM_RESET,        //Reset system
 };

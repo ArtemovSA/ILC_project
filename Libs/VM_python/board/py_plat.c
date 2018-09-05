@@ -141,7 +141,7 @@ plat_putByte(uint8_t b)
   if (USBP_mode == USBP_MODE_SCRIPT) {
     USBP_Send(&b,1);
   }else{
-    DC_debugOut(&b);
+    DC_debugOut((char*)&b);
   }
   
   return retval;

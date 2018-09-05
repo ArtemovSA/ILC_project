@@ -540,7 +540,7 @@ void EMS_sendChannelVars(uint8_t channel_num)
   cJSON_AddItemToObject(root, "varibles", vars);
   
   time_t timestamp;
-  if ( CL_getSystem_Timestamp(&timestamp) == HAL_OK)//Get system timestamp
+  if ( CL_getSystem_Timestamp(&timestamp) == DEV_OK)//Get system timestamp
   {
     cJSON_AddNumberToObject(root, "time", (uint32_t)timestamp);
   }else{

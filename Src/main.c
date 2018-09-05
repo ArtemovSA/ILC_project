@@ -825,7 +825,18 @@ void startDebugTask(void const * argument)
   
   /* init code for LWIP */
   MX_LWIP_Init(DC_set.net_dev_ip_addr, DC_set.net_mask, DC_set.net_gw_ip_addr, DC_set.net_DHCP_en);
-   
+  
+  if (DC_set.net_DHCP_en == 1)
+  {
+    uint8_t ip[4];
+    if (MX_LWIP_getIP(ip))
+    {
+      DC_debug_ipAdrrOut("# DHCP enable, IP: ", ip);
+    }
+  }else{
+    DC_debug_ipAdrrOut("# Static IP: ", DC_set.net_dev_ip_addr);
+  }
+    
   //USB
   USBP_init();
   USBC_init(1);

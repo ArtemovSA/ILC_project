@@ -78,6 +78,7 @@ extern ETH_HandleTypeDef heth;
 
 /* LWIP init function */	
 void MX_LWIP_Init(uint8_t* ipAddr, uint8_t* netMask, uint8_t* gatewayIP, uint8_t DHCP_en);
+bool MX_LWIP_getIP(uint8_t *ip);
 
 #if !WITH_RTOS
 /* USER CODE BEGIN 1 */

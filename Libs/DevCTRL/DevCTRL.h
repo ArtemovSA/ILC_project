@@ -118,7 +118,7 @@ typedef struct {
   uint8_t EMS_autoSendEn; //Enable periodic send
   
   //Python VM
-  uint8_t VM_autoStartEn; //Enable autostart script
+  uint8_t PY_autoStartEn; //Enable autostart script
   PY_scryptData_t PY_scryptData; //Описание скрипта
   
   //Settings struct
@@ -151,10 +151,12 @@ void DC_debugOut(char *str, ...);
 void DC_debug_ipAdrrOut(char *text, uint8_t *ip);
 //Load settings
 DEV_Status_t DC_load_settings();
+//Get setting param
+DEV_Status_t DC_getSetParam(DC_settingID_t setID, uint8_t* data, uint8_t* len);
 //Assign setting parametr
 DEV_Status_t DC_assignSettings();
 //Set setting parametr
-DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint16_t len);
+DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint8_t len);
 //User function Get Current task ID 
 uint8_t DC_getCurrentTaskID();
 
