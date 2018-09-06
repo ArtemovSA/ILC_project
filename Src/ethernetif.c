@@ -211,7 +211,7 @@ void HAL_ETH_RxCpltCallback(ETH_HandleTypeDef *heth)
 }
 
 /* USER CODE BEGIN 4 */
-
+extern uint8_t *pDevMAC; //Device MAC address
 /* USER CODE END 4 */
 
 /*******************************************************************************
@@ -235,12 +235,21 @@ static void low_level_init(struct netif *netif)
   heth.Instance = ETH;
   heth.Init.AutoNegotiation = ETH_AUTONEGOTIATION_ENABLE;
   heth.Init.PhyAddress = LAN8742A_PHY_ADDRESS;
-  MACAddr[0] = 0x00;
-  MACAddr[1] = 0x80;
-  MACAddr[2] = 0xE1;
-  MACAddr[3] = 0x00;
-  MACAddr[4] = 0x00;
-  MACAddr[5] = 0x01;
+  
+//  MACAddr[0] = 0x00;
+//  MACAddr[1] = 0x80;
+//  MACAddr[2] = 0xE1;
+//  MACAddr[3] = 0x00;
+//  MACAddr[4] = 0x00;
+//  MACAddr[5] = 0x01;
+  
+  MACAddr[0] = *pDevMAC;
+  MACAddr[1] = *(pDevMAC+1);
+  MACAddr[2] = *(pDevMAC+2);
+  MACAddr[3] = *(pDevMAC+3);
+  MACAddr[4] = *(pDevMAC+4);
+  MACAddr[5] = *(pDevMAC+5);
+ 
   heth.Init.MACAddr = &MACAddr[0];
   heth.Init.RxMode = ETH_RXINTERRUPT_MODE;
   heth.Init.ChecksumMode = ETH_CHECKSUM_BY_HARDWARE;

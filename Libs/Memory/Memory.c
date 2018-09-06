@@ -69,10 +69,10 @@ DEV_Status_t MEM_NAND_checkID()
 DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint16_t offset_addr, uint8_t *data, uint32_t len)
 {
   DEV_Status_t stat;
-  NAND_AddressTypeDef startBlockAddress = address;
+  NAND_AddressTypeDef currentAddress = address;
   uint32_t* SRAMaddress_p = (uint32_t*)(MEM_SRAM1_ADDR_BLOCK_BUF);
   
-  startBlockAddress.Page = 0;
+  currentAddress.Page = 0;
   
   MEM_selectMem(MEM_ID_SRAM1); //Select memory
   //Enable sram write
@@ -83,20 +83,22 @@ DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint16_t offset_add
   for (int i=0; i<MEM_NAND_BLOCK_SIZE; i++)
   {
     MEM_selectMem(MEM_ID_NAND); //Select memory
-    if ((stat = (DEV_Status_t)HAL_NAND_Read_Page_8b(MEM_hNAND1, &startBlockAddress, MEM_dataBuf, 1)) != DEV_OK)
+    if ((stat = (DEV_Status_t)HAL_NAND_Read_Page_8b(MEM_hNAND1, &currentAddress, MEM_dataBuf, 1)) != DEV_OK)
       return stat;
     
     MEM_selectMem(MEM_ID_SRAM1); //Select memory
     if ((stat = (DEV_Status_t)HAL_SRAM_Write_8b(MEM_hSRAM1, SRAMaddress_p, MEM_dataBuf, MEM_NAND_PAGE_SIZE)) != DEV_OK)
       return stat;
     
-    startBlockAddress.Page++;
+    currentAddress.Page++;
     SRAMaddress_p = (uint32_t*)((uint32_t)SRAMaddress_p+MEM_NAND_PAGE_SIZE);
   }  
+  
+  currentAddress.Page = 0;
 
   //Erace block NAND
   MEM_selectMem(MEM_ID_NAND); //Select memory
-  if ((stat = (DEV_Status_t)HAL_NAND_Erase_Block(MEM_hNAND1, &startBlockAddress)) != DEV_OK)
+  if ((stat = (DEV_Status_t)HAL_NAND_Erase_Block(MEM_hNAND1, &currentAddress)) != DEV_OK)
     return stat;
   
   //Write data
@@ -106,7 +108,6 @@ DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint16_t offset_add
       return stat;
   
   SRAMaddress_p = (uint32_t*)(MEM_SRAM1_ADDR_BLOCK_BUF);
-  startBlockAddress.Page = 0;
     
   //Copy block to nand
   for (int i=0; i<MEM_NAND_BLOCK_SIZE; i++)
@@ -116,10 +117,10 @@ DEV_Status_t MEM_NAND_writeData(NAND_AddressTypeDef address, uint16_t offset_add
       return stat;
     
     MEM_selectMem(MEM_ID_NAND); //Select memory
-    if ((stat = (DEV_Status_t)HAL_NAND_Write_Page_8b(MEM_hNAND1, &startBlockAddress, MEM_dataBuf, 1)) != DEV_OK)
+    if ((stat = (DEV_Status_t)HAL_NAND_Write_Page_8b(MEM_hNAND1, &currentAddress, MEM_dataBuf, 1)) != DEV_OK)
       return stat;
     
-    startBlockAddress.Page++;
+    currentAddress.Page++;
     SRAMaddress_p = (uint32_t*)((uint32_t)SRAMaddress_p+MEM_NAND_PAGE_SIZE);
   }
   

@@ -44,10 +44,11 @@ void vUSBC_task(void *pvParameters)
       USBC_state = USBC_state_WAIT_STOP1;
       //Zero cmd buffer
       memset(USBC_cmd_buf, 0, USBC_CMD_BUF_LEN);
-      USBC_cmd_len = 0;
+      USBC_cmd_len = 0;     
     }
-    
-    vTaskDelay(100);
+
+    vTaskSuspend( USBC_handle );
+    //vTaskDelay(100);
   }
 }
 //--------------------------------------------------------------------------------------------------
@@ -65,7 +66,6 @@ void USBC_sendPayload(uint8_t* payload, uint16_t len)
   
   USBP_Send(payload,len+4); //Отправить ответ
 }
-DEV_Status_t retStatus;
 //--------------------------------------------------------------------------------------------------
 //Command process
 void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
@@ -76,7 +76,7 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
   uint8_t command; //Command current
   uint8_t status; //Command status
   NAND_AddressTypeDef addrNAND; //Nand address
-  
+  DEV_Status_t retStatus;
   
   uint16_t partNum;
   uint16_t partLen;
@@ -318,6 +318,7 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
       if (DC_getSetParam((DC_settingID_t)cmdData[1], &cmdData[3], &cmdData[2]) == DEV_OK)
       {
         cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_OK;
         len = cmdData[2];
         USBC_sendPayload(cmdData, len+3);//Send payload
       }else{
@@ -325,6 +326,8 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
         cmdData[1] = USBC_RET_ERROR;
         USBC_sendPayload(cmdData, 2);//Send payload
       }
+        
+      break;
       
       //Применить настройки
     case USBC_CMD_ASSIGN_SETTINGS:
@@ -341,6 +344,22 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
       
       USBC_sendPayload(cmdData, 2);//Send payload
       
+      break;
+      
+    case USBC_CMD_DEFAULT_SETTINGS:
+      {       
+        //Reset setting key
+        if (DC_setResetSettingKey() == DEV_OK)
+        {
+          cmdData[0] = command; //Команда
+          cmdData[1] = USBC_RET_OK;
+        }else{
+          cmdData[0] = command; //Команда
+          cmdData[1] = USBC_RET_ERROR;
+        }
+        
+        USBC_sendPayload(cmdData, 2);//Send payload
+      }
       break;
       
       //Сброс
@@ -386,6 +405,7 @@ void USBC_Receive_proc(uint8_t *data, uint16_t len)
       if (USBC_state == USBC_state_WAIT_STOP2)
         if (data[i] == USBC_STOP2_BYTE)
         {
+          vTaskResume( USBC_handle );
           USBC_state = USBC_state_MSG_PROCESS;
         }else{
           USBC_state = USBC_state_WAIT_STOP1;

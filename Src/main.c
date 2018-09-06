@@ -202,8 +202,8 @@ SemaphoreHandle_t muxUSB;
 
   /* Create the timer(s) */
   /* definition and creation of SampleTimer */
-  osTimerDef(SampleTimer, sampleTimerCall);
-  SampleTimerHandle = osTimerCreate(osTimer(SampleTimer), osTimerPeriodic, NULL);
+//  osTimerDef(SampleTimer, sampleTimerCall);
+//  SampleTimerHandle = osTimerCreate(osTimer(SampleTimer), osTimerPeriodic, NULL);
 
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */

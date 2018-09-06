@@ -15,6 +15,7 @@
 #include "USB_port.h"
 
 //default variables
+const uint8_t DC_const_dev_mac_addr[] = DC_DEF_DEV_MAC_ADDR;
 const uint8_t DC_const_dev_ip_addr[] = DC_DEF_DEV_IP_ADDR;
 const uint8_t DC_const_gw_ip_addr[] = DC_DEF_GW_IP_ADDR;
 const uint8_t DC_const_net_mask[] = DC_DEF_NET_MASK;
@@ -30,6 +31,7 @@ char DC_unic_idef[36];  //Unic idef
 char DC_unic_idStr[13]; //Unic id str
 osMessageQId *DC_eventQueue; //Event queue
 char strBuffer[1024];
+uint8_t *pDevMAC; //Device MAC address point
 
 //Extern
 extern I2C_HandleTypeDef hi2c1;
@@ -303,6 +305,7 @@ DEV_Status_t DC_load_settings()
   }
   if (DC_set.magicKey == DC_SET_MAGICKEY)
   {
+    pDevMAC = DC_set.devMAC;
     DC_debugOut("# Settings load OK\r\n");
     //DC_debug_settingsOut();
     return DEV_OK;
@@ -313,6 +316,7 @@ DEV_Status_t DC_load_settings()
 
   //Set default
   //Network
+  memcpy(DC_set.devMAC, DC_const_dev_mac_addr, 6);
   DC_set.net_DHCP_en = DC_DEF_DEV_DHCP_EN;
   memcpy(DC_set.net_dev_ip_addr, DC_const_dev_ip_addr, 4);
   memcpy(DC_set.net_gw_ip_addr, DC_const_gw_ip_addr, 4);
@@ -349,6 +353,7 @@ DEV_Status_t DC_load_settings()
   //Write settings
   DC_writeSet(&DC_set ,addr);
   
+  pDevMAC = DC_set.devMAC;
   DC_debugOut("# Settings set default\r\n");
   //DC_debug_settingsOut();
   
@@ -359,11 +364,18 @@ DEV_Status_t DC_load_settings()
 DEV_Status_t DC_assignSettings()
 {
   NAND_AddressTypeDef addr = MEM_NAND_ADDR_SETTINGS;
+  DC_tempSet.magicKey = DC_SET_MAGICKEY;
+  return DC_writeSet(&DC_tempSet ,addr); //Write settings
+}
+//--------------------------------------------------------------------------------------------------
+//Reset setting key
+DEV_Status_t DC_setResetSettingKey()
+{
+  NAND_AddressTypeDef addr = MEM_NAND_ADDR_SETTINGS;
   
   //Set magic key
-  DC_tempSet.magicKey = DC_SET_MAGICKEY+1;
-
-  return DC_writeSet(&DC_tempSet ,addr); //Write settings
+  DC_set.magicKey = DC_SET_MAGICKEY+1;
+  return DC_writeSet(&DC_set ,addr); //Write settings
 }
 //--------------------------------------------------------------------------------------------------
 //System reset
@@ -381,9 +393,18 @@ DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint8_t len)
 {
   switch(setID)
   {
+  case DC_SET_NET_MAC_ADR:
+    if (len == 6)
+    {
+      memcpy(DC_tempSet.devMAC, data, 6);
+      DC_debug_ipAdrrOut("* Witten MAC addr: ", DC_tempSet.devMAC);
+      return DEV_OK;
+    }
+    break;
+    
   case DC_SET_NET_DHCP_EN:
     DC_tempSet.net_DHCP_en = *data;
-    DC_debugOut("DHCP enable: %d", DC_tempSet.net_DHCP_en);
+    DC_debugOut("* Witten DHCP enable: %d\r\n", DC_tempSet.net_DHCP_en);
     return DEV_OK;
     break;
     
@@ -418,7 +439,7 @@ DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint8_t len)
     if (len <= sizeof(DC_tempSet.netNTP_server))
     {
       memcpy(DC_tempSet.netNTP_server, data, len);
-      DC_debugOut("* Witten NTP domen: %s", DC_tempSet.netNTP_server);
+      DC_debugOut("* Witten NTP domen: %s\r\n", DC_tempSet.netNTP_server);
       return DEV_OK;
     }
     break;
@@ -445,14 +466,14 @@ DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint8_t len)
     if (len <= sizeof(DC_tempSet.MQTT_broc_domen))
     {
       memcpy(DC_tempSet.MQTT_broc_domen, data, len);
-      DC_debugOut("* Witten MQTT domen: %s", DC_tempSet.MQTT_broc_domen);
+      DC_debugOut("* Witten MQTT domen: %s\r\n", DC_tempSet.MQTT_broc_domen);
       return DEV_OK;
     }
     break;
     
   case DC_SET_MQTT_CH:
     DC_tempSet.MQTT_broc_ch = *data;
-    DC_debugOut("Setted channel: %d", DC_tempSet.MQTT_broc_ch);
+    DC_debugOut("* Witten channel: %d\r\n", DC_tempSet.MQTT_broc_ch);
     return DEV_OK;
     break;
     
@@ -460,7 +481,7 @@ DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint8_t len)
     if (len == 2)
     {
       memcpy((uint8_t*)DC_tempSet.MQTT_port, data, 2);
-      DC_debugOut("* Witten MQTT port: %d", DC_tempSet.MQTT_port);
+      DC_debugOut("* Witten MQTT port: %d\r\n", DC_tempSet.MQTT_port);
       return DEV_OK;
     }
     break;
@@ -469,7 +490,16 @@ DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint8_t len)
     if (len <= sizeof(DC_tempSet.MQTT_user))
     {
       memcpy(DC_tempSet.MQTT_user, data, len);
-      DC_debugOut("* Witten MQTT user: %s", DC_tempSet.MQTT_user);
+      DC_debugOut("* Witten MQTT user: %s\r\n", DC_tempSet.MQTT_user);
+      return DEV_OK;
+    }
+    break;
+    
+  case DC_SET_MQTT_PASS:
+    if (len <= sizeof(DC_tempSet.MQTT_pass))
+    {
+      memcpy(DC_tempSet.MQTT_pass, data, len);
+      DC_debugOut("* Witten MQTT pass: %s\r\n", DC_tempSet.MQTT_pass);
       return DEV_OK;
     }
     break;
@@ -478,7 +508,7 @@ DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint8_t len)
     if (len == 1)
     {
       DC_tempSet.MQTT_qos = *data;
-      DC_debugOut("* Witten MQTT QoS: %d", DC_tempSet.MQTT_qos);
+      DC_debugOut("* Witten MQTT QoS: %d\r\n", DC_tempSet.MQTT_qos);
       return DEV_OK;
     }
     break;
@@ -487,7 +517,7 @@ DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint8_t len)
     if (len == 2)
     {
       memcpy((uint8_t*)DC_tempSet.EMS_out_period, data, 2);
-      DC_debugOut("* Witten EMS period: %d", DC_tempSet.EMS_out_period);
+      DC_debugOut("* Witten EMS period: %d\r\n", DC_tempSet.EMS_out_period);
       return DEV_OK;
     }
     break;
@@ -496,7 +526,7 @@ DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint8_t len)
     if (len == 1)
     {
       DC_tempSet.EMS_autoSendEn = *data;
-      DC_debugOut("* Witten EMS enable: %d", DC_tempSet.EMS_autoSendEn);
+      DC_debugOut("* Witten EMS enable: %d\r\n", DC_tempSet.EMS_autoSendEn);
       return DEV_OK;
     }
     break;
@@ -505,7 +535,7 @@ DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint8_t len)
     if (len == 1)
     {
       DC_tempSet.PY_autoStartEn = *data;
-      DC_debugOut("* Witten PY autostart: %d", DC_tempSet.PY_autoStartEn);
+      DC_debugOut("* Witten PY autostart: %d\r\n", DC_tempSet.PY_autoStartEn);
       return DEV_OK;
     }
     break;
@@ -519,6 +549,11 @@ DEV_Status_t DC_getSetParam(DC_settingID_t setID, uint8_t* data, uint8_t* len)
 {
   switch(setID)
   {
+  case DC_SET_NET_MAC_ADR:
+    *len = 6;
+    memcpy(data, DC_set.devMAC, 6);
+    break;
+  
   case DC_SET_NET_DHCP_EN:
     *len = 1;
     *data = DC_set.net_DHCP_en;
@@ -572,6 +607,11 @@ DEV_Status_t DC_getSetParam(DC_settingID_t setID, uint8_t* data, uint8_t* len)
   case DC_SET_MQTT_USER:
     *len = sizeof(DC_set.MQTT_user);
     memcpy(data, DC_set.MQTT_user, sizeof(DC_set.MQTT_user));
+    break;
+    
+  case DC_SET_MQTT_PASS:
+    *len = sizeof(DC_set.MQTT_pass);
+    memcpy(data, DC_set.MQTT_pass, sizeof(DC_set.MQTT_pass));
     break;
     
   case DC_SET_MQTT_QOS:

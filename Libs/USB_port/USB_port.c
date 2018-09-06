@@ -17,6 +17,9 @@ TimerHandle_t USBP_timer;
 //Semaphores
 extern xSemaphoreHandle muxUSBP;
 
+//Handler
+extern USBD_HandleTypeDef hUsbDeviceFS;
+
 //Recive runtime
 static void USBP_runtime( TimerHandle_t xTimer );
 
@@ -45,26 +48,28 @@ static void USBP_runtime( TimerHandle_t xTimer )
 {      
   uint16_t len;
   
-  //Scrypt mode
-  if (USBP_mode != USBP_MODE_SCRIPT)
+  if (USBD_LL_DevConnected(&hUsbDeviceFS) == USBD_OK)
   {
-    
-    len = USBP_Recive(USBP_rx_buf, USBP_RX_BUF_LEN);
-    
-    if (len > 0)
+    //Scrypt mode
+    if (USBP_mode != USBP_MODE_SCRIPT)
     {
-      //Cmd mode
-      if (USBP_mode == USBP_MODE_CMD)
-      {
-        USBC_Receive_proc(USBP_rx_buf, len);//Recive commnd process
-      }
       
-      //Debug mode
-      if (USBP_mode == USBP_MODE_DEBUG)
+      len = USBP_Recive(USBP_rx_buf, USBP_RX_BUF_LEN);
+      
+      if (len > 0)
       {
+        //Cmd mode
+        if (USBP_mode == USBP_MODE_CMD)
+        {
+          USBC_Receive_proc(USBP_rx_buf, len);//Recive commnd process
+        }
         
-      }    
+        //Debug mode
+        if (USBP_mode == USBP_MODE_DEBUG)
+        {
+          
+        }    
+      }
     }
   }
-  
 }

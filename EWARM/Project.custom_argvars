@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<iarUserArgVars>
+  <group active="true" name="111">
+    <variable>
+      <name>$PROJ_DIR$</name>
+      <value>D:\Sergey\ILC_project</value>
+    </variable>
+  </group>
+</iarUserArgVars>
+
+

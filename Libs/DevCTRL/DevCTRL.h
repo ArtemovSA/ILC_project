@@ -43,6 +43,7 @@ extern char DC_unic_idStr[13]; //Unic id str
 //***********************************Default settings***********************************************
 
 //TCP/IP Ethernet
+#define DC_DEF_DEV_MAC_ADDR             {0x00,0x80,0xE1,0x00,0x00,0x01}
 #define DC_DEF_DEV_DHCP_EN              0
 #define DC_DEF_DEV_IP_ADDR              {192,168,31,55}
 #define DC_DEF_GW_IP_ADDR               {192,168,31,1}
@@ -72,7 +73,8 @@ extern char DC_unic_idStr[13]; //Unic id str
 
 //Settings List
 typedef enum{
-  DC_SET_NET_DHCP_EN = 1,
+  DC_SET_NET_MAC_ADR = 1,
+  DC_SET_NET_DHCP_EN,
   DC_SET_NET_DEV_IP,
   DC_SET_NET_GW_IP,
   DC_SET_NET_MASK,
@@ -90,13 +92,14 @@ typedef enum{
   DC_SET_VM_AUTO_START
 }DC_settingID_t;
 
-#define DC_SET_MAGICKEY 0x01
+#define DC_SET_MAGICKEY 0x02
 
 typedef struct {
   
   uint8_t magicKey;
   
   //TCP/IP Ethernet
+  uint8_t devMAC[6];            //Device MAC address
   uint8_t net_DHCP_en;
   uint8_t net_dev_ip_addr[4];
   uint8_t net_gw_ip_addr[4];
@@ -151,6 +154,8 @@ void DC_debugOut(char *str, ...);
 void DC_debug_ipAdrrOut(char *text, uint8_t *ip);
 //Load settings
 DEV_Status_t DC_load_settings();
+//Reset setting key
+DEV_Status_t DC_setResetSettingKey();
 //Get setting param
 DEV_Status_t DC_getSetParam(DC_settingID_t setID, uint8_t* data, uint8_t* len);
 //Assign setting parametr
