@@ -24,8 +24,6 @@
 
 "--drv_communication=USB:#select" 
 
-"--drv_debug_ap=0" 
-
 
 
 

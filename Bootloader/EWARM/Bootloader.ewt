@@ -1266,6 +1266,15 @@
   <group>
     <name>lib</name>
     <group>
+      <name>CRC16</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\Libs\CRC16\CRC16.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\Libs\CRC16\CRC16.h</name>
+      </file>
+    </group>
+    <group>
       <name>CRC8</name>
       <file>
         <name>$PROJ_DIR$\..\..\Libs\CRC8\CRC8.c</name>

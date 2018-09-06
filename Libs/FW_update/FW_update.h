@@ -32,7 +32,7 @@ DEV_Status_t FW_readInfodata(DEV_info_t* info);
 #define FW_IMAGE_START_SECTOR           FLASH_SECTOR_2 // 32KBytes for bootloader
 #define FW_IMAGE_END_SECTOR             FLASH_SECTOR_TOTAL
 
-#define FW_IMAGE_START_ADDRESS          0x00008000UL
+#define FW_IMAGE_START_ADDRESS          0x08008000UL
 #define FW_IMAGE_END_ADDRESS            0x080FFFFFUL
 
 //Read nand metadata

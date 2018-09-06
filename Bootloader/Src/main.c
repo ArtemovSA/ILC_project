@@ -80,6 +80,8 @@ NAND_HandleTypeDef hnand1;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+//#define DEF_INTERNAL_RC               1 //Внутреннея RC
+//#define DEF_DEBUG                       1 //Внутреннея RC
 
 /* USER CODE END PV */
 
@@ -147,6 +149,19 @@ int main(void)
   /* USER CODE BEGIN 2 */
   
   //LED out
+  HAL_GPIO_WritePin(LED_LINK_GPIO_Port, LED_LINK_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(LED_RUN_GPIO_Port, LED_RUN_Pin, GPIO_PIN_SET);
+  
+  delay(16800000/2);
+  
+  //LED out
+  HAL_GPIO_WritePin(LED_LINK_GPIO_Port, LED_LINK_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LED_RUN_GPIO_Port, LED_RUN_Pin, GPIO_PIN_RESET);
+
+  delay(16800000/2);
+  
   HAL_GPIO_WritePin(LED_LINK_GPIO_Port, LED_LINK_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(LED_RUN_GPIO_Port, LED_RUN_Pin, GPIO_PIN_SET);
@@ -239,10 +254,6 @@ int main(void)
   
   //Jump to main program
 jump_to_application:
-  JumpAddress = *( uint32_t* )( ApplicationAddress + 4 );
-  Jump_To_Application = ( pFunction )JumpAddress;
-  uint32_t Stack = *( uint32_t* ) ApplicationAddress;
-  __set_MSP( Stack );
   
   delay(16800000);
   
@@ -250,6 +261,10 @@ jump_to_application:
   HAL_GPIO_WritePin(LED_LINK_GPIO_Port, LED_LINK_Pin, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(LED_RUN_GPIO_Port, LED_RUN_Pin, GPIO_PIN_RESET);
+  
+  JumpAddress = *( uint32_t* )( ApplicationAddress + 4);
+  Jump_To_Application = ( pFunction )JumpAddress;
+  __set_MSP(*(__IO uint32_t*) ApplicationAddress);
 
   Jump_To_Application(); 
   
@@ -270,6 +285,7 @@ jump_to_application:
 
 }
 
+#ifdef DEF_INTERNAL_RC
 /**
   * @brief System Clock Configuration
   * @retval None
@@ -326,6 +342,64 @@ void SystemClock_Config(void)
   /* SysTick_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
+
+#else 
+
+void SystemClock_Config(void)
+{
+
+  RCC_OscInitTypeDef RCC_OscInitStruct;
+  RCC_ClkInitTypeDef RCC_ClkInitStruct;
+
+    /**Configure the main internal regulator output voltage 
+    */
+  __HAL_RCC_PWR_CLK_ENABLE();
+
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
+    /**Initializes the CPU, AHB and APB busses clocks 
+    */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = 16;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLM = 8;
+  RCC_OscInitStruct.PLL.PLLN = 168;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ = 7;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+    /**Initializes the CPU, AHB and APB busses clocks 
+    */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+    /**Configure the Systick interrupt time 
+    */
+  HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
+
+    /**Configure the Systick 
+    */
+  HAL_SYSTICK_CLKSourceConfig(SYSTICK_CLKSOURCE_HCLK);
+
+  /* SysTick_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+}
+
+#endif
 
 /* CRC init function */
 static void MX_CRC_Init(void)
@@ -581,6 +655,7 @@ void assert_failed(uint8_t* file, uint32_t line)
 //arg: str - string for out
 void debugOut(char *str, ...)
 {  
+#ifdef DEF_DEBUG
   va_list args;
   va_start(args, str);
   va_end(args);
@@ -596,7 +671,9 @@ void debugOut(char *str, ...)
   }
 
   va_end(args);
+#endif
 }
+
 void delay(uint32_t time_delay)
 {	
     while(time_delay--)
