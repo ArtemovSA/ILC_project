@@ -11,12 +11,12 @@ ByteLimit=50
 [StLinkDriver]
 CStepIntDis=_ 0
 LeaveTargetRunning=_ 0
-stlinkserialNo=30303031
+stlinkserialNo=28300987
 stlinkfoundProbes=
 stlinkResetStyle=0
 stlinkResetStrategy=1
 [DebugChecksum]
-Checksum=1805235200
+Checksum=253108144
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -82,16 +82,17 @@ UseFilter=_ 0
 Show=1 1
 Sort=4 0
 [struct_types]
-Fmt0=PY_scryptData_t-crc	4	0
-Fmt1=V9203_Total_cal_t-Cal_WAPT	4	0
-Fmt2=V9203_Total_cal_t-Cal_WAQT	4	0
-Fmt3=V9203_Total_cal_t-Cal_WARTI	4	0
-Fmt4=V9203_Total_cal_t-Cal_WARTU	4	0
-Fmt5=V9203_Total_cal_t-Cal_WWAPT	4	0
-Fmt6=V9203_Total_cal_t-Cal_WWARTU	4	0
-Fmt7=ip_addr_t-addr	3	0
-Fmt8=struct PmObj_s-od	4	0
-Fmt9=struct tcp_pcb-sv	4	0
+Fmt0=DC_set_t-EMS_channelEn	4	0
+Fmt1=PY_scryptData_t-crc	4	0
+Fmt2=V9203_Total_cal_t-Cal_WAPT	4	0
+Fmt3=V9203_Total_cal_t-Cal_WAQT	4	0
+Fmt4=V9203_Total_cal_t-Cal_WARTI	4	0
+Fmt5=V9203_Total_cal_t-Cal_WARTU	4	0
+Fmt6=V9203_Total_cal_t-Cal_WWAPT	4	0
+Fmt7=V9203_Total_cal_t-Cal_WWARTU	4	0
+Fmt8=ip_addr_t-addr	3	0
+Fmt9=struct PmObj_s-od	4	0
+Fmt10=struct tcp_pcb-sv	4	0
 [array_types]
 Fmt0=uint8_t[4]	3	0
 [watch_formats]
@@ -198,7 +199,8 @@ Bp1=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_interp.c}.1
 Bp2=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\WM_python\board\py_plat.c}.180.14" 0 0 1 "" 0 "" 0
 Bp3=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Src\usbd_cdc_if.c}.451.5" 0 0 1 "" 0 "" 0
 Bp4=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Src\usbd_cdc_if.c}.442.5" 0 0 1 "" 0 "" 0
-Count=5
+Bp5=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Src\lwip.c}.148.3" 0 0 1 "" 0 "" 0
+Count=6
 [Aliases]
 A0=_ "C:\Users\Sergey\Desktop\INS\ILC\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c" ""
 A1=_ "C:\Users\Sergey\Desktop\INS\ILC\Middlewares\Third_Party\FreeRTOS\Source\tasks.c" ""

@@ -1,3 +1,9 @@
 [0529/000744:ERROR:browser_gpu_channel_host_factory.cc(119)] Failed to launch GPU process.
 [0621/235617:ERROR:browser_gpu_channel_host_factory.cc(119)] Failed to launch GPU process.
 [0622/104334:ERROR:browser_gpu_channel_host_factory.cc(119)] Failed to launch GPU process.
+[0907/121639:WARNING:dns_config_service_win.cc(665)] Failed to read DnsConfig.
+[0907/121639:WARNING:dns_config_service_win.cc(665)] Failed to read DnsConfig.
+[0909/090504:WARNING:dns_config_service_win.cc(665)] Failed to read DnsConfig.
+[0909/090509:WARNING:dns_config_service_win.cc(665)] Failed to read DnsConfig.
+[0909/090509:WARNING:dns_config_service_win.cc(665)] Failed to read DnsConfig.
+[0909/200237:WARNING:dns_config_service_win.cc(665)] Failed to read DnsConfig.

@@ -57,6 +57,8 @@
 
 /* USER CODE BEGIN 0 */
 
+void link_callback(struct netif *net);
+
 /* USER CODE END 0 */
 /* Private function prototypes -----------------------------------------------*/
 /* ETH Variables initialization ----------------------------------------------*/
@@ -130,6 +132,8 @@ void MX_LWIP_Init(uint8_t* ipAddr, uint8_t* netMask, uint8_t* gatewayIP, uint8_t
     netif_set_down(&gnetif);
   }
   
+  netif_set_link_callback(&gnetif, link_callback);
+  
   if (DHCP_en == 1)
   {
     dhcp_start(&gnetif);
@@ -138,6 +142,18 @@ void MX_LWIP_Init(uint8_t* ipAddr, uint8_t* netMask, uint8_t* gatewayIP, uint8_t
   
   /* USER CODE END 3 */
 }
+
+void link_callback(struct netif *net)  
+{  
+  if(netif_is_link_up(&gnetif)) { //DES link up blink fast  
+    DC_state.ethLink = 1;
+    DC_debugOut(" @ ETH LINK UP\r\n");
+  }  
+  else { //DES link down blink slow  
+    DC_state.ethLink = 0;
+    DC_debugOut(" @ ETH LINK DOWN\r\n");
+  }  
+}  
 
 bool MX_LWIP_getIP(uint8_t *ip)
 {

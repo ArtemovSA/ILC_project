@@ -93,13 +93,7 @@ SRAM_HandleTypeDef hsram2;
 NAND_HandleTypeDef hnand1;
 
 osThreadId debugTaskHandle;
-osThreadId WM_taskHandle;
-osThreadId PW_taskHandle;
-osThreadId CL_taskHandle;
 osMessageQId debug_TTqueueHandle;
-osMessageQId WM_TTqueueHandle;
-osMessageQId PW_TTqueueHandle;
-osMessageQId CL_TTqueueHandle;
 osTimerId SampleTimerHandle;
 
 /* USER CODE BEGIN PV */
@@ -122,9 +116,6 @@ static void MX_USART6_UART_Init(void);
 static void MX_CRC_Init(void);
 static void MX_RTC_Init(void);
 void startDebugTask(void const * argument);
-void startWM_task(void const * argument);
-void startPW_task(void const * argument);
-void startCL_task(void const * argument);
 void sampleTimerCall(void const * argument);
 
 /* USER CODE BEGIN PFP */
@@ -151,8 +142,8 @@ SemaphoreHandle_t muxUSB;
 {
   /* USER CODE BEGIN 1 */
 
-  SCB->VTOR = FLASH_BASE | FW_IMAGE_START_ADDRESS;
-    
+  SCB->VTOR = FW_IMAGE_START_ADDRESS;
+  
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -186,6 +177,8 @@ SemaphoreHandle_t muxUSB;
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
 
+  __enable_irq();
+
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -214,18 +207,6 @@ SemaphoreHandle_t muxUSB;
   osThreadDef(debugTask, startDebugTask, osPriorityNormal, 0, 128);
   debugTaskHandle = osThreadCreate(osThread(debugTask), NULL);
 
-  /* definition and creation of WM_task */
-  osThreadDef(WM_task, startWM_task, osPriorityIdle, 0, 512);
-  WM_taskHandle = osThreadCreate(osThread(WM_task), NULL);
-
-  /* definition and creation of PW_task */
-  osThreadDef(PW_task, startPW_task, osPriorityIdle, 0, 256);
-  PW_taskHandle = osThreadCreate(osThread(PW_task), NULL);
-
-  /* definition and creation of CL_task */
-  osThreadDef(CL_task, startCL_task, osPriorityIdle, 0, 256);
-  CL_taskHandle = osThreadCreate(osThread(CL_task), NULL);
-
   /* definition and creation of EMS_task */
   osThreadDef(EMS_task, startEMS_task, osPriorityIdle, 0, 1536);
   EMS_taskHandle = osThreadCreate(osThread(EMS_task), NULL);
@@ -240,18 +221,6 @@ SemaphoreHandle_t muxUSB;
   osMessageQDef(debug_TTqueue, 5, uint16_t);
   debug_TTqueueHandle = osMessageCreate(osMessageQ(debug_TTqueue), NULL);
 
-  /* definition and creation of WM_TTqueue */
-  osMessageQDef(WM_TTqueue, 5, uint16_t);
-  WM_TTqueueHandle = osMessageCreate(osMessageQ(WM_TTqueue), NULL);
-
-  /* definition and creation of PW_TTqueue */
-  osMessageQDef(PW_TTqueue, 5, uint16_t);
-  PW_TTqueueHandle = osMessageCreate(osMessageQ(PW_TTqueue), NULL);
-
-  /* definition and creation of CL_TTqueue */
-  osMessageQDef(CL_TTqueue, 5, uint16_t);
-  CL_TTqueueHandle = osMessageCreate(osMessageQ(CL_TTqueue), NULL);
-
    /* definition and creation of EMS_TTqueue */
   osMessageQDef(EMS_TTqueue, 5, uint16_t);
   EMS_TTqueueHandle = osMessageCreate(osMessageQ(EMS_TTqueue), NULL);
@@ -260,7 +229,7 @@ SemaphoreHandle_t muxUSB;
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
- 
+  
 
   /* Start scheduler */
   osKernelStart();
@@ -820,12 +789,17 @@ void startDebugTask(void const * argument)
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
 
+  /* init code for FATFS */
+  MX_FATFS_Init();
+  
   /* USER CODE BEGIN 5 */
   DC_init(&debug_TTqueueHandle);
   
+  V9203_init(&hspi1, &DC_set.EMS_channelEn, &DC_state.V9203_channelsActive);
+  
   /* init code for LWIP */
   MX_LWIP_Init(DC_set.net_dev_ip_addr, DC_set.net_mask, DC_set.net_gw_ip_addr, DC_set.net_DHCP_en);
-  
+
   if (DC_set.net_DHCP_en == 1)
   {
     uint8_t ip[4];
@@ -836,6 +810,7 @@ void startDebugTask(void const * argument)
   }else{
     DC_debug_ipAdrrOut("# Static IP: ", DC_set.net_dev_ip_addr);
   }
+  stateState = LED_PROC_OK;
     
   //USB
   USBP_init();
@@ -851,68 +826,20 @@ void startDebugTask(void const * argument)
   CL_init(); //Init clock
 
   USBP_mode = USBP_MODE_CMD;
-  
+
   vTaskResume(EMS_taskHandle);
-    
+
   //Инициализация задачи
   TASK_script_init(0);
-  
-  //devMQTT_connect(DC_set.MQTT_broc_ip[DC_set.MQTT_activeBrock], DC_set.MQTT_port, DC_set.MQTT_clintID, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
-  
+
   /* USER CODE BEGIN 5 */
   /* Infinite loop */
   for(;;)
   {
-
-//    for (int i=1; i < 5; i++)
-//    {
-//      float freqLineA = V9203_getFreq(i, LINE_A);//Get frequency
-//      float freqLineB = V9203_getFreq(i, LINE_B);//Get frequency
-//      float freqLineC = V9203_getFreq(i, LINE_C);//Get frequency
-//      
-//      DC_debugOut("@ ch %d FREQ A: %2f | FREQ B: %2f | FREQ C: %2f\r\n", i, freqLineA, freqLineB, freqLineC);
-//    }
-    
     osDelay(1000);
   }
   
   /* USER CODE END 5 */ 
-}
-
-/* startWM_task function */
-void startWM_task(void const * argument)
-{
-  /* USER CODE BEGIN startWM_task */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END startWM_task */
-}
-
-/* startPW_task function */
-void startPW_task(void const * argument)
-{
-  /* USER CODE BEGIN startPW_task */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END startPW_task */
-}
-
-/* startCL_task function */
-void startCL_task(void const * argument)
-{
-  /* USER CODE BEGIN startCL_task */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END startCL_task */
 }
 
 uint8_t usbData;

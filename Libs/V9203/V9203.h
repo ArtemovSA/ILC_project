@@ -8,6 +8,7 @@
 
 #define V9203_SPI_TIMEOUT       500
 #define V9203_TRY_COUNT         3      //1000 ms
+#define V9203_COUNT_CHANNELS    4      //Count channels
 
 //****************************************Parametrs*************************************************
 
@@ -390,7 +391,7 @@ typedef struct
 
 //***********************************************API************************************************
 //Init
-void V9203_init(SPI_HandleTypeDef *hspi);
+void V9203_init(SPI_HandleTypeDef *hspi, uint8_t* channelEn, uint8_t* activeCh);
 //Init dev
 HAL_StatusTypeDef V9203_initDev(uint8_t channel, V9203_settings_t *settings);
 //Defaul reg val

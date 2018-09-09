@@ -11,12 +11,12 @@ ByteLimit=50
 [StLinkDriver]
 CStepIntDis=_ 0
 LeaveTargetRunning=_ 0
-stlinkserialNo=30303031
+stlinkserialNo=28300987
 stlinkfoundProbes=
 stlinkResetStyle=0
 stlinkResetStrategy=3
 [DebugChecksum]
-Checksum=426831393
+Checksum=-1870915429
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -108,8 +108,7 @@ ShowTiming=1
 mode=0
 [Breakpoints2]
 Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Src\stm32f4xx_it.c}.71.3" 0 0 1 "" 0 "" 0
-Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Src\main.c}.269.3" 0 0 1 "" 0 "" 0
-Count=2
+Count=1
 [Aliases]
 Count=0
 SuppressDialog=0

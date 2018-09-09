@@ -26,11 +26,12 @@ const char DC_const_serverDNS[] = DC_DEF_DNS;
 //Var
 DC_set_t DC_set;        //Device settings
 DC_set_t DC_tempSet;    //Temp data settings
+DC_state_t DC_state;    //state
 uint32_t DC_unicID[3];  //Unic ID
 char DC_unic_idef[36];  //Unic idef
 char DC_unic_idStr[13]; //Unic id str
 osMessageQId *DC_eventQueue; //Event queue
-char strBuffer[1024];
+char strBuffer[512];
 uint8_t *pDevMAC; //Device MAC address point
 
 //Extern
@@ -83,7 +84,7 @@ void DC_init(osMessageQId *eventQueue)
 
   //Set pin mode
   if ((stat = PCA9555_regSetValue(PCA9555_DEF_ADDR, PCA9555_REG_CONFIG, PCA9555_PIN_MODE_DEF)) == HAL_OK)
-  {     
+  {
     //Set default out
     if (PCA9555_regSetValue(PCA9555_DEF_ADDR, PCA9555_REG_OUTPUT, PCA9555_PIN_OUT_DEF) == HAL_OK)
     {
@@ -91,10 +92,14 @@ void DC_init(osMessageQId *eventQueue)
     }else{
       DC_debugOut("# PCA9555 OUT ERROR\r\n"); 
     }
+    
   }else{
     
     if (stat == HAL_ERROR)
+    {
+      DC_state.errorFlags |= DC_ERR_PCA9555;
       DC_debugOut("# PCA9555 ERROR\r\n");
+    }
     
     if (stat == HAL_TIMEOUT)
       DC_debugOut("# PCA9555 TIMEOUT\r\n");
@@ -105,10 +110,14 @@ void DC_init(osMessageQId *eventQueue)
 //  if (FATFS_res != FR_OK)
 //  {
 //    DC_debugOut("# Mount error %d\r\n", FATFS_res);
+//    DC_state.discMount = 0;
+//  }else{
+//    DC_debugOut("# Mount drive OK\r\n");
+//    DC_state.discMount = 1;    
 //  }
   
   //Start led task
-  xTaskCreate(vTASK_led,(char*)"TASK_led", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY, &ledTask_handle);
+  xTaskCreate(vTASK_led,(char*)"TASK_led", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY+5, &ledTask_handle);
 }
 //--------------------------------------------------------------------------------------------------
 //Log data
@@ -149,31 +158,50 @@ void DC_log(char *str, ...)
 void vTASK_led(void *pvParameters)
 {
   uint8_t slowCnt;
-  GPIO_PinState linkLedState = GPIO_PIN_RESET;
-  GPIO_PinState statLedState = GPIO_PIN_RESET;
-  GPIO_PinState runLedState = GPIO_PIN_RESET;
+  uint8_t linkLedState = GPIO_PIN_RESET;
+  uint8_t statLedState = GPIO_PIN_RESET;
+  uint8_t runLedState = GPIO_PIN_RESET;
   
   while(1)
   {
     if (linkState == LED_PROC_ERROR)
-      DC_LedOut(LED_LINK, !linkLedState);
+    {
+      DC_LedOut(LED_LINK, (GPIO_PinState)linkLedState);
+      linkLedState = !linkLedState;
+    }
     
     if (stateState == LED_PROC_ERROR)
-      DC_LedOut(LED_STATUS, !statLedState);
+    {
+      DC_LedOut(LED_STATUS, (GPIO_PinState)statLedState);
+      statLedState = !statLedState;
+    }
     
     if (runState == LED_PROC_ERROR)
-      DC_LedOut(LED_RUN, !runLedState);
+    {
+      DC_LedOut(LED_RUN, (GPIO_PinState)runLedState);
+      runLedState = !runLedState;
+    }
     
     if (slowCnt >= 2)
     {
       if (linkState == LED_PROC_OK)
-        DC_LedOut(LED_LINK, !linkLedState);
+      {
+        DC_LedOut(LED_LINK, (GPIO_PinState)linkLedState);
+        linkLedState = !linkLedState;
+      }
       
       if (stateState == LED_PROC_OK)
-        DC_LedOut(LED_STATUS, !statLedState);
+      {
+        DC_LedOut(LED_STATUS, (GPIO_PinState)statLedState);
+        statLedState = !statLedState;
+      }
       
       if (runState == LED_PROC_OK)
-        DC_LedOut(LED_RUN, !runLedState);
+      {
+        DC_LedOut(LED_RUN, (GPIO_PinState)runLedState);
+        runLedState = !runLedState;
+      }
+      
       
     }else{
       slowCnt++;
@@ -337,6 +365,7 @@ DEV_Status_t DC_load_settings()
   //EMS
   DC_set.EMS_out_period = DC_DEF_EMS_OUT_PERIOD;
   DC_set.EMS_autoSendEn = DC_DEF_EMS_SEND_EN;
+  DC_set.EMS_channelEn = DC_DEF_EMS_CH_EN;
   
   //Py
   DC_set.PY_autoStartEn = DC_DEF_PY_AUTOSTART;
@@ -344,7 +373,7 @@ DEV_Status_t DC_load_settings()
   DC_set.PY_scryptData.memID = DC_DEF_PY_MEM;
     
   //V9203 set settings
-  for (int i=0; i<DC_V9203_COUNT_CHANNELS; i++)
+  for (int i=0; i<V9203_COUNT_CHANNELS; i++)
     V9203_setDefaultReg(i, &DC_set.V9203_ch_set[i]);
   
   //Set magic key
@@ -531,6 +560,15 @@ DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint8_t len)
     }
     break;
     
+  case DC_SET_EMS_CHANNEL_EN:
+    if (len == 1)
+    {
+      DC_tempSet.EMS_channelEn = *data;
+      DC_debugOut("* Witten EMS channel en: %d\r\n", DC_tempSet.EMS_channelEn);
+      return DEV_OK;
+    }
+    break;
+    
   case DC_SET_VM_AUTO_START:
     if (len == 1)
     {
@@ -627,6 +665,11 @@ DEV_Status_t DC_getSetParam(DC_settingID_t setID, uint8_t* data, uint8_t* len)
   case DC_SET_EMS_AUTO_SEND:
     *len = 1;
     *data = DC_set.EMS_autoSendEn;
+    break;
+    
+  case DC_SET_EMS_CHANNEL_EN:
+    *len = 1;
+    *data = DC_set.EMS_channelEn;
     break;
     
   case DC_SET_VM_AUTO_START:

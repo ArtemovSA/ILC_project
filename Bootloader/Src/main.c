@@ -105,10 +105,9 @@ DEV_info_t DEV_info; //dev info struct
 DEV_Status_t retStat; //Return status
 
 char strBuffer[512];
-//Out debug data
-//arg: str - string for out
 void debugOut(char *str, ...);
 void delay(uint32_t time_delay);
+void jump_to_application(); //Jump to main program
 
 /* USER CODE END 0 */
 
@@ -166,7 +165,7 @@ int main(void)
   HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(LED_RUN_GPIO_Port, LED_RUN_Pin, GPIO_PIN_SET);
   
-  //goto jump_to_application;
+  jump_to_application();
   
   //Init memory
   MEM_init(&hsram1, &hsram2, &hnand1);
@@ -183,7 +182,7 @@ int main(void)
   if (FW_readInfodata(&DEV_info) != DEV_OK)
   {
     debugOut("@ NAND info read ERROR\r\n");
-    goto jump_to_application;
+    jump_to_application();
   }
   
   //Read card metadata
@@ -207,7 +206,7 @@ int main(void)
         //SD card update
         if (FW_SDcardUpdate(&metadataSD) != DEV_OK)
           debugOut("@ SD update error\r\n");
-        goto jump_to_application;
+        jump_to_application();
       }
     }
     
@@ -218,7 +217,7 @@ int main(void)
       //SD card update
       if (FW_SDcardUpdate(&metadataSD) != DEV_OK)
         debugOut("@ SD update error\r\n");
-      goto jump_to_application;
+      jump_to_application();
     }
   }
   
@@ -234,7 +233,7 @@ int main(void)
         //Nand update
         if (FW_nandUpdate(&metadataNAND) != DEV_OK)
           debugOut("@ NAND update error\r\n");
-        goto jump_to_application;
+        jump_to_application();
       }
     }
     
@@ -245,28 +244,14 @@ int main(void)
       //Nand update
       if (FW_nandUpdate(&metadataNAND) != DEV_OK)
         debugOut("@ NAND update error\r\n");
-      goto jump_to_application;
+      jump_to_application();
     }
     
   }
   
   debugOut("@ Go to start\r\n");
   
-  //Jump to main program
-jump_to_application:
-  
-  delay(16800000);
-  
-  //LED out
-  HAL_GPIO_WritePin(LED_LINK_GPIO_Port, LED_LINK_Pin, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(LED_RUN_GPIO_Port, LED_RUN_Pin, GPIO_PIN_RESET);
-  
-  JumpAddress = *( uint32_t* )( ApplicationAddress + 4);
-  Jump_To_Application = ( pFunction )JumpAddress;
-  __set_MSP(*(__IO uint32_t*) ApplicationAddress);
-
-  Jump_To_Application(); 
+  jump_to_application();
   
   /* USER CODE END 2 */
 
@@ -283,6 +268,25 @@ jump_to_application:
   
   /* USER CODE END 3 */
 
+}
+
+//Jump to main program
+void jump_to_application()
+{
+  delay(16800000);
+  
+  //LED out
+  HAL_GPIO_WritePin(LED_LINK_GPIO_Port, LED_LINK_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LED_RUN_GPIO_Port, LED_RUN_Pin, GPIO_PIN_RESET);
+  
+   __disable_irq();//запрещаем прерывания
+  JumpAddress = *(__IO uint32_t* )( ApplicationAddress + 4);
+  Jump_To_Application = ( pFunction )JumpAddress;
+  __set_MSP(*(__IO uint32_t*) ApplicationAddress);
+
+  Jump_To_Application(); 
+  
 }
 
 #ifdef DEF_INTERNAL_RC

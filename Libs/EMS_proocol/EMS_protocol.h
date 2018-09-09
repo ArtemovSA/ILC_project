@@ -15,6 +15,9 @@
 #define EMS_TOPIC_CALIBRATE             "calibrate"
 #define EMS_TOPIC_MAIN_SETTINGS         "main_set"
 
+//Messages
+#define EMS_DBG_MES_ALIVE               "Alive"
+
 //**********************************Channel variables***********************************************
 
 //JSON attributes

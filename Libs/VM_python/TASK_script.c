@@ -34,10 +34,10 @@ static void PY_TimerHandler( TimerHandle_t xTimer ); //Таймер
 
 //----------------------------------------------------------------------------------------------------
 void vTASK_script(void *pvParameters) {
-
-PmReturn_t retval = PM_RET_OK; //Return value
-PY_task = PY_SCRIPT_NLOAD;
-NAND_AddressTypeDef PY_VM_data_addr = MEM_NAND_ADDR_VM_DATA;
+  
+  PmReturn_t retval = PM_RET_OK; //Return value
+  PY_task = PY_SCRIPT_NLOAD;
+  NAND_AddressTypeDef PY_VM_data_addr = MEM_NAND_ADDR_VM_DATA;
   PmMemSpace_t PY_memspace;
   
   while (1) {

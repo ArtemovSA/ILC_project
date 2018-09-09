@@ -32,8 +32,6 @@
 #define PCA9555_PIN_K3             14      //
 #define PCA9555_PIN_K4             15      //
 
-#define DC_V9203_COUNT_CHANNELS    1      //Count channels
-
 //Unic ID
 #define UNIC_ID_PREFIX  "aaaaaaaa-1234-1234-1234-"
 extern uint32_t DC_unicID[3]; //Unic ID
@@ -63,6 +61,7 @@ extern char DC_unic_idStr[13]; //Unic id str
 //EMS
 #define DC_DEF_EMS_OUT_PERIOD           5 //sec
 #define DC_DEF_EMS_SEND_EN              1 //Разрешить передачу данных
+#define DC_DEF_EMS_CH_EN                1 //Channel enable in bit
 
 //Python
 #define DC_DEF_PY_AUTOSTART             0
@@ -89,10 +88,11 @@ typedef enum{
   DC_SET_MQTT_QOS,
   DC_SET_EMS_PERIOD,
   DC_SET_EMS_AUTO_SEND,
+  DC_SET_EMS_CHANNEL_EN,
   DC_SET_VM_AUTO_START
 }DC_settingID_t;
 
-#define DC_SET_MAGICKEY 0x02
+#define DC_SET_MAGICKEY 0x01
 
 typedef struct {
   
@@ -119,13 +119,14 @@ typedef struct {
   //EMS
   uint16_t EMS_out_period; //Send period
   uint8_t EMS_autoSendEn; //Enable periodic send
+  uint8_t EMS_channelEn;  //Enable channels
   
   //Python VM
   uint8_t PY_autoStartEn; //Enable autostart script
   PY_scryptData_t PY_scryptData; //Описание скрипта
   
   //Settings struct
-  V9203_settings_t V9203_ch_set[DC_V9203_COUNT_CHANNELS];
+  V9203_settings_t V9203_ch_set[V9203_COUNT_CHANNELS];
   
 }DC_set_t;
 
@@ -165,6 +166,7 @@ DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint8_t len);
 //User function Get Current task ID 
 uint8_t DC_getCurrentTaskID();
 
+
 //**********************************Digital IO******************************************************
 
 //LEDs
@@ -190,7 +192,24 @@ extern volatile ledState_t runState;
 HAL_StatusTypeDef DC_relayOut(uint8_t relNum, uint8_t state);
 //LED out
 void DC_LedOut(LED_t led, uint8_t state);
+//LED blink
+void DC_LedBlink(LED_t led, uint16_t rate_Hz, uint16_t count);
 
+//**********************************DC state********************************************************
 
+enum{
+  DC_ERR_ALL_OK = 0,
+  DC_ERR_PCA9555,
+  DC_ERR_CHANNEL  
+};
+
+typedef struct{
+  uint8_t V9203_channelsActive;
+  uint32_t errorFlags;
+  uint8_t discMount;
+  uint8_t ethLink;
+} DC_state_t;
+
+extern DC_state_t DC_state;
 
 #endif

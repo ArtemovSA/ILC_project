@@ -24,9 +24,17 @@ static void V9203_setupReg(uint8_t channel, V9203_settings_t *settings);
 
 //--------------------------------------------------------------------------------------------------
 //Init
-void V9203_init(SPI_HandleTypeDef *hspi)
+void V9203_init(SPI_HandleTypeDef *hspi, uint8_t* channelEn, uint8_t* activeCh)
 {
   V9203_hspi = hspi;  
+  
+  for (int i=0; i<V9203_COUNT_CHANNELS; i++)
+  {
+    if (*channelEn & (1<<i))
+      if (V9203_initDev(i, &DC_set.V9203_ch_set[i]) == HAL_OK) //Init dev
+        *activeCh |= (1<<i);
+  }
+  
 }
 //--------------------------------------------------------------------------------------------------
 //Init dev
@@ -60,7 +68,7 @@ HAL_StatusTypeDef V9203_initDev(uint8_t channel, V9203_settings_t *settings)
   
   V9203_setupReg(channel, settings); //Setup registers
     
-  DC_debugOut(" #V9203 INIT OK CH:%d\r\n", channel);
+  DC_debugOut("# V9203 INIT OK CH:%d\r\n", channel);
   
   return HAL_OK;
 }
@@ -305,7 +313,7 @@ HAL_StatusTypeDef V9203_set_CS(uint8_t channel, uint8_t state)
 {
   uint8_t pin;
 
-  HAL_GPIO_WritePin(PW_CS_GPIO_Port, PW_CS_Pin, GPIO_PIN_RESET); //CS SPI
+  HAL_GPIO_WritePin(PW_CS_GPIO_Port, PW_CS_Pin, GPIO_PIN_SET); //CS SPI
   
   PCA9555_digitalWrite(PCA9555_DEF_ADDR, PCA9555_PIN_CS1, HIGH_LEVEL);
   PCA9555_digitalWrite(PCA9555_DEF_ADDR, PCA9555_PIN_CS2, HIGH_LEVEL);
@@ -324,6 +332,7 @@ HAL_StatusTypeDef V9203_set_CS(uint8_t channel, uint8_t state)
     };
     
     PCA9555_digitalWrite(PCA9555_DEF_ADDR, pin, LOW_LEVEL);
+    HAL_GPIO_WritePin(PW_CS_GPIO_Port, PW_CS_Pin, GPIO_PIN_RESET); //CS SPI
   }
   
   return HAL_OK;
@@ -448,7 +457,7 @@ float V9203_getFreq(uint8_t channel, V9203_line_t line)
   uint32_t regData;
   
   //Check channel
-  if (channel > DC_V9203_COUNT_CHANNELS)
+  if (channel > V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
     return -1;
@@ -483,7 +492,7 @@ float V9203_getRMS_Voltage(uint8_t channel, V9203_line_t line)
   uint32_t regData;
   
   //Check channel
-  if (channel > DC_V9203_COUNT_CHANNELS)
+  if (channel > V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
     return -1;
@@ -518,7 +527,7 @@ float V9203_getRMS_Current(uint8_t channel, V9203_line_t line)
   uint32_t regData;
   
   //Check channel
-  if (channel > DC_V9203_COUNT_CHANNELS)
+  if (channel > V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
     return -1;
@@ -554,7 +563,7 @@ float V9203_getRMS_Power(uint8_t channel, V9203_line_t line)
   uint32_t regData;
   
   //Check channel
-  if (channel > DC_V9203_COUNT_CHANNELS)
+  if (channel > V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
     return -1;
@@ -589,7 +598,7 @@ float V9203_getRMS_reactivePower(uint8_t channel, V9203_line_t line)
   uint32_t regData;
   
   //Check channel
-  if (channel > DC_V9203_COUNT_CHANNELS)
+  if (channel > V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
     return -1;
@@ -625,7 +634,7 @@ uint64_t V9203_getSCons(uint8_t channel, V9203_line_t line)
   uint32_t regDataHI, regDataLO;
   
   //Check channel
-  if (channel > DC_V9203_COUNT_CHANNELS)
+  if (channel > V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
     return 0;
@@ -671,7 +680,7 @@ uint64_t V9203_getPCons(uint8_t channel, V9203_line_t line)
   uint32_t regDataHI, regDataLO;
   
   //Check channel
-  if (channel > DC_V9203_COUNT_CHANNELS)
+  if (channel > V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
     return 0;
@@ -716,7 +725,7 @@ uint64_t V9203_getQCons(uint8_t channel, V9203_line_t line)
   uint32_t regDataHI, regDataLO;
   
   //Check channel
-  if (channel > DC_V9203_COUNT_CHANNELS)
+  if (channel > V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
     return 0;
@@ -760,7 +769,7 @@ float V9203_getCOSfi(uint8_t channel, V9203_line_t line)
   uint32_t regData;
   
   //Check channel
-  if (channel > DC_V9203_COUNT_CHANNELS)
+  if (channel > V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
     return -1;
@@ -795,7 +804,7 @@ HAL_StatusTypeDef V9203_clearPCons(uint8_t channel, V9203_line_t line)
   uint16_t regAddrHI, regAddrLO;
   
   //Check channel
-  if (channel > DC_V9203_COUNT_CHANNELS)
+  if (channel > V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
     return HAL_ERROR;
@@ -832,7 +841,7 @@ HAL_StatusTypeDef V9203_clearQCons(uint8_t channel, V9203_line_t line)
   uint16_t regAddrHI, regAddrLO;
   
   //Check channel
-  if (channel > DC_V9203_COUNT_CHANNELS)
+  if (channel > V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
     return HAL_ERROR;
@@ -869,7 +878,7 @@ HAL_StatusTypeDef V9203_clearSCons(uint8_t channel, V9203_line_t line)
   uint16_t regAddrHI, regAddrLO;
   
   //Check channel
-  if (channel > DC_V9203_COUNT_CHANNELS)
+  if (channel > V9203_COUNT_CHANNELS)
   {
     DC_debugOut("# Channel num ERROR\r\n");
     return HAL_ERROR;
