@@ -728,6 +728,69 @@ DEV_Status_t DC_getSetParam(DC_settingID_t setID, uint8_t* data, uint8_t* len)
   return DEV_OK;  
 }
 //--------------------------------------------------------------------------------------------------
+//Set calibrate parametr
+DEV_Status_t DC_setCaltParam(uint8_t channel, V9203_line_t line, DC_calibrID_t calID, uint8_t* data, uint8_t len)
+{
+  switch(calID)
+  {
+    
+  }
+}
+//--------------------------------------------------------------------------------------------------
+//Get calibrate param
+DEV_Status_t DC_getCalParam(uint8_t channel, V9203_line_t line, DC_calibrID_t calID, uint8_t* data, uint8_t* len)
+{
+  switch(calID)
+  {
+  case DC_CAL_REG_CTHH: 
+    break;
+    
+  case DC_CAL_REG_CTHL:
+    break;
+   
+  case DC_CAL_REG_WAEC0:
+    break;
+
+  case DC_CAL_REG_MTPARA0:
+    break;
+
+  case DC_CAL_REG_MTPARA1:
+    break;    
+
+  case DC_CAL_REG_MTPARA2:
+    break;  
+    
+  case DC_CAL_REG_ANCtrl0:
+    break;
+
+  case DC_CAL_REG_ANCtrl1:
+    break;    
+
+  case DC_CAL_REG_ANCtrl2:
+    break;  
+    
+  case DC_CAL_REG_ANCtrl3:
+    break;  
+    
+  case DC_CAL_REG_WARTU:
+    if (len == 4)
+    {
+     switch(line)
+    {
+    case LINE_A:
+      memcpy(DC_calibr.channel_cal[channel].calTotalPhaseA.Cal_WARTU, data, len); break;
+    case     
+    }
+    }else{
+      return DEV_ERROR;
+    }
+    break;
+
+  }
+  
+  return DEV_OK;
+}
+//--------------------------------------------------------------------------------------------------
 //Relay out
 HAL_StatusTypeDef DC_relayOut(uint8_t relNum, uint8_t state)
 {

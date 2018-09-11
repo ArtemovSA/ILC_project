@@ -295,11 +295,9 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
       
       //Установка настроек
     case USBC_CMD_SET_SETTINGS:
-      
-      len = cmdData[2];
-      
+
       //Set setting parametr
-      if (DC_setSetParam((DC_settingID_t)cmdData[1], &cmdData[3], len) == DEV_OK)
+      if (DC_setSetParam((DC_settingID_t)cmdData[1], &cmdData[3], cmdData[2]) == DEV_OK)
       {
         cmdData[0] = command; //Команда
         cmdData[1] = USBC_RET_OK;
@@ -374,7 +372,37 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
       break;
       
       //Калибровка
-    case USBC_CMD_SET_CALIBRATE:
+    case USBC_CMD_SET_CALIBR:
+      
+      len = cmdData[2];
+      
+      //Set setting parametr
+      if (DC_setCalParam(cmdData[3], (DC_calibrID_t)cmdData[1], &cmdData[4], cmdData[2]) == DEV_OK)
+      {
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_OK;
+      }else{
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_ERROR;
+      }
+      
+      USBC_sendPayload(cmdData, 2);//Send payload
+      
+      break;
+
+    case USBC_CMD_GET_CALIBR:
+      
+      if (DC_getCalParam(cmdData[3], (DC_calibrID_t)cmdData[1], &cmdData[4], &cmdData[2]) == DEV_OK)
+      {
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_OK;
+        len = cmdData[2];
+        USBC_sendPayload(cmdData, len+3);//Send payload
+      }else{
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_ERROR;
+        USBC_sendPayload(cmdData, 2);//Send payload
+      }
       
       break;
       

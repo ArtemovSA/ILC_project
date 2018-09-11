@@ -133,6 +133,50 @@ DEV_Status_t DC_writeSet(DC_set_t *settings, NAND_AddressTypeDef addr);
 
 //**********************************Calibrate*******************************************************
 
+typedef enum{
+  
+  //Default register settings
+  DC_CAL_REG_CTHH,              // Top judgment threshold register
+  DC_CAL_REG_CTHL,              // Bottom judgment threshold register
+  DC_CAL_REG_WAEC0,             // Angle difference 0
+  DC_CAL_REG_MTPARA0,           // Metering data reg 0
+  DC_CAL_REG_MTPARA1,           // Metering data reg 1
+  DC_CAL_REG_MTPARA2,           // Metering data reg 2
+  DC_CAL_REG_ANCtrl0,           // Analog control register 0
+  DC_CAL_REG_ANCtrl1,           // Analog control register 1
+  DC_CAL_REG_ANCtrl2,           // Analog control register 2
+  DC_CAL_REG_ANCtrl3,           // Analog control register 3
+  
+  //Calibtation struct (Total)
+  DC_CAL_REG_WARTU,
+  DC_CAL_REG_WARTI,
+  DC_CAL_REG_WAPT,
+  DC_CAL_REG_WAQT,
+  DC_CAL_REG_WWARTU,
+  DC_CAL_REG_WWARTI,
+  DC_CAL_REG_WWAPT,
+  DC_CAL_REG_WWAQT,
+  
+  //Calibtation struct (Fundamental)
+  DC_CAL_REG_WBRTU,
+  DC_CAL_REG_WBRTI,
+  DC_CAL_REG_WBPT,
+  DC_CAL_REG_WBQT,
+  DC_CAL_REG_WWBRTU,
+  DC_CAL_REG_WWBRTI,
+  DC_CAL_REG_WWBPT,
+  DC_CAL_REG_WWBQT,
+  
+  //Proportion coefficents
+  DC_CAL_PROP_P,                //Proportiona Power coeff
+  DC_CAL_PROP_U,                //Proportiona U coeff
+  DC_CAL_PROP_I,                //Proportiona I coeff
+  DC_CAL_PROP_FREQ,             //Propotrional Freq coeff
+    
+  DC_CAL_THRDI_DETECT,         //Threshold current detect
+  DC_CAL_THRDM_DETECT          //Threshold energy meter detect
+}DC_calibrID_t;
+
 #define DC_CALIBR_MAGICKEY 0x01
 
 typedef struct{

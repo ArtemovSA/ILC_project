@@ -305,7 +305,7 @@
 #define V9203_DEF_PROP_COSFI      1
 
 //Threshold detect
-#define V9203_DEF_THRD_CURRENT_DETECT	0x00000000
+#define V9203_DEF_THRD_CURRENT_DETECT	        0x00000000
 #define V9203_DEF_THRD_POWER_DETECT		0x00000000
 
 //****************************************Calibration struct****************************************
@@ -365,13 +365,14 @@ typedef struct
 //Calibration channel coefficients
 typedef struct
 {
-  //Default settings
+  //Default register settings
   V9203_defSet_t V9203_defSet;
   
   //Calibtation total struct
   V9203_Total_cal_t calTotalPhaseA;
   V9203_Total_cal_t calTotalPhaseB;
   V9203_Total_cal_t calTotalPhaseC;
+  
   
   //Calibtation Fundamental struct
   V9203_Fund_cal_t calFundPhaseA;
@@ -382,6 +383,7 @@ typedef struct
   uint32_t calPropPower;                //Proportiona Power coeff
   uint32_t calPropVoltage;              //Proportiona U coeff
   uint32_t calPropCurrent;              //Proportiona I coeff
+  uint32_t calPropFreq;                 //Propotrional Freq coeff
   
   //Threshold
   uint32_t cal_currThrdDetect;          //Threshold current detect
