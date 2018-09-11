@@ -33,6 +33,7 @@ char DC_unic_idStr[13]; //Unic id str
 osMessageQId *DC_eventQueue; //Event queue
 char strBuffer[512];
 uint8_t *pDevMAC; //Device MAC address point
+DC_calibr_t DC_calibr; //Calibrate struct
 
 //Extern
 extern I2C_HandleTypeDef hi2c1;
@@ -313,10 +314,59 @@ DEV_Status_t DC_writeSet(DC_set_t *settings, NAND_AddressTypeDef addr)
   if ((stat = MEM_NAND_writeData(addr, 0, (uint8_t*)settings, sizeof(DC_set_t))) != DEV_OK)
   {
     DC_debugOut("# Write settings ERROR\r\n");
+  }else{
+    DC_debugOut("# Write settings OK\r\n");
   }
   
   return stat;
 }
+//--------------------------------------------------------------------------------------------------
+//Write settings
+DEV_Status_t DC_writeCalibrate(DC_calibr_t *calibr, NAND_AddressTypeDef addr)
+{
+  DEV_Status_t stat;
+  
+  //Write
+  if ((stat = MEM_NAND_writeData(addr, 0, (uint8_t*)calibr, sizeof(DC_calibr_t))) != DEV_OK)
+  {
+    DC_debugOut("# Write calibration ERROR\r\n");
+  }else{
+    DC_debugOut("# Write calibration OK\r\n");
+  }
+  
+  return stat;
+}
+//--------------------------------------------------------------------------------------------------
+//Load calibrate
+DEV_Status_t DC_load_calibrate()
+{
+  DEV_Status_t stat;
+  
+  NAND_AddressTypeDef addr = MEM_NAND_ADDR_CALIBRATE;
+  
+  //read
+  if ((stat = MEM_NAND_readData(addr, 0, (uint8_t*)&DC_calibr, sizeof(DC_calibr))) != DEV_OK)
+  {
+    DC_debugOut("# NAND IO ERROR\r\n");
+    return stat;
+  }
+  
+  if (DC_calibr.magicKey == DC_CALIBR_MAGICKEY)
+  {
+    DC_debugOut("# Calibration load OK\r\n");
+    return DEV_OK;
+  }
+
+  //V9203 set settings
+  for (int i=0; i<V9203_COUNT_CHANNELS; i++)
+    V9203_setDefaultReg(i, &DC_calibr.channel_cal[i]);
+  DC_debugOut("# Calibration set default\r\n");
+  
+  DC_calibr.magicKey = DC_CALIBR_MAGICKEY;
+  DC_writeCalibrate(&DC_calibr, addr);
+    
+  return DEV_OK;
+}  
 //--------------------------------------------------------------------------------------------------
 //Load settings
 DEV_Status_t DC_load_settings()
@@ -331,6 +381,7 @@ DEV_Status_t DC_load_settings()
     DC_debugOut("# NAND IO ERROR\r\n");
     return stat;
   }
+  
   if (DC_set.magicKey == DC_SET_MAGICKEY)
   {
     pDevMAC = DC_set.devMAC;
@@ -371,11 +422,7 @@ DEV_Status_t DC_load_settings()
   DC_set.PY_autoStartEn = DC_DEF_PY_AUTOSTART;
   strcpy(DC_set.PY_scryptData.Name, DC_DEF_PY_NAME);
   DC_set.PY_scryptData.memID = DC_DEF_PY_MEM;
-    
-  //V9203 set settings
-  for (int i=0; i<V9203_COUNT_CHANNELS; i++)
-    V9203_setDefaultReg(i, &DC_set.V9203_ch_set[i]);
-  
+
   //Set magic key
   DC_set.magicKey = DC_SET_MAGICKEY;
   
@@ -385,7 +432,7 @@ DEV_Status_t DC_load_settings()
   pDevMAC = DC_set.devMAC;
   DC_debugOut("# Settings set default\r\n");
   //DC_debug_settingsOut();
-  
+
   return DEV_OK;
 }
 //--------------------------------------------------------------------------------------------------

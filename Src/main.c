@@ -796,7 +796,7 @@ void startDebugTask(void const * argument)
   /* USER CODE BEGIN 5 */
   DC_init(&debug_TTqueueHandle);
   
-  V9203_init(&hspi1, &DC_set.EMS_channelEn, &DC_state.V9203_channelsActive);
+  V9203_init(&hspi1, &DC_set.EMS_channelEn, &DC_state.V9203_channelsActive, DC_calibr.channel_cal);
   
   /* init code for LWIP */
   MX_LWIP_Init(DC_set.net_dev_ip_addr, DC_set.net_mask, DC_set.net_gw_ip_addr, DC_set.net_DHCP_en);

@@ -389,21 +389,21 @@ HAL_StatusTypeDef EMS_setCalibrate(uint8_t* data, uint16_t len)
   //***********************************Calibrate TOTAL phase********************************************
 
   //Set phaseA calibrate
-  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASEA_NAME, &DC_set.V9203_ch_set[channelNum].calTotalPhaseA) != HAL_OK)
+  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASEA_NAME, &DC_calibr.channel_cal[channelNum].calTotalPhaseA) != HAL_OK)
   {
     DC_debugOut("# Phase Total A calibrate error\r\r\n");
     return HAL_ERROR;
   }
   
   //Set phaseB calibrate
-  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASEB_NAME, &DC_set.V9203_ch_set[channelNum].calTotalPhaseB) != HAL_OK)
+  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASEB_NAME, &DC_calibr.channel_cal[channelNum].calTotalPhaseB) != HAL_OK)
   {
     DC_debugOut("# Phase B calibrate error\r\r\n");
     return HAL_ERROR;
   }
   
   //Set phaseC calibrate
-  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASEC_NAME, &DC_set.V9203_ch_set[channelNum].calTotalPhaseC) != HAL_OK)
+  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASEC_NAME, &DC_calibr.channel_cal[channelNum].calTotalPhaseC) != HAL_OK)
   {
     DC_debugOut("# Phase C calibrate error\r\r\n");
     return HAL_ERROR;
@@ -412,21 +412,21 @@ HAL_StatusTypeDef EMS_setCalibrate(uint8_t* data, uint16_t len)
   //***********************************Calibrate Fundamental Phase***************************************
   
   //Set phaseA calibrate
-  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASEA_NAME, &DC_set.V9203_ch_set[channelNum].calFundPhaseA) != HAL_OK)
+  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASEA_NAME, &DC_calibr.channel_cal[channelNum].calFundPhaseA) != HAL_OK)
   {
     DC_debugOut("# Phase Total A calibrate error\r\r\n");
     return HAL_ERROR;
   }
   
   //Set phaseB calibrate
-  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASEB_NAME, &DC_set.V9203_ch_set[channelNum].calFundPhaseB) != HAL_OK)
+  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASEB_NAME, &DC_calibr.channel_cal[channelNum].calFundPhaseB) != HAL_OK)
   {
     DC_debugOut("# Phase B calibrate error\r\r\n");
     return HAL_ERROR;
   }
   
   //Set phaseC calibrate
-  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASEC_NAME, &DC_set.V9203_ch_set[channelNum].calFundPhaseC) != HAL_OK)
+  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASEC_NAME, &DC_calibr.channel_cal[channelNum].calFundPhaseC) != HAL_OK)
   {
     DC_debugOut("# Phase C calibrate error\r\r\n");
     return HAL_ERROR;
@@ -437,10 +437,10 @@ HAL_StatusTypeDef EMS_setCalibrate(uint8_t* data, uint16_t len)
   uint16_t Threshold_val;
   //Граница детектирования тока
   EMS_JSON_getInt(cal_json, EMS_JSON_CAL_ZZDCUM, &Threshold_val);
-  DC_set.V9203_ch_set[channelNum].cal_currThrdDetect = Threshold_val;
+  DC_calibr.channel_cal[channelNum].cal_currThrdDetect = Threshold_val;
   //Граница счета мощности
   EMS_JSON_getInt(cal_json, EMS_JSON_CAL_ZZEGYTH, &Threshold_val);
-  DC_set.V9203_ch_set[channelNum].cal_energyThrdDetect = Threshold_val;
+  DC_calibr.channel_cal[channelNum].cal_energyThrdDetect = Threshold_val;
 
   return HAL_OK;
 }

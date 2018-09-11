@@ -10,7 +10,7 @@
 
 //Var
 SPI_HandleTypeDef *V9203_hspi; //SPI pointer
-V9203_defSet_t V9203_defSet; //Default settings
+V9203_defSet_t V9203_defSet; //Default calibr
 
 
 //Write flash
@@ -20,25 +20,25 @@ HAL_StatusTypeDef V9203_rd_flash(uint8_t channel, uint16_t addrReg, uint32_t* da
 //CRC16
 static uint16_t V9203_crc16(const void *data, unsigned data_size);
 //Setup registers
-static void V9203_setupReg(uint8_t channel, V9203_settings_t *settings);
+static void V9203_setupReg(uint8_t channel, V9203_calibrate_t *calibr);
 
 //--------------------------------------------------------------------------------------------------
 //Init
-void V9203_init(SPI_HandleTypeDef *hspi, uint8_t* channelEn, uint8_t* activeCh)
+void V9203_init(SPI_HandleTypeDef *hspi, uint8_t* channelEn, uint8_t* activeCh, V9203_calibrate_t* ch_set)
 {
   V9203_hspi = hspi;  
   
   for (int i=0; i<V9203_COUNT_CHANNELS; i++)
   {
     if (*channelEn & (1<<i))
-      if (V9203_initDev(i, &DC_set.V9203_ch_set[i]) == HAL_OK) //Init dev
+      if (V9203_initDev(i, &ch_set[i]) == HAL_OK) //Init dev
         *activeCh |= (1<<i);
   }
   
 }
 //--------------------------------------------------------------------------------------------------
 //Init dev
-HAL_StatusTypeDef V9203_initDev(uint8_t channel, V9203_settings_t *settings)
+HAL_StatusTypeDef V9203_initDev(uint8_t channel, V9203_calibrate_t *calibr)
 {
   uint8_t try_count = V9203_TRY_COUNT;
   uint32_t readyFlag = 0;
@@ -66,7 +66,7 @@ HAL_StatusTypeDef V9203_initDev(uint8_t channel, V9203_settings_t *settings)
     V9203_wr_flash(channel, (0xC800+i), 0);
   } 
   
-  V9203_setupReg(channel, settings); //Setup registers
+  V9203_setupReg(channel, calibr); //Setup registers
     
   DC_debugOut("# V9203 INIT OK CH:%d\r\n", channel);
   
@@ -74,7 +74,7 @@ HAL_StatusTypeDef V9203_initDev(uint8_t channel, V9203_settings_t *settings)
 }
 //--------------------------------------------------------------------------------------------------
 //Setup registers
-static void V9203_setupReg(uint8_t channel, V9203_settings_t *settings)
+static void V9203_setupReg(uint8_t channel, V9203_calibrate_t *calibr)
 {
   uint32_t checkSum = 0;
   
@@ -84,118 +84,118 @@ static void V9203_setupReg(uint8_t channel, V9203_settings_t *settings)
   
   //**********************************Metering data reg*********************************************
   // Metering data reg
-  V9203_wr_flash(channel, RegMTPARA0, settings->V9203_defSet.MTPARA0); //Enable digital input
-  checkSum += settings->V9203_defSet.MTPARA0;
-  V9203_wr_flash(channel, RegMTPARA1, settings->V9203_defSet.MTPARA1);
-  checkSum += settings->V9203_defSet.MTPARA1;
-  V9203_wr_flash(channel, RegMTPARA2, settings->V9203_defSet.MTPARA2); //MT_PARA2 - Unsegmented,distribute 32bit separately twice,DMA enable UA,non-did,AD all-enable
-  checkSum += settings->V9203_defSet.MTPARA2;
+  V9203_wr_flash(channel, RegMTPARA0, calibr->V9203_defSet.MTPARA0); //Enable digital input
+  checkSum += calibr->V9203_defSet.MTPARA0;
+  V9203_wr_flash(channel, RegMTPARA1, calibr->V9203_defSet.MTPARA1);
+  checkSum += calibr->V9203_defSet.MTPARA1;
+  V9203_wr_flash(channel, RegMTPARA2, calibr->V9203_defSet.MTPARA2); //MT_PARA2 - Unsegmented,distribute 32bit separately twice,DMA enable UA,non-did,AD all-enable
+  checkSum += calibr->V9203_defSet.MTPARA2;
   
   //**********************************Analog control register***************************************
-  V9203_wr_flash(channel, RegANCtrl0, settings->V9203_defSet.ANCtrl0);
-  checkSum += settings->V9203_defSet.ANCtrl0;
-  V9203_wr_flash(channel, RegANCtrl1, settings->V9203_defSet.ANCtrl1);
-  checkSum += settings->V9203_defSet.ANCtrl1;
-  V9203_wr_flash(channel, RegANCtrl2, settings->V9203_defSet.ANCtrl2);
-  checkSum += settings->V9203_defSet.ANCtrl2;
-  V9203_wr_flash(channel, RegANCtrl3, settings->V9203_defSet.ANCtrl3);
-  checkSum += settings->V9203_defSet.ANCtrl3;
+  V9203_wr_flash(channel, RegANCtrl0, calibr->V9203_defSet.ANCtrl0);
+  checkSum += calibr->V9203_defSet.ANCtrl0;
+  V9203_wr_flash(channel, RegANCtrl1, calibr->V9203_defSet.ANCtrl1);
+  checkSum += calibr->V9203_defSet.ANCtrl1;
+  V9203_wr_flash(channel, RegANCtrl2, calibr->V9203_defSet.ANCtrl2);
+  checkSum += calibr->V9203_defSet.ANCtrl2;
+  V9203_wr_flash(channel, RegANCtrl3, calibr->V9203_defSet.ANCtrl3);
+  checkSum += calibr->V9203_defSet.ANCtrl3;
   
   //**********************************Threshold*****************************************************
   // Low threshold
-  V9203_wr_flash(channel, RegZZEGYTHL, settings->cal_energyThrdDetect);
-  checkSum += settings->cal_energyThrdDetect;
+  V9203_wr_flash(channel, RegZZEGYTHL, calibr->cal_energyThrdDetect);
+  checkSum += calibr->cal_energyThrdDetect;
   // High threshold
   V9203_wr_flash(channel, RegZZEGYTHH, 0x00000000);
   checkSum += 0x00000000;
   // enable threshold limit
-  V9203_wr_flash(channel, RegCTHH, settings->V9203_defSet.CTHH);
-  checkSum += settings->V9203_defSet.CTHH;
+  V9203_wr_flash(channel, RegCTHH, calibr->V9203_defSet.CTHH);
+  checkSum += calibr->V9203_defSet.CTHH;
   // enable threshold lower limit
-  V9203_wr_flash(channel, RegCTHL, settings->V9203_defSet.CTHL);
-  checkSum += settings->V9203_defSet.CTHL;
+  V9203_wr_flash(channel, RegCTHL, calibr->V9203_defSet.CTHL);
+  checkSum += calibr->V9203_defSet.CTHL;
   //Current threshold
-  V9203_wr_flash(channel, RegZZDCUM, settings->cal_currThrdDetect);
-  checkSum += settings->cal_currThrdDetect; 
+  V9203_wr_flash(channel, RegZZDCUM, calibr->cal_currThrdDetect);
+  checkSum += calibr->cal_currThrdDetect; 
 
   //**********************************Calibration***************************************************
   // Phase A Total
   // gain voltage RMS
-  V9203_wr_flash(channel, RegWARTUA, settings->calTotalPhaseA.Cal_WARTU);
-  checkSum += settings->calTotalPhaseA.Cal_WARTU;
+  V9203_wr_flash(channel, RegWARTUA, calibr->calTotalPhaseA.Cal_WARTU);
+  checkSum += calibr->calTotalPhaseA.Cal_WARTU;
   // gain current RMS
-  V9203_wr_flash(channel, RegWARTIA, settings->calTotalPhaseA.Cal_WARTI);
-  checkSum += settings->calTotalPhaseA.Cal_WARTI;
+  V9203_wr_flash(channel, RegWARTIA, calibr->calTotalPhaseA.Cal_WARTI);
+  checkSum += calibr->calTotalPhaseA.Cal_WARTI;
   // gain active power coef RMS
-  V9203_wr_flash(channel, RegWAPTA, settings->calTotalPhaseA.Cal_WAPT);
-  checkSum += settings->calTotalPhaseA.Cal_WAPT;
+  V9203_wr_flash(channel, RegWAPTA, calibr->calTotalPhaseA.Cal_WAPT);
+  checkSum += calibr->calTotalPhaseA.Cal_WAPT;
   // gain reactive power coef RMS
-  V9203_wr_flash(channel, RegWAQTA, settings->calTotalPhaseA.Cal_WAQT);
-  checkSum += settings->calTotalPhaseA.Cal_WAQT;
+  V9203_wr_flash(channel, RegWAQTA, calibr->calTotalPhaseA.Cal_WAQT);
+  checkSum += calibr->calTotalPhaseA.Cal_WAQT;
   // offset voltage RMS
-  V9203_wr_flash(channel, RegWWARTUA, settings->calTotalPhaseA.Cal_WWARTU);
-  checkSum += settings->calTotalPhaseA.Cal_WARTU;
+  V9203_wr_flash(channel, RegWWARTUA, calibr->calTotalPhaseA.Cal_WWARTU);
+  checkSum += calibr->calTotalPhaseA.Cal_WARTU;
   // offset current RMS
-  V9203_wr_flash(channel, RegWWARTIA, settings->calTotalPhaseA.Cal_WWARTI);
-  checkSum += settings->calTotalPhaseA.Cal_WARTI;
+  V9203_wr_flash(channel, RegWWARTIA, calibr->calTotalPhaseA.Cal_WWARTI);
+  checkSum += calibr->calTotalPhaseA.Cal_WARTI;
   // offset active power
-  V9203_wr_flash(channel, RegWWAPTA, settings->calTotalPhaseA.Cal_WWAPT);
-  checkSum += settings->calTotalPhaseA.Cal_WAPT;
+  V9203_wr_flash(channel, RegWWAPTA, calibr->calTotalPhaseA.Cal_WWAPT);
+  checkSum += calibr->calTotalPhaseA.Cal_WAPT;
   // offset reactive power
-  V9203_wr_flash(channel, RegWWAQTA, settings->calTotalPhaseA.Cal_WWAQT);
-  checkSum += settings->calTotalPhaseA.Cal_WAQT;
+  V9203_wr_flash(channel, RegWWAQTA, calibr->calTotalPhaseA.Cal_WWAQT);
+  checkSum += calibr->calTotalPhaseA.Cal_WAQT;
   
   // Phase B Total
   // gain voltage RMS
-  V9203_wr_flash(channel, RegWARTUB, settings->calTotalPhaseB.Cal_WARTU);
-  checkSum += settings->calTotalPhaseB.Cal_WARTU;
+  V9203_wr_flash(channel, RegWARTUB, calibr->calTotalPhaseB.Cal_WARTU);
+  checkSum += calibr->calTotalPhaseB.Cal_WARTU;
   // gain current RMS
-  V9203_wr_flash(channel, RegWARTIB, settings->calTotalPhaseB.Cal_WARTI);
-  checkSum += settings->calTotalPhaseB.Cal_WARTI;
+  V9203_wr_flash(channel, RegWARTIB, calibr->calTotalPhaseB.Cal_WARTI);
+  checkSum += calibr->calTotalPhaseB.Cal_WARTI;
   // gain active power coef RMS
-  V9203_wr_flash(channel, RegWAPTB, settings->calTotalPhaseB.Cal_WAPT);
-  checkSum += settings->calTotalPhaseB.Cal_WAPT;
+  V9203_wr_flash(channel, RegWAPTB, calibr->calTotalPhaseB.Cal_WAPT);
+  checkSum += calibr->calTotalPhaseB.Cal_WAPT;
   // gain reactive power coef RMS
-  V9203_wr_flash(channel, RegWAQTB, settings->calTotalPhaseB.Cal_WAQT);
-  checkSum += settings->calTotalPhaseB.Cal_WAQT;
+  V9203_wr_flash(channel, RegWAQTB, calibr->calTotalPhaseB.Cal_WAQT);
+  checkSum += calibr->calTotalPhaseB.Cal_WAQT;
   // offset voltage RMS
-  V9203_wr_flash(channel, RegWWARTUB, settings->calTotalPhaseB.Cal_WWARTU);
-  checkSum += settings->calTotalPhaseB.Cal_WARTU;
+  V9203_wr_flash(channel, RegWWARTUB, calibr->calTotalPhaseB.Cal_WWARTU);
+  checkSum += calibr->calTotalPhaseB.Cal_WARTU;
   // offset current RMS
-  V9203_wr_flash(channel, RegWWARTIB, settings->calTotalPhaseB.Cal_WWARTI);
-  checkSum += settings->calTotalPhaseB.Cal_WARTI;
+  V9203_wr_flash(channel, RegWWARTIB, calibr->calTotalPhaseB.Cal_WWARTI);
+  checkSum += calibr->calTotalPhaseB.Cal_WARTI;
   // offset active power
-  V9203_wr_flash(channel, RegWWAPTB, settings->calTotalPhaseB.Cal_WWAPT);
-  checkSum += settings->calTotalPhaseB.Cal_WAPT;
+  V9203_wr_flash(channel, RegWWAPTB, calibr->calTotalPhaseB.Cal_WWAPT);
+  checkSum += calibr->calTotalPhaseB.Cal_WAPT;
   // offset reactive power
-  V9203_wr_flash(channel, RegWWAQTB, settings->calTotalPhaseB.Cal_WWAQT);
-  checkSum += settings->calTotalPhaseB.Cal_WAQT;
+  V9203_wr_flash(channel, RegWWAQTB, calibr->calTotalPhaseB.Cal_WWAQT);
+  checkSum += calibr->calTotalPhaseB.Cal_WAQT;
   
   // Phase C Total
   // gain voltage RMS
-  V9203_wr_flash(channel, RegWARTUC, settings->calTotalPhaseC.Cal_WARTU);
-  checkSum += settings->calTotalPhaseC.Cal_WARTU;
+  V9203_wr_flash(channel, RegWARTUC, calibr->calTotalPhaseC.Cal_WARTU);
+  checkSum += calibr->calTotalPhaseC.Cal_WARTU;
   // gain current RMS
-  V9203_wr_flash(channel, RegWARTIC, settings->calTotalPhaseC.Cal_WARTI);
-  checkSum += settings->calTotalPhaseC.Cal_WARTI;
+  V9203_wr_flash(channel, RegWARTIC, calibr->calTotalPhaseC.Cal_WARTI);
+  checkSum += calibr->calTotalPhaseC.Cal_WARTI;
   // gain active power coef RMS
-  V9203_wr_flash(channel, RegWAPTC, settings->calTotalPhaseC.Cal_WAPT);
-  checkSum += settings->calTotalPhaseC.Cal_WAPT;
+  V9203_wr_flash(channel, RegWAPTC, calibr->calTotalPhaseC.Cal_WAPT);
+  checkSum += calibr->calTotalPhaseC.Cal_WAPT;
   // gain reactive power coef RMS
-  V9203_wr_flash(channel, RegWAQTC, settings->calTotalPhaseC.Cal_WAQT);
-  checkSum += settings->calTotalPhaseC.Cal_WAQT;
+  V9203_wr_flash(channel, RegWAQTC, calibr->calTotalPhaseC.Cal_WAQT);
+  checkSum += calibr->calTotalPhaseC.Cal_WAQT;
   // offset voltage RMS
-  V9203_wr_flash(channel, RegWWARTUC, settings->calTotalPhaseC.Cal_WWARTU);
-  checkSum += settings->calTotalPhaseC.Cal_WARTU;
+  V9203_wr_flash(channel, RegWWARTUC, calibr->calTotalPhaseC.Cal_WWARTU);
+  checkSum += calibr->calTotalPhaseC.Cal_WARTU;
   // offset current RMS
-  V9203_wr_flash(channel, RegWWARTIC, settings->calTotalPhaseC.Cal_WWARTI);
-  checkSum += settings->calTotalPhaseC.Cal_WARTI;
+  V9203_wr_flash(channel, RegWWARTIC, calibr->calTotalPhaseC.Cal_WWARTI);
+  checkSum += calibr->calTotalPhaseC.Cal_WARTI;
   // offset active power
-  V9203_wr_flash(channel, RegWWAPTC, settings->calTotalPhaseC.Cal_WWAPT);
-  checkSum += settings->calTotalPhaseC.Cal_WAPT;
+  V9203_wr_flash(channel, RegWWAPTC, calibr->calTotalPhaseC.Cal_WWAPT);
+  checkSum += calibr->calTotalPhaseC.Cal_WAPT;
   // offset reactive power
-  V9203_wr_flash(channel, RegWWAQTC, settings->calTotalPhaseC.Cal_WWAQT);
-  checkSum += settings->calTotalPhaseC.Cal_WAQT;
+  V9203_wr_flash(channel, RegWWAQTC, calibr->calTotalPhaseC.Cal_WWAQT);
+  checkSum += calibr->calTotalPhaseC.Cal_WAQT;
   
  
   //**********************************Others********************************************************
@@ -209,8 +209,8 @@ static void V9203_setupReg(uint8_t channel, V9203_settings_t *settings)
   checkSum += 0x00000001;
   
   // Angle difference
-  V9203_wr_flash(channel, RegWAEC0, settings->V9203_defSet.WAEC0);
-  checkSum += settings->V9203_defSet.WAEC0;
+  V9203_wr_flash(channel, RegWAEC0, calibr->V9203_defSet.WAEC0);
+  checkSum += calibr->V9203_defSet.WAEC0;
   
   // Active and phase 0 configuration
   V9203_wr_flash(channel, ZZPA0, 0x00000015);
@@ -254,58 +254,58 @@ static void V9203_setupReg(uint8_t channel, V9203_settings_t *settings)
 }
 //--------------------------------------------------------------------------------------------------
 //Defaul reg val
-void V9203_setDefaultReg(uint8_t channel, V9203_settings_t *settings)
+void V9203_setDefaultReg(uint8_t channel, V9203_calibrate_t *calibr)
 {    
-  //Default settings
-  settings->V9203_defSet.CTHH = V9203_DEF_CTHH; // Top judgment threshold register
-  settings->V9203_defSet.CTHL = V9203_DEF_CTHL; // Bottom judgment threshold register
-  settings->V9203_defSet.WAEC0 = V9203_DEF_WAEC0; // Angle difference 0
-  settings->V9203_defSet.MTPARA0 = V9203_DEF_MTPARA0; // Metering data reg 0
-  settings->V9203_defSet.MTPARA1 = V9203_DEF_MTPARA1; // Metering data reg 1
-  settings->V9203_defSet.MTPARA2 = V9203_DEF_MTPARA2; // Metering data reg 2
-  settings->V9203_defSet.ANCtrl0 = V9203_DEF_ANCTRL0; //Analog control register 0
-  settings->V9203_defSet.ANCtrl1 = V9203_DEF_ANCTRL1; //Analog control register 1
-  settings->V9203_defSet.ANCtrl2 = V9203_DEF_ANCTRL2; //Analog control register 2
-  settings->V9203_defSet.ANCtrl3 = V9203_DEF_ANCTRL3; //Analog control register 3
+  //Default calibr
+  calibr->V9203_defSet.CTHH = V9203_DEF_CTHH; // Top judgment threshold register
+  calibr->V9203_defSet.CTHL = V9203_DEF_CTHL; // Bottom judgment threshold register
+  calibr->V9203_defSet.WAEC0 = V9203_DEF_WAEC0; // Angle difference 0
+  calibr->V9203_defSet.MTPARA0 = V9203_DEF_MTPARA0; // Metering data reg 0
+  calibr->V9203_defSet.MTPARA1 = V9203_DEF_MTPARA1; // Metering data reg 1
+  calibr->V9203_defSet.MTPARA2 = V9203_DEF_MTPARA2; // Metering data reg 2
+  calibr->V9203_defSet.ANCtrl0 = V9203_DEF_ANCTRL0; //Analog control register 0
+  calibr->V9203_defSet.ANCtrl1 = V9203_DEF_ANCTRL1; //Analog control register 1
+  calibr->V9203_defSet.ANCtrl2 = V9203_DEF_ANCTRL2; //Analog control register 2
+  calibr->V9203_defSet.ANCtrl3 = V9203_DEF_ANCTRL3; //Analog control register 3
   
   //Total calibrate
   //Gaint
-  settings->calTotalPhaseA.Cal_WARTU = V9203_DEF_CAL_WARTU;
-  settings->calTotalPhaseA.Cal_WARTI = V9203_DEF_CAL_WARTI;
-  settings->calTotalPhaseA.Cal_WAPT = V9203_DEF_CAL_WAPT;
-  settings->calTotalPhaseA.Cal_WAQT = V9203_DEF_CAL_WAQT;
+  calibr->calTotalPhaseA.Cal_WARTU = V9203_DEF_CAL_WARTU;
+  calibr->calTotalPhaseA.Cal_WARTI = V9203_DEF_CAL_WARTI;
+  calibr->calTotalPhaseA.Cal_WAPT = V9203_DEF_CAL_WAPT;
+  calibr->calTotalPhaseA.Cal_WAQT = V9203_DEF_CAL_WAQT;
   //Offset
-  settings->calTotalPhaseA.Cal_WWARTU = V9203_DEF_CAL_WWARTU;
-  settings->calTotalPhaseA.Cal_WWARTI = V9203_DEF_CAL_WWARTI;
-  settings->calTotalPhaseA.Cal_WWAPT = V9203_DEF_CAL_WWAPT;
-  settings->calTotalPhaseA.Cal_WWAQT = V9203_DEF_CAL_WWAQT;
+  calibr->calTotalPhaseA.Cal_WWARTU = V9203_DEF_CAL_WWARTU;
+  calibr->calTotalPhaseA.Cal_WWARTI = V9203_DEF_CAL_WWARTI;
+  calibr->calTotalPhaseA.Cal_WWAPT = V9203_DEF_CAL_WWAPT;
+  calibr->calTotalPhaseA.Cal_WWAQT = V9203_DEF_CAL_WWAQT;
   
-  settings->calTotalPhaseB = settings->calTotalPhaseA;
-  settings->calTotalPhaseC = settings->calTotalPhaseA;
+  calibr->calTotalPhaseB = calibr->calTotalPhaseA;
+  calibr->calTotalPhaseC = calibr->calTotalPhaseA;
   
   //Findamental calibrate
   //Gaint
-  settings->calFundPhaseA.Cal_WBRTU = V9203_DEF_CAL_WBRTU;
-  settings->calFundPhaseA.Cal_WBRTI = V9203_DEF_CAL_WBRTI;
-  settings->calFundPhaseA.Cal_WBPT = V9203_DEF_CAL_WBPT;
-  settings->calFundPhaseA.Cal_WBQT = V9203_DEF_CAL_WBQT;
+  calibr->calFundPhaseA.Cal_WBRTU = V9203_DEF_CAL_WBRTU;
+  calibr->calFundPhaseA.Cal_WBRTI = V9203_DEF_CAL_WBRTI;
+  calibr->calFundPhaseA.Cal_WBPT = V9203_DEF_CAL_WBPT;
+  calibr->calFundPhaseA.Cal_WBQT = V9203_DEF_CAL_WBQT;
   //Offset
-  settings->calFundPhaseA.Cal_WWBRTU = V9203_DEF_CAL_WWBRTU;
-  settings->calFundPhaseA.Cal_WWBRTI = V9203_DEF_CAL_WWBRTI;
-  settings->calFundPhaseA.Cal_WWBPT = V9203_DEF_CAL_WWBPT;
-  settings->calFundPhaseA.Cal_WWBQT = V9203_DEF_CAL_WWBQT;
+  calibr->calFundPhaseA.Cal_WWBRTU = V9203_DEF_CAL_WWBRTU;
+  calibr->calFundPhaseA.Cal_WWBRTI = V9203_DEF_CAL_WWBRTI;
+  calibr->calFundPhaseA.Cal_WWBPT = V9203_DEF_CAL_WWBPT;
+  calibr->calFundPhaseA.Cal_WWBQT = V9203_DEF_CAL_WWBQT;
   
-  settings->calFundPhaseB = settings->calFundPhaseA;
-  settings->calFundPhaseC = settings->calFundPhaseA;
+  calibr->calFundPhaseB = calibr->calFundPhaseA;
+  calibr->calFundPhaseC = calibr->calFundPhaseA;
   
   //Proportion coeff
-  settings->calPropVoltage = V9203_DEF_PROP_VOLTAGE;
-  settings->calPropCurrent = V9203_DEF_PROP_CURRENT;
-  settings->calPropPower = V9203_DEF_PROP_POWER;
+  calibr->calPropVoltage = V9203_DEF_PROP_VOLTAGE;
+  calibr->calPropCurrent = V9203_DEF_PROP_CURRENT;
+  calibr->calPropPower = V9203_DEF_PROP_POWER;
   
   //Threshold
-  settings->cal_currThrdDetect = V9203_DEF_THRD_CURRENT_DETECT;
-  settings->cal_energyThrdDetect = V9203_DEF_THRD_POWER_DETECT;
+  calibr->cal_currThrdDetect = V9203_DEF_THRD_CURRENT_DETECT;
+  calibr->cal_energyThrdDetect = V9203_DEF_THRD_POWER_DETECT;
 }
 //--------------------------------------------------------------------------------------------------
 //Set chip select

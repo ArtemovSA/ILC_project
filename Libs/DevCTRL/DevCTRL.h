@@ -125,14 +125,24 @@ typedef struct {
   uint8_t PY_autoStartEn; //Enable autostart script
   PY_scryptData_t PY_scryptData; //Описание скрипта
   
-  //Settings struct
-  V9203_settings_t V9203_ch_set[V9203_COUNT_CHANNELS];
-  
 }DC_set_t;
 
 extern DC_set_t DC_set; //Device settings
 //Write settings
 DEV_Status_t DC_writeSet(DC_set_t *settings, NAND_AddressTypeDef addr);
+
+//**********************************Calibrate*******************************************************
+
+#define DC_CALIBR_MAGICKEY 0x01
+
+typedef struct{
+  
+  uint8_t magicKey;
+  V9203_calibrate_t channel_cal[V9203_COUNT_CHANNELS];
+  
+}DC_calibr_t;
+
+extern DC_calibr_t DC_calibr; //Calibrate struct
 
 //**********************************Flash log*******************************************************
 

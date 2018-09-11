@@ -387,15 +387,15 @@ typedef struct
   uint32_t cal_currThrdDetect;          //Threshold current detect
   uint32_t cal_energyThrdDetect;        //Threshold energy meter detect
   
-}V9203_settings_t;
+}V9203_calibrate_t;
 
 //***********************************************API************************************************
 //Init
-void V9203_init(SPI_HandleTypeDef *hspi, uint8_t* channelEn, uint8_t* activeCh);
+void V9203_init(SPI_HandleTypeDef *hspi, uint8_t* channelEn, uint8_t* activeCh, V9203_calibrate_t* ch_set);
 //Init dev
-HAL_StatusTypeDef V9203_initDev(uint8_t channel, V9203_settings_t *settings);
+HAL_StatusTypeDef V9203_initDev(uint8_t channel, V9203_calibrate_t *settings);
 //Defaul reg val
-void V9203_setDefaultReg(uint8_t channel, V9203_settings_t *settings);
+void V9203_setDefaultReg(uint8_t channel, V9203_calibrate_t *settings);
 //Get frequency
 float V9203_getFreq(uint8_t channel, V9203_line_t line);
 //Get RMS voltage
