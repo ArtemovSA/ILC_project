@@ -313,8 +313,6 @@ HAL_StatusTypeDef V9203_set_CS(uint8_t channel, uint8_t state)
 {
   uint8_t pin;
 
-  HAL_GPIO_WritePin(PW_CS_GPIO_Port, PW_CS_Pin, GPIO_PIN_SET); //CS SPI
-  
   PCA9555_digitalWrite(PCA9555_DEF_ADDR, PCA9555_PIN_CS1, HIGH_LEVEL);
   PCA9555_digitalWrite(PCA9555_DEF_ADDR, PCA9555_PIN_CS2, HIGH_LEVEL);
   PCA9555_digitalWrite(PCA9555_DEF_ADDR, PCA9555_PIN_CS3, HIGH_LEVEL);
@@ -332,7 +330,6 @@ HAL_StatusTypeDef V9203_set_CS(uint8_t channel, uint8_t state)
     };
     
     PCA9555_digitalWrite(PCA9555_DEF_ADDR, pin, LOW_LEVEL);
-    HAL_GPIO_WritePin(PW_CS_GPIO_Port, PW_CS_Pin, GPIO_PIN_RESET); //CS SPI
   }
   
   return HAL_OK;
@@ -349,8 +346,7 @@ HAL_StatusTypeDef V9203_data_cmd_flash(uint8_t channel, uint8_t cmd, uint16_t da
   txBuf[1] = dataTx >> 8;
   txBuf[2] = dataTx & 0x00ff;
   txBuf[3] = ~((dataTx & 0x00ff) + (dataTx >> 8) + txBuf[0]);
-  
-  vTaskDelay(50);
+
   if ((state = V9203_set_CS(channel, LOW_LEVEL)) != HAL_OK)
     return state;
   
@@ -359,7 +355,7 @@ HAL_StatusTypeDef V9203_data_cmd_flash(uint8_t channel, uint8_t cmd, uint16_t da
 
   if ((state = V9203_set_CS(channel, HIGH_LEVEL)) != HAL_OK)
     return state;
-  
+
   if (dataRx != NULL)
     *dataRx = ADD(rxBuf[1], rxBuf[2]);
   

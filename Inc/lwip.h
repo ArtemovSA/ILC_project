@@ -70,6 +70,8 @@
 #endif /* WITH_RTOS */
 
 /* USER CODE BEGIN 0 */
+   
+void MX_link_sample(); //Link sample function
 
 /* USER CODE END 0 */
 
@@ -87,7 +89,6 @@ bool MX_LWIP_getIP(uint8_t *ip);
  *   - Send it to the lwIP stack for handling
  *   - Handle timeouts if NO_SYS_NO_TIMERS not set
  */ 
-void MX_LWIP_Process(void);
 
 /* USER CODE END 1 */
 #endif /* WITH_RTOS */

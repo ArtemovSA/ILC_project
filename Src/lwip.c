@@ -131,7 +131,7 @@ void MX_LWIP_Init(uint8_t* ipAddr, uint8_t* netMask, uint8_t* gatewayIP, uint8_t
     /* When the netif link is down this function must be called */
     netif_set_down(&gnetif);
   }
-  
+
   netif_set_link_callback(&gnetif, link_callback);
   
   if (DHCP_en == 1)
@@ -141,6 +141,24 @@ void MX_LWIP_Init(uint8_t* ipAddr, uint8_t* netMask, uint8_t* gatewayIP, uint8_t
   /* USER CODE BEGIN 3 */
   
   /* USER CODE END 3 */
+}
+
+//Link sample function
+void MX_link_sample()
+{
+//  uint32_t regvalue=0;
+//  HAL_ETH_ReadPHYRegister(&heth, 0x01, &regvalue); // Get Link Status
+//  bool linkup=!!(regvalue & 0x0001);
+//  
+//  if (linkup)
+//  {
+//    DC_debugOut(" @ ETH LINK UP\r\n");
+//  }
+//  else
+//  {
+//    DC_debugOut(" @ ETH LINK DOWN\r\n");
+//  }; // linkup
+  
 }
 
 void link_callback(struct netif *net)  

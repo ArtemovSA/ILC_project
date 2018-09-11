@@ -43,8 +43,8 @@ extern char DC_unic_idStr[13]; //Unic id str
 //TCP/IP Ethernet
 #define DC_DEF_DEV_MAC_ADDR             {0x00,0x80,0xE1,0x00,0x00,0x01}
 #define DC_DEF_DEV_DHCP_EN              0
-#define DC_DEF_DEV_IP_ADDR              {192,168,31,55}
-#define DC_DEF_GW_IP_ADDR               {192,168,31,1}
+#define DC_DEF_DEV_IP_ADDR              {192,168,1,55}
+#define DC_DEF_GW_IP_ADDR               {192,168,1,1}
 #define DC_DEF_NET_MASK                 {255,255,255,0}
 #define DC_DEF_NTP_SERVER               "ntp1.stratum2.ru"
 #define DC_DEF_DNS                      {8,8,8,8}
@@ -61,7 +61,7 @@ extern char DC_unic_idStr[13]; //Unic id str
 //EMS
 #define DC_DEF_EMS_OUT_PERIOD           5 //sec
 #define DC_DEF_EMS_SEND_EN              1 //Разрешить передачу данных
-#define DC_DEF_EMS_CH_EN                1 //Channel enable in bit
+#define DC_DEF_EMS_CH_EN                3 //Channel enable in bit
 
 //Python
 #define DC_DEF_PY_AUTOSTART             0
@@ -92,7 +92,7 @@ typedef enum{
   DC_SET_VM_AUTO_START
 }DC_settingID_t;
 
-#define DC_SET_MAGICKEY 0x01
+#define DC_SET_MAGICKEY 0x03
 
 typedef struct {
   

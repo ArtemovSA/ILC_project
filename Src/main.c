@@ -195,8 +195,8 @@ SemaphoreHandle_t muxUSB;
 
   /* Create the timer(s) */
   /* definition and creation of SampleTimer */
-//  osTimerDef(SampleTimer, sampleTimerCall);
-//  SampleTimerHandle = osTimerCreate(osTimer(SampleTimer), osTimerPeriodic, NULL);
+  osTimerDef(SampleTimer, sampleTimerCall);
+  SampleTimerHandle = osTimerCreate(osTimer(SampleTimer), osTimerPeriodic, NULL);
 
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
@@ -662,9 +662,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pin = PW_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(PW_CS_GPIO_Port, &GPIO_InitStruct);
 
+  HAL_GPIO_WritePin(PW_CS_GPIO_Port, PW_CS_Pin, GPIO_PIN_RESET); //CS SPI
 }
 
 /* FSMC initialization function */
@@ -827,6 +828,9 @@ void startDebugTask(void const * argument)
 
   USBP_mode = USBP_MODE_CMD;
 
+  //Start sample timer
+  osTimerStart(SampleTimerHandle, 1000);
+    
   vTaskResume(EMS_taskHandle);
 
   //Инициализация задачи
@@ -842,14 +846,13 @@ void startDebugTask(void const * argument)
   /* USER CODE END 5 */ 
 }
 
-uint8_t usbData;
+
 /* sampleTimerCall function */
 void sampleTimerCall(void const * argument)
 {
   /* USER CODE BEGIN sampleTimerCall */
   
-  if (VCP_read(&usbData, 1) != 1)
-    VCP_write(&usbData, 1);
+  MX_link_sample(); //Link sample function  
   
   /* USER CODE END sampleTimerCall */
 }
