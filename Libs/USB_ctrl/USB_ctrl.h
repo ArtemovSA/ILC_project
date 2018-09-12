@@ -33,7 +33,8 @@ enum{
   USBC_CMD_DEFAULT_SETTINGS,    //Set default settings
   USBC_CMD_SYSTEM_RESET,        //Reset system
   USBC_CMD_SET_CALIBR,          //Set calibratings data
-  USBC_CMD_GET_CALIBR           //Get calibrate data
+  USBC_CMD_GET_CALIBR,          //Get calibrate data
+  USBC_CMD_GET_VALUES           //Get values
 };
 
 //Command status

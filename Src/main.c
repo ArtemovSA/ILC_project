@@ -129,6 +129,7 @@ SemaphoreHandle_t muxNAND;
 SemaphoreHandle_t muxSRAM1;
 SemaphoreHandle_t muxSRAM2;
 SemaphoreHandle_t muxUSB;
+SemaphoreHandle_t muxV9203;
 
 /* USER CODE END 0 */
 
@@ -186,6 +187,7 @@ SemaphoreHandle_t muxUSB;
   muxSRAM1 = xSemaphoreCreateMutex();
   muxSRAM2 = xSemaphoreCreateMutex();
   muxUSB = xSemaphoreCreateMutex();
+  muxV9203 = xSemaphoreCreateMutex();
   
   /* USER CODE END RTOS_MUTEX */
 
@@ -795,9 +797,9 @@ void startDebugTask(void const * argument)
   
   /* USER CODE BEGIN 5 */
   DC_init(&debug_TTqueueHandle);
-  
+
   V9203_init(&hspi1, &DC_set.EMS_channelEn, &DC_state.V9203_channelsActive, DC_calibr.channel_cal);
-  
+
   /* init code for LWIP */
   MX_LWIP_Init(DC_set.net_dev_ip_addr, DC_set.net_mask, DC_set.net_gw_ip_addr, DC_set.net_DHCP_en);
 

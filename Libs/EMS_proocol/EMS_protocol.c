@@ -20,6 +20,7 @@ EMC_chan_mesh_t meshChan[V9203_COUNT_CHANNELS];
 //Task
 osThreadId EMS_taskHandle;
 osMessageQId EMS_TTqueueHandle;
+extern SemaphoreHandle_t muxV9203;
 
 //Callback
 void EMS_callBack(uint16_t topic_ID, uint8_t* data, uint16_t len);
@@ -389,21 +390,21 @@ HAL_StatusTypeDef EMS_setCalibrate(uint8_t* data, uint16_t len)
   //***********************************Calibrate TOTAL phase********************************************
 
   //Set phaseA calibrate
-  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASEA_NAME, &DC_calibr.channel_cal[channelNum].calTotalPhaseA) != HAL_OK)
+  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASEA_NAME, &DC_calibr.channel_cal[channelNum].calTotalPhase[LINE_A]) != HAL_OK)
   {
     DC_debugOut("# Phase Total A calibrate error\r\r\n");
     return HAL_ERROR;
   }
   
   //Set phaseB calibrate
-  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASEB_NAME, &DC_calibr.channel_cal[channelNum].calTotalPhaseB) != HAL_OK)
+  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASEB_NAME, &DC_calibr.channel_cal[channelNum].calTotalPhase[LINE_B]) != HAL_OK)
   {
     DC_debugOut("# Phase B calibrate error\r\r\n");
     return HAL_ERROR;
   }
   
   //Set phaseC calibrate
-  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASEC_NAME, &DC_calibr.channel_cal[channelNum].calTotalPhaseC) != HAL_OK)
+  if (EMS_setPahseTotalCalibrate(cal_json, EMS_JSON_CAL_PHASEC_NAME, &DC_calibr.channel_cal[channelNum].calTotalPhase[LINE_C]) != HAL_OK)
   {
     DC_debugOut("# Phase C calibrate error\r\r\n");
     return HAL_ERROR;
@@ -412,21 +413,21 @@ HAL_StatusTypeDef EMS_setCalibrate(uint8_t* data, uint16_t len)
   //***********************************Calibrate Fundamental Phase***************************************
   
   //Set phaseA calibrate
-  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASEA_NAME, &DC_calibr.channel_cal[channelNum].calFundPhaseA) != HAL_OK)
+  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASEA_NAME, &DC_calibr.channel_cal[channelNum].calFundPhase[LINE_A]) != HAL_OK)
   {
     DC_debugOut("# Phase Total A calibrate error\r\r\n");
     return HAL_ERROR;
   }
   
   //Set phaseB calibrate
-  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASEB_NAME, &DC_calibr.channel_cal[channelNum].calFundPhaseB) != HAL_OK)
+  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASEB_NAME, &DC_calibr.channel_cal[channelNum].calFundPhase[LINE_B]) != HAL_OK)
   {
     DC_debugOut("# Phase B calibrate error\r\r\n");
     return HAL_ERROR;
   }
   
   //Set phaseC calibrate
-  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASEC_NAME, &DC_calibr.channel_cal[channelNum].calFundPhaseC) != HAL_OK)
+  if (EMS_setPahseFundamentalCalibrate(cal_json, EMS_JSON_CAL_PHASEC_NAME, &DC_calibr.channel_cal[channelNum].calFundPhase[LINE_C]) != HAL_OK)
   {
     DC_debugOut("# Phase C calibrate error\r\r\n");
     return HAL_ERROR;
@@ -584,26 +585,30 @@ void EMS_ChannelDebugOut(uint8_t channel)
 void startEMS_task(void const * argument)
 { 
   TickType_t xLastWakeTime = xTaskGetTickCount();
-
+  
   EMS_init();
   
-  //Clear S consamption
-  V9203_clearSCons(0, LINE_A);
-  V9203_clearSCons(0, LINE_B);
-  V9203_clearSCons(0, LINE_C);
-  V9203_clearSCons(0, LINE_S);
-  
-  //Clear Q consamption
-  V9203_clearQCons(0, LINE_A);
-  V9203_clearQCons(0, LINE_B);
-  V9203_clearQCons(0, LINE_C);
-  V9203_clearQCons(0, LINE_S);
-  
-  //Clear P consamption
-  V9203_clearPCons(0, LINE_A);
-  V9203_clearPCons(0, LINE_B);
-  V9203_clearPCons(0, LINE_C);
-  V9203_clearPCons(0, LINE_S);
+  if( xSemaphoreTake( muxV9203, ( TickType_t ) 2000 ) == pdTRUE )
+  {
+    //Clear S consamption
+    V9203_clearSCons(0, LINE_A);
+    V9203_clearSCons(0, LINE_B);
+    V9203_clearSCons(0, LINE_C);
+    V9203_clearSCons(0, LINE_S);
+    
+    //Clear Q consamption
+    V9203_clearQCons(0, LINE_A);
+    V9203_clearQCons(0, LINE_B);
+    V9203_clearQCons(0, LINE_C);
+    V9203_clearQCons(0, LINE_S);
+    
+    //Clear P consamption
+    V9203_clearPCons(0, LINE_A);
+    V9203_clearPCons(0, LINE_B);
+    V9203_clearPCons(0, LINE_C);
+    V9203_clearPCons(0, LINE_S);
+    xSemaphoreGive( muxV9203 );
+  }
   
   while(1)
   {
@@ -611,57 +616,62 @@ void startEMS_task(void const * argument)
     {
       if (DC_state.V9203_channelsActive & (1<<i))
       {
-        //Get frequency
-        meshChan[i].FREQ = V9203_getFreq(i, LINE_A);
-        
-        //S power consamption
-        meshChan[i].CONSSP = V9203_getSCons(i, LINE_S);
-        
-        //RMS N current
-        meshChan[i].RMSNI = V9203_getRMS_Current(i, LINE_N);
-        
-        //Get cos Fi
-        meshChan[i].COSFIS = V9203_getCOSfi(i, LINE_S);
-        
-        //Get RMS voltage
-        meshChan[i].phaseA.RMSV = V9203_getRMS_Voltage(i, LINE_A);
-        meshChan[i].phaseB.RMSV = V9203_getRMS_Voltage(i, LINE_B);
-        meshChan[i].phaseC.RMSV = V9203_getRMS_Voltage(i, LINE_C);
-        
-        //Get RMS current
-        meshChan[i].phaseA.RMSI = V9203_getRMS_Current(i, LINE_A);
-        meshChan[i].phaseB.RMSI = V9203_getRMS_Current(i, LINE_B);
-        meshChan[i].phaseC.RMSI = V9203_getRMS_Current(i, LINE_C);
-        
-        //Get RMS power
-        meshChan[i].phaseA.RMSP = V9203_getRMS_Power(i, LINE_A);
-        meshChan[i].phaseB.RMSP = V9203_getRMS_Power(i, LINE_B);
-        meshChan[i].phaseC.RMSP = V9203_getRMS_Power(i, LINE_C);
-        
-        //Get RMSRP power
-        meshChan[i].phaseA.RMSRP = V9203_getRMS_reactivePower(i, LINE_A);
-        meshChan[i].phaseB.RMSRP = V9203_getRMS_reactivePower(i, LINE_B);
-        meshChan[i].phaseC.RMSRP = V9203_getRMS_reactivePower(i, LINE_C);
-        
-        //Get cos Fi
-        meshChan[i].phaseA.COSFI = V9203_getCOSfi(i, LINE_A);
-        meshChan[i].phaseB.COSFI = V9203_getCOSfi(i, LINE_B);
-        meshChan[i].phaseC.COSFI = V9203_getCOSfi(i, LINE_C);
-        
-        //Get full Consamption
-        meshChan[i].phaseA.CONSSP = V9203_getSCons(i, LINE_A);
-        meshChan[i].phaseB.CONSSP = V9203_getSCons(i, LINE_B);
-        meshChan[i].phaseC.CONSSP = V9203_getSCons(i, LINE_C);
-        
-        //Get active Consamption
-        meshChan[i].phaseA.CONSP = V9203_getPCons(i, LINE_A);
-        meshChan[i].phaseB.CONSP = V9203_getPCons(i, LINE_B);
-        meshChan[i].phaseC.CONSP = V9203_getPCons(i, LINE_C);
-        
-        //Get active Consamption
-        meshChan[i].phaseA.CONSRP = V9203_getQCons(i, LINE_A);
-        meshChan[i].phaseB.CONSRP = V9203_getQCons(i, LINE_B);
-        meshChan[i].phaseC.CONSRP = V9203_getQCons(i, LINE_C);
+        if( xSemaphoreTake( muxV9203, ( TickType_t ) 5000 ) == pdTRUE )
+        {
+          //Get frequency
+          meshChan[i].FREQ = V9203_getFreq(i, LINE_A);
+          
+          //S power consamption
+          meshChan[i].CONSSP = V9203_getSCons(i, LINE_S);
+          
+          //RMS N current
+          meshChan[i].RMSNI = V9203_getRMS_Current(i, LINE_N);
+          
+          //Get cos Fi
+          meshChan[i].COSFIS = V9203_getCOSfi(i, LINE_S);
+          
+          //Get RMS voltage
+          meshChan[i].phaseA.RMSV = V9203_getRMS_Voltage(i, LINE_A);
+          meshChan[i].phaseB.RMSV = V9203_getRMS_Voltage(i, LINE_B);
+          meshChan[i].phaseC.RMSV = V9203_getRMS_Voltage(i, LINE_C);
+          
+          //Get RMS current
+          meshChan[i].phaseA.RMSI = V9203_getRMS_Current(i, LINE_A);
+          meshChan[i].phaseB.RMSI = V9203_getRMS_Current(i, LINE_B);
+          meshChan[i].phaseC.RMSI = V9203_getRMS_Current(i, LINE_C);
+          
+          //Get RMS power
+          meshChan[i].phaseA.RMSP = V9203_getRMS_Power(i, LINE_A);
+          meshChan[i].phaseB.RMSP = V9203_getRMS_Power(i, LINE_B);
+          meshChan[i].phaseC.RMSP = V9203_getRMS_Power(i, LINE_C);
+          
+          //Get RMSRP power
+          meshChan[i].phaseA.RMSRP = V9203_getRMS_reactivePower(i, LINE_A);
+          meshChan[i].phaseB.RMSRP = V9203_getRMS_reactivePower(i, LINE_B);
+          meshChan[i].phaseC.RMSRP = V9203_getRMS_reactivePower(i, LINE_C);
+          
+          //Get cos Fi
+          meshChan[i].phaseA.COSFI = V9203_getCOSfi(i, LINE_A);
+          meshChan[i].phaseB.COSFI = V9203_getCOSfi(i, LINE_B);
+          meshChan[i].phaseC.COSFI = V9203_getCOSfi(i, LINE_C);
+          
+          //Get full Consamption
+          meshChan[i].phaseA.CONSSP = V9203_getSCons(i, LINE_A);
+          meshChan[i].phaseB.CONSSP = V9203_getSCons(i, LINE_B);
+          meshChan[i].phaseC.CONSSP = V9203_getSCons(i, LINE_C);
+          
+          //Get active Consamption
+          meshChan[i].phaseA.CONSP = V9203_getPCons(i, LINE_A);
+          meshChan[i].phaseB.CONSP = V9203_getPCons(i, LINE_B);
+          meshChan[i].phaseC.CONSP = V9203_getPCons(i, LINE_C);
+          
+          //Get active Consamption
+          meshChan[i].phaseA.CONSRP = V9203_getQCons(i, LINE_A);
+          meshChan[i].phaseB.CONSRP = V9203_getQCons(i, LINE_B);
+          meshChan[i].phaseC.CONSRP = V9203_getQCons(i, LINE_C);
+          
+          xSemaphoreGive( muxV9203 );
+        }
         
         //Debug out counter outputs variables
         EMS_ChannelDebugOut(i);

@@ -73,14 +73,12 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
   uint16_t crc_val; //Значение CRC
   uint16_t offset; //Смещение
   uint16_t len; //Длина
-  uint8_t command; //Command current
-  uint8_t status; //Command status
-  NAND_AddressTypeDef addrNAND; //Nand address
-  DEV_Status_t retStatus;
-  
   uint16_t partNum;
   uint16_t partLen;
-  
+  uint8_t lenByte, id, channel, line, command, status;
+  NAND_AddressTypeDef addrNAND; //Nand address
+  DEV_Status_t retStatus;
+
   //Calc CRC16
   crc_val = 0;
   crc16calc(&crc_val, cmdData, cmdLen-2);
@@ -296,8 +294,11 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
       //Установка настроек
     case USBC_CMD_SET_SETTINGS:
 
+      id = cmdData[1];
+      lenByte = cmdData[2];
+      
       //Set setting parametr
-      if (DC_setSetParam((DC_settingID_t)cmdData[1], &cmdData[3], cmdData[2]) == DEV_OK)
+      if (DC_setSetParam((DC_settingID_t)id, &cmdData[3], lenByte) == DEV_OK)
       {
         cmdData[0] = command; //Команда
         cmdData[1] = USBC_RET_OK;
@@ -312,13 +313,15 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
       
       //Читать настройки
     case USBC_CMD_GET_SETTINGS:
+
+      id = cmdData[1];
       
-      if (DC_getSetParam((DC_settingID_t)cmdData[1], &cmdData[3], &cmdData[2]) == DEV_OK)
+      if (DC_getSetParam((DC_settingID_t)id, &cmdData[3], &lenByte) == DEV_OK)
       {
         cmdData[0] = command; //Команда
         cmdData[1] = USBC_RET_OK;
-        len = cmdData[2];
-        USBC_sendPayload(cmdData, len+3);//Send payload
+        cmdData[2] = lenByte;
+        USBC_sendPayload(cmdData, lenByte+3);//Send payload
       }else{
         cmdData[0] = command; //Команда
         cmdData[1] = USBC_RET_ERROR;
@@ -374,10 +377,13 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
       //Калибровка
     case USBC_CMD_SET_CALIBR:
       
-      len = cmdData[2];
+      id = cmdData[1];
+      channel = cmdData[2];
+      line = cmdData[3];
+      lenByte = cmdData[4];
       
       //Set setting parametr
-      if (DC_setCalParam(cmdData[3], (DC_calibrID_t)cmdData[1], &cmdData[4], cmdData[2]) == DEV_OK)
+      if (DC_setCalParam(channel, (V9203_line_t)line, (DC_calibrID_t)id, &cmdData[5], lenByte) == DEV_OK)
       {
         cmdData[0] = command; //Команда
         cmdData[1] = USBC_RET_OK;
@@ -392,12 +398,16 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
 
     case USBC_CMD_GET_CALIBR:
       
-      if (DC_getCalParam(cmdData[3], (DC_calibrID_t)cmdData[1], &cmdData[4], &cmdData[2]) == DEV_OK)
+      id = cmdData[1];
+      channel = cmdData[2];
+      line = cmdData[3];
+      
+      if (DC_getCalParam(channel, (V9203_line_t)line, (DC_calibrID_t)id, &cmdData[3], &lenByte) == DEV_OK)
       {
         cmdData[0] = command; //Команда
         cmdData[1] = USBC_RET_OK;
-        len = cmdData[2];
-        USBC_sendPayload(cmdData, len+3);//Send payload
+        cmdData[2] = lenByte;
+        USBC_sendPayload(cmdData, lenByte+3);//Send payload
       }else{
         cmdData[0] = command; //Команда
         cmdData[1] = USBC_RET_ERROR;
@@ -406,6 +416,25 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
       
       break;
       
+    case USBC_CMD_GET_VALUES:
+      
+      id = cmdData[1];
+      channel = cmdData[2];
+      line = cmdData[3];
+      
+      if (DC_getValues(channel, (V9203_line_t)line, (DC_valueID_t)id, &cmdData[3], &lenByte) == DEV_OK)
+      {
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_OK;
+        cmdData[2] = lenByte;
+        USBC_sendPayload(cmdData, len+3);//Send payload
+      }else{
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_ERROR;
+        USBC_sendPayload(cmdData, 2);//Send payload
+      }
+      
+      break;
     }
 
   }else{

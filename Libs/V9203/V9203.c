@@ -121,81 +121,81 @@ static void V9203_setupReg(uint8_t channel, V9203_calibrate_t *calibr)
   //**********************************Calibration***************************************************
   // Phase A Total
   // gain voltage RMS
-  V9203_wr_flash(channel, RegWARTUA, calibr->calTotalPhaseA.Cal_WARTU);
-  checkSum += calibr->calTotalPhaseA.Cal_WARTU;
+  V9203_wr_flash(channel, RegWARTUA, calibr->calTotalPhase[LINE_A].Cal_WARTU);
+  checkSum += calibr->calTotalPhase[LINE_A].Cal_WARTU;
   // gain current RMS
-  V9203_wr_flash(channel, RegWARTIA, calibr->calTotalPhaseA.Cal_WARTI);
-  checkSum += calibr->calTotalPhaseA.Cal_WARTI;
+  V9203_wr_flash(channel, RegWARTIA, calibr->calTotalPhase[LINE_A].Cal_WARTI);
+  checkSum += calibr->calTotalPhase[LINE_A].Cal_WARTI;
   // gain active power coef RMS
-  V9203_wr_flash(channel, RegWAPTA, calibr->calTotalPhaseA.Cal_WAPT);
-  checkSum += calibr->calTotalPhaseA.Cal_WAPT;
+  V9203_wr_flash(channel, RegWAPTA, calibr->calTotalPhase[LINE_A].Cal_WAPT);
+  checkSum += calibr->calTotalPhase[LINE_A].Cal_WAPT;
   // gain reactive power coef RMS
-  V9203_wr_flash(channel, RegWAQTA, calibr->calTotalPhaseA.Cal_WAQT);
-  checkSum += calibr->calTotalPhaseA.Cal_WAQT;
+  V9203_wr_flash(channel, RegWAQTA, calibr->calTotalPhase[LINE_A].Cal_WAQT);
+  checkSum += calibr->calTotalPhase[LINE_A].Cal_WAQT;
   // offset voltage RMS
-  V9203_wr_flash(channel, RegWWARTUA, calibr->calTotalPhaseA.Cal_WWARTU);
-  checkSum += calibr->calTotalPhaseA.Cal_WARTU;
+  V9203_wr_flash(channel, RegWWARTUA, calibr->calTotalPhase[LINE_A].Cal_WWARTU);
+  checkSum += calibr->calTotalPhase[LINE_A].Cal_WARTU;
   // offset current RMS
-  V9203_wr_flash(channel, RegWWARTIA, calibr->calTotalPhaseA.Cal_WWARTI);
-  checkSum += calibr->calTotalPhaseA.Cal_WARTI;
+  V9203_wr_flash(channel, RegWWARTIA, calibr->calTotalPhase[LINE_A].Cal_WWARTI);
+  checkSum += calibr->calTotalPhase[LINE_A].Cal_WARTI;
   // offset active power
-  V9203_wr_flash(channel, RegWWAPTA, calibr->calTotalPhaseA.Cal_WWAPT);
-  checkSum += calibr->calTotalPhaseA.Cal_WAPT;
+  V9203_wr_flash(channel, RegWWAPTA, calibr->calTotalPhase[LINE_A].Cal_WWAPT);
+  checkSum += calibr->calTotalPhase[LINE_A].Cal_WAPT;
   // offset reactive power
-  V9203_wr_flash(channel, RegWWAQTA, calibr->calTotalPhaseA.Cal_WWAQT);
-  checkSum += calibr->calTotalPhaseA.Cal_WAQT;
+  V9203_wr_flash(channel, RegWWAQTA, calibr->calTotalPhase[LINE_A].Cal_WWAQT);
+  checkSum += calibr->calTotalPhase[LINE_A].Cal_WAQT;
   
   // Phase B Total
   // gain voltage RMS
-  V9203_wr_flash(channel, RegWARTUB, calibr->calTotalPhaseB.Cal_WARTU);
-  checkSum += calibr->calTotalPhaseB.Cal_WARTU;
+  V9203_wr_flash(channel, RegWARTUB, calibr->calTotalPhase[LINE_B].Cal_WARTU);
+  checkSum += calibr->calTotalPhase[LINE_B].Cal_WARTU;
   // gain current RMS
-  V9203_wr_flash(channel, RegWARTIB, calibr->calTotalPhaseB.Cal_WARTI);
-  checkSum += calibr->calTotalPhaseB.Cal_WARTI;
+  V9203_wr_flash(channel, RegWARTIB, calibr->calTotalPhase[LINE_B].Cal_WARTI);
+  checkSum += calibr->calTotalPhase[LINE_B].Cal_WARTI;
   // gain active power coef RMS
-  V9203_wr_flash(channel, RegWAPTB, calibr->calTotalPhaseB.Cal_WAPT);
-  checkSum += calibr->calTotalPhaseB.Cal_WAPT;
+  V9203_wr_flash(channel, RegWAPTB, calibr->calTotalPhase[LINE_B].Cal_WAPT);
+  checkSum += calibr->calTotalPhase[LINE_B].Cal_WAPT;
   // gain reactive power coef RMS
-  V9203_wr_flash(channel, RegWAQTB, calibr->calTotalPhaseB.Cal_WAQT);
-  checkSum += calibr->calTotalPhaseB.Cal_WAQT;
+  V9203_wr_flash(channel, RegWAQTB, calibr->calTotalPhase[LINE_B].Cal_WAQT);
+  checkSum += calibr->calTotalPhase[LINE_B].Cal_WAQT;
   // offset voltage RMS
-  V9203_wr_flash(channel, RegWWARTUB, calibr->calTotalPhaseB.Cal_WWARTU);
-  checkSum += calibr->calTotalPhaseB.Cal_WARTU;
+  V9203_wr_flash(channel, RegWWARTUB, calibr->calTotalPhase[LINE_B].Cal_WWARTU);
+  checkSum += calibr->calTotalPhase[LINE_B].Cal_WARTU;
   // offset current RMS
-  V9203_wr_flash(channel, RegWWARTIB, calibr->calTotalPhaseB.Cal_WWARTI);
-  checkSum += calibr->calTotalPhaseB.Cal_WARTI;
+  V9203_wr_flash(channel, RegWWARTIB, calibr->calTotalPhase[LINE_B].Cal_WWARTI);
+  checkSum += calibr->calTotalPhase[LINE_B].Cal_WARTI;
   // offset active power
-  V9203_wr_flash(channel, RegWWAPTB, calibr->calTotalPhaseB.Cal_WWAPT);
-  checkSum += calibr->calTotalPhaseB.Cal_WAPT;
+  V9203_wr_flash(channel, RegWWAPTB, calibr->calTotalPhase[LINE_B].Cal_WWAPT);
+  checkSum += calibr->calTotalPhase[LINE_B].Cal_WAPT;
   // offset reactive power
-  V9203_wr_flash(channel, RegWWAQTB, calibr->calTotalPhaseB.Cal_WWAQT);
-  checkSum += calibr->calTotalPhaseB.Cal_WAQT;
+  V9203_wr_flash(channel, RegWWAQTB, calibr->calTotalPhase[LINE_B].Cal_WWAQT);
+  checkSum += calibr->calTotalPhase[LINE_B].Cal_WAQT;
   
   // Phase C Total
   // gain voltage RMS
-  V9203_wr_flash(channel, RegWARTUC, calibr->calTotalPhaseC.Cal_WARTU);
-  checkSum += calibr->calTotalPhaseC.Cal_WARTU;
+  V9203_wr_flash(channel, RegWARTUC, calibr->calTotalPhase[LINE_C].Cal_WARTU);
+  checkSum += calibr->calTotalPhase[LINE_C].Cal_WARTU;
   // gain current RMS
-  V9203_wr_flash(channel, RegWARTIC, calibr->calTotalPhaseC.Cal_WARTI);
-  checkSum += calibr->calTotalPhaseC.Cal_WARTI;
+  V9203_wr_flash(channel, RegWARTIC, calibr->calTotalPhase[LINE_C].Cal_WARTI);
+  checkSum += calibr->calTotalPhase[LINE_C].Cal_WARTI;
   // gain active power coef RMS
-  V9203_wr_flash(channel, RegWAPTC, calibr->calTotalPhaseC.Cal_WAPT);
-  checkSum += calibr->calTotalPhaseC.Cal_WAPT;
+  V9203_wr_flash(channel, RegWAPTC, calibr->calTotalPhase[LINE_C].Cal_WAPT);
+  checkSum += calibr->calTotalPhase[LINE_C].Cal_WAPT;
   // gain reactive power coef RMS
-  V9203_wr_flash(channel, RegWAQTC, calibr->calTotalPhaseC.Cal_WAQT);
-  checkSum += calibr->calTotalPhaseC.Cal_WAQT;
+  V9203_wr_flash(channel, RegWAQTC, calibr->calTotalPhase[LINE_C].Cal_WAQT);
+  checkSum += calibr->calTotalPhase[LINE_C].Cal_WAQT;
   // offset voltage RMS
-  V9203_wr_flash(channel, RegWWARTUC, calibr->calTotalPhaseC.Cal_WWARTU);
-  checkSum += calibr->calTotalPhaseC.Cal_WARTU;
+  V9203_wr_flash(channel, RegWWARTUC, calibr->calTotalPhase[LINE_C].Cal_WWARTU);
+  checkSum += calibr->calTotalPhase[LINE_C].Cal_WARTU;
   // offset current RMS
-  V9203_wr_flash(channel, RegWWARTIC, calibr->calTotalPhaseC.Cal_WWARTI);
-  checkSum += calibr->calTotalPhaseC.Cal_WARTI;
+  V9203_wr_flash(channel, RegWWARTIC, calibr->calTotalPhase[LINE_C].Cal_WWARTI);
+  checkSum += calibr->calTotalPhase[LINE_C].Cal_WARTI;
   // offset active power
-  V9203_wr_flash(channel, RegWWAPTC, calibr->calTotalPhaseC.Cal_WWAPT);
-  checkSum += calibr->calTotalPhaseC.Cal_WAPT;
+  V9203_wr_flash(channel, RegWWAPTC, calibr->calTotalPhase[LINE_C].Cal_WWAPT);
+  checkSum += calibr->calTotalPhase[LINE_C].Cal_WAPT;
   // offset reactive power
-  V9203_wr_flash(channel, RegWWAQTC, calibr->calTotalPhaseC.Cal_WWAQT);
-  checkSum += calibr->calTotalPhaseC.Cal_WAQT;
+  V9203_wr_flash(channel, RegWWAQTC, calibr->calTotalPhase[LINE_C].Cal_WWAQT);
+  checkSum += calibr->calTotalPhase[LINE_C].Cal_WAQT;
   
  
   //**********************************Others********************************************************
@@ -270,33 +270,33 @@ void V9203_setDefaultReg(uint8_t channel, V9203_calibrate_t *calibr)
   
   //Total calibrate
   //Gaint
-  calibr->calTotalPhaseA.Cal_WARTU = V9203_DEF_CAL_WARTU;
-  calibr->calTotalPhaseA.Cal_WARTI = V9203_DEF_CAL_WARTI;
-  calibr->calTotalPhaseA.Cal_WAPT = V9203_DEF_CAL_WAPT;
-  calibr->calTotalPhaseA.Cal_WAQT = V9203_DEF_CAL_WAQT;
+  calibr->calTotalPhase[LINE_A].Cal_WARTU = V9203_DEF_CAL_WARTU;
+  calibr->calTotalPhase[LINE_A].Cal_WARTI = V9203_DEF_CAL_WARTI;
+  calibr->calTotalPhase[LINE_A].Cal_WAPT = V9203_DEF_CAL_WAPT;
+  calibr->calTotalPhase[LINE_A].Cal_WAQT = V9203_DEF_CAL_WAQT;
   //Offset
-  calibr->calTotalPhaseA.Cal_WWARTU = V9203_DEF_CAL_WWARTU;
-  calibr->calTotalPhaseA.Cal_WWARTI = V9203_DEF_CAL_WWARTI;
-  calibr->calTotalPhaseA.Cal_WWAPT = V9203_DEF_CAL_WWAPT;
-  calibr->calTotalPhaseA.Cal_WWAQT = V9203_DEF_CAL_WWAQT;
+  calibr->calTotalPhase[LINE_A].Cal_WWARTU = V9203_DEF_CAL_WWARTU;
+  calibr->calTotalPhase[LINE_A].Cal_WWARTI = V9203_DEF_CAL_WWARTI;
+  calibr->calTotalPhase[LINE_A].Cal_WWAPT = V9203_DEF_CAL_WWAPT;
+  calibr->calTotalPhase[LINE_A].Cal_WWAQT = V9203_DEF_CAL_WWAQT;
   
-  calibr->calTotalPhaseB = calibr->calTotalPhaseA;
-  calibr->calTotalPhaseC = calibr->calTotalPhaseA;
+  calibr->calTotalPhase[LINE_B] = calibr->calTotalPhase[LINE_A];
+  calibr->calTotalPhase[LINE_C] = calibr->calTotalPhase[LINE_A];
   
   //Findamental calibrate
   //Gaint
-  calibr->calFundPhaseA.Cal_WBRTU = V9203_DEF_CAL_WBRTU;
-  calibr->calFundPhaseA.Cal_WBRTI = V9203_DEF_CAL_WBRTI;
-  calibr->calFundPhaseA.Cal_WBPT = V9203_DEF_CAL_WBPT;
-  calibr->calFundPhaseA.Cal_WBQT = V9203_DEF_CAL_WBQT;
+  calibr->calFundPhase[LINE_A].Cal_WBRTU = V9203_DEF_CAL_WBRTU;
+  calibr->calFundPhase[LINE_A].Cal_WBRTI = V9203_DEF_CAL_WBRTI;
+  calibr->calFundPhase[LINE_A].Cal_WBPT = V9203_DEF_CAL_WBPT;
+  calibr->calFundPhase[LINE_A].Cal_WBQT = V9203_DEF_CAL_WBQT;
   //Offset
-  calibr->calFundPhaseA.Cal_WWBRTU = V9203_DEF_CAL_WWBRTU;
-  calibr->calFundPhaseA.Cal_WWBRTI = V9203_DEF_CAL_WWBRTI;
-  calibr->calFundPhaseA.Cal_WWBPT = V9203_DEF_CAL_WWBPT;
-  calibr->calFundPhaseA.Cal_WWBQT = V9203_DEF_CAL_WWBQT;
+  calibr->calFundPhase[LINE_A].Cal_WWBRTU = V9203_DEF_CAL_WWBRTU;
+  calibr->calFundPhase[LINE_A].Cal_WWBRTI = V9203_DEF_CAL_WWBRTI;
+  calibr->calFundPhase[LINE_A].Cal_WWBPT = V9203_DEF_CAL_WWBPT;
+  calibr->calFundPhase[LINE_A].Cal_WWBQT = V9203_DEF_CAL_WWBQT;
   
-  calibr->calFundPhaseB = calibr->calFundPhaseA;
-  calibr->calFundPhaseC = calibr->calFundPhaseA;
+  calibr->calFundPhase[LINE_B] = calibr->calFundPhase[LINE_A];
+  calibr->calFundPhase[LINE_C] = calibr->calFundPhase[LINE_A];
   
   //Proportion coeff
   calibr->calPropVoltage = V9203_DEF_PROP_VOLTAGE;

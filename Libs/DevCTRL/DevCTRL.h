@@ -92,7 +92,7 @@ typedef enum{
   DC_SET_VM_AUTO_START
 }DC_settingID_t;
 
-#define DC_SET_MAGICKEY 0x03
+#define DC_SET_MAGICKEY 0x01
 
 typedef struct {
   
@@ -156,6 +156,8 @@ typedef enum{
   DC_CAL_REG_WWARTI,
   DC_CAL_REG_WWAPT,
   DC_CAL_REG_WWAQT,
+  DC_CAL_REG_WARTIN,
+  DC_CAL_REG_WWARTIN,
   
   //Calibtation struct (Fundamental)
   DC_CAL_REG_WBRTU,
@@ -166,6 +168,8 @@ typedef enum{
   DC_CAL_REG_WWBRTI,
   DC_CAL_REG_WWBPT,
   DC_CAL_REG_WWBQT,
+  DC_CAL_REG_WBRTIN,
+  DC_CAL_REG_WWBRTIN,
   
   //Proportion coefficents
   DC_CAL_PROP_P,                //Proportiona Power coeff
@@ -187,6 +191,26 @@ typedef struct{
 }DC_calibr_t;
 
 extern DC_calibr_t DC_calibr; //Calibrate struct
+
+//Get calibrate param
+DEV_Status_t DC_getCalParam(uint8_t channel, V9203_line_t line, DC_calibrID_t calID, uint8_t* data, uint8_t* len);
+//Set calibrate parametr
+DEV_Status_t DC_setCalParam(uint8_t channel, V9203_line_t line, DC_calibrID_t calID, uint8_t* data, uint8_t len);
+
+//**********************************Values**********************************************************
+
+typedef enum{
+  //Phase
+  DC_VAL_RMSV = 1,
+  DC_VAL_RMSI,
+  DC_VAL_RMSP,
+  DC_VAL_RMSRP,
+  DC_VAL_COSFI,
+  DC_VAL_CONSSP,
+  DC_VAL_CONSP,
+  DC_VAL_CONSRP,
+  DC_VAL_FREQ,  
+}DC_valueID_t;
 
 //**********************************Flash log*******************************************************
 

@@ -40,6 +40,7 @@ extern I2C_HandleTypeDef hi2c1;
 extern SRAM_HandleTypeDef hsram1;
 extern SRAM_HandleTypeDef hsram2;
 extern NAND_HandleTypeDef hnand1;
+extern SemaphoreHandle_t muxV9203;
 
 //Get unic ID
 void DC_getUnicID();
@@ -82,7 +83,7 @@ void DC_init(osMessageQId *eventQueue)
   
   //PCA9555
   PCA9555_init(&hi2c1);
-
+  
   //Set pin mode
   if ((stat = PCA9555_regSetValue(PCA9555_DEF_ADDR, PCA9555_REG_CONFIG, PCA9555_PIN_MODE_DEF)) == HAL_OK)
   {
@@ -107,15 +108,15 @@ void DC_init(osMessageQId *eventQueue)
   }
   
   //Log init
-//  FATFS_res = f_mount(&FATFS_Obj, "0", 1);
-//  if (FATFS_res != FR_OK)
-//  {
-//    DC_debugOut("# Mount error %d\r\n", FATFS_res);
-//    DC_state.discMount = 0;
-//  }else{
-//    DC_debugOut("# Mount drive OK\r\n");
-//    DC_state.discMount = 1;    
-//  }
+  //  FATFS_res = f_mount(&FATFS_Obj, "0", 1);
+  //  if (FATFS_res != FR_OK)
+  //  {
+  //    DC_debugOut("# Mount error %d\r\n", FATFS_res);
+  //    DC_state.discMount = 0;
+  //  }else{
+  //    DC_debugOut("# Mount drive OK\r\n");
+  //    DC_state.discMount = 1;    
+  //  }
   
   //Start led task
   xTaskCreate(vTASK_led,(char*)"TASK_led", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY+5, &ledTask_handle);
@@ -139,7 +140,7 @@ void DC_log(char *str, ...)
     strcat(strBuffer,";");
     strcat(strBuffer, datetime);
     strcat(strBuffer, "\r\n");
-
+    
     FATFS_res = f_open(&LOG_file, "LOG.txt", FA_WRITE | FA_OPEN_ALWAYS);
     if (FATFS_res != FR_OK)
     {
@@ -238,7 +239,7 @@ void DC_LedBlink(LED_t led, uint16_t rate_Hz, uint16_t count)
     }else{
       state = 1;
     }
-
+    
     DC_LedOut(led, state);
     vTaskDelay(delay);
   }
@@ -248,8 +249,8 @@ void DC_LedBlink(LED_t led, uint16_t rate_Hz, uint16_t count)
 void DC_getUnicID()
 {
   HAL_GetUID(DC_unicID);
- // char uinicID[12];
-//  memcpy(uinicID, DC_unicID, 12);
+  // char uinicID[12];
+  //  memcpy(uinicID, DC_unicID, 12);
   sprintf(DC_unic_idStr, "%02x%02x%02x", DC_unicID[0], DC_unicID[1], DC_unicID[2]);
   DC_unic_idStr[12] = 0;
   sprintf(DC_unic_idef, "%s%s", UNIC_ID_PREFIX, DC_unic_idStr);
@@ -356,7 +357,7 @@ DEV_Status_t DC_load_calibrate()
     DC_debugOut("# Calibration load OK\r\n");
     return DEV_OK;
   }
-
+  
   //V9203 set settings
   for (int i=0; i<V9203_COUNT_CHANNELS; i++)
     V9203_setDefaultReg(i, &DC_calibr.channel_cal[i]);
@@ -364,7 +365,7 @@ DEV_Status_t DC_load_calibrate()
   
   DC_calibr.magicKey = DC_CALIBR_MAGICKEY;
   DC_writeCalibrate(&DC_calibr, addr);
-    
+  
   return DEV_OK;
 }  
 //--------------------------------------------------------------------------------------------------
@@ -392,7 +393,7 @@ DEV_Status_t DC_load_settings()
   
   //Clear settings
   memset(&DC_set, 0, sizeof(DC_set));
-
+  
   //Set default
   //Network
   memcpy(DC_set.devMAC, DC_const_dev_mac_addr, 6);
@@ -402,13 +403,13 @@ DEV_Status_t DC_load_settings()
   memcpy(DC_set.net_mask, DC_const_net_mask, 4);
   memcpy(DC_set.netNTP_server, DC_const_NTP_server_name, strlen(DC_const_NTP_server_name));
   memcpy(DC_set.serverDNS, DC_const_serverDNS, 4);
-
+  
   //MQTT
   memcpy(DC_set.MQTT_broc_ip, DC_const_MQTT_ip_broc, 4);
   memcpy(DC_set.MQTT_broc_domen, DC_DEF_MQTT_BROC_DOMEN, strlen(DC_DEF_MQTT_BROC_DOMEN));
   DC_set.MQTT_port = DC_DEF_MQTT_PORT;
   DC_set.MQTT_broc_ch = DC_DEF_MQTT_BROC_CH;
-
+  
   memcpy(DC_set.MQTT_user, DC_DEF_MQTT_USER, sizeof(DC_DEF_MQTT_USER));
   memcpy(DC_set.MQTT_pass, DC_DEF_MQTT_PASS, sizeof(DC_DEF_MQTT_PASS));
   DC_set.MQTT_qos = DC_DEF_MQTT_QOS;
@@ -422,7 +423,7 @@ DEV_Status_t DC_load_settings()
   DC_set.PY_autoStartEn = DC_DEF_PY_AUTOSTART;
   strcpy(DC_set.PY_scryptData.Name, DC_DEF_PY_NAME);
   DC_set.PY_scryptData.memID = DC_DEF_PY_MEM;
-
+  
   //Set magic key
   DC_set.magicKey = DC_SET_MAGICKEY;
   
@@ -432,7 +433,7 @@ DEV_Status_t DC_load_settings()
   pDevMAC = DC_set.devMAC;
   DC_debugOut("# Settings set default\r\n");
   //DC_debug_settingsOut();
-
+  
   return DEV_OK;
 }
 //--------------------------------------------------------------------------------------------------
@@ -501,7 +502,7 @@ DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint8_t len)
       return DEV_OK;
     }
     break;
-      
+    
   case DC_SET_NET_MASK:
     if (len == 4)
     {
@@ -519,7 +520,7 @@ DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint8_t len)
       return DEV_OK;
     }
     break;
-
+    
   case DC_SET_NET_DNS_IP:
     if (len == 4)
     {
@@ -638,7 +639,7 @@ DEV_Status_t DC_getSetParam(DC_settingID_t setID, uint8_t* data, uint8_t* len)
     *len = 6;
     memcpy(data, DC_set.devMAC, 6);
     break;
-  
+    
   case DC_SET_NET_DHCP_EN:
     *len = 1;
     *data = DC_set.net_DHCP_en;
@@ -653,7 +654,7 @@ DEV_Status_t DC_getSetParam(DC_settingID_t setID, uint8_t* data, uint8_t* len)
     *len = 4;
     memcpy(data, DC_set.net_gw_ip_addr, 4);
     break;
-      
+    
   case DC_SET_NET_MASK:
     *len = 4;
     memcpy(data, DC_set.net_mask, 4);
@@ -663,7 +664,7 @@ DEV_Status_t DC_getSetParam(DC_settingID_t setID, uint8_t* data, uint8_t* len)
     *len = sizeof(DC_set.netNTP_server);
     memcpy(data, DC_set.netNTP_server, sizeof(DC_set.netNTP_server));
     break;
-
+    
   case DC_SET_NET_DNS_IP:
     *len = 4;
     memcpy(data, DC_set.serverDNS, 4);
@@ -729,63 +730,190 @@ DEV_Status_t DC_getSetParam(DC_settingID_t setID, uint8_t* data, uint8_t* len)
 }
 //--------------------------------------------------------------------------------------------------
 //Set calibrate parametr
-DEV_Status_t DC_setCaltParam(uint8_t channel, V9203_line_t line, DC_calibrID_t calID, uint8_t* data, uint8_t len)
+DEV_Status_t DC_setCalParam(uint8_t channel, V9203_line_t line, DC_calibrID_t calID, uint8_t* data, uint8_t len)
 {
   switch(calID)
   {
     
   }
+  
+  return DEV_OK;
 }
 //--------------------------------------------------------------------------------------------------
 //Get calibrate param
 DEV_Status_t DC_getCalParam(uint8_t channel, V9203_line_t line, DC_calibrID_t calID, uint8_t* data, uint8_t* len)
 {
+  *len = 4;
+  
   switch(calID)
   {
-  case DC_CAL_REG_CTHH: 
+  case DC_CAL_REG_CTHH:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.CTHH, data, *len); 
     break;
     
   case DC_CAL_REG_CTHL:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.CTHL, data, *len);
     break;
-   
+    
   case DC_CAL_REG_WAEC0:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.WAEC0, data, *len);
     break;
-
+    
   case DC_CAL_REG_MTPARA0:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.MTPARA0, data, *len);
     break;
-
+    
   case DC_CAL_REG_MTPARA1:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.MTPARA1, data, *len);
     break;    
-
+    
   case DC_CAL_REG_MTPARA2:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.MTPARA2, data, *len);
     break;  
     
   case DC_CAL_REG_ANCtrl0:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.ANCtrl0, data, *len);
     break;
-
+    
   case DC_CAL_REG_ANCtrl1:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.ANCtrl1, data, *len);
     break;    
-
+    
   case DC_CAL_REG_ANCtrl2:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.ANCtrl2, data, *len);
     break;  
     
   case DC_CAL_REG_ANCtrl3:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.ANCtrl3, data, *len);
     break;  
     
   case DC_CAL_REG_WARTU:
-    if (len == 4)
-    {
-     switch(line)
-    {
-    case LINE_A:
-      memcpy(DC_calibr.channel_cal[channel].calTotalPhaseA.Cal_WARTU, data, len); break;
-    case     
-    }
-    }else{
-      return DEV_ERROR;
-    }
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WARTU, data, *len);
+    break;
+    
+  case DC_CAL_REG_WARTI:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WARTI, data, *len);
+    break;
+    
+  case DC_CAL_REG_WAPT:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WAPT, data, *len);
+    break;
+    
+  case DC_CAL_REG_WAQT:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WAQT, data, *len);
+    break;
+    
+  case DC_CAL_REG_WWARTU:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WWARTU, data, *len);
+    break;
+    
+  case DC_CAL_REG_WWARTI:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WARTI, data, *len);
+    break;
+    
+  case DC_CAL_REG_WWAPT:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WWAPT, data, *len);
+    break;
+    
+  case DC_CAL_REG_WWAQT:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WWAQT, data, *len);
+    break;
+    
+  case DC_CAL_REG_WARTIN:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].WARTIN, data, *len); break;
+    break;
+    
+  case DC_CAL_REG_WWARTIN:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].WBRTIN, data, *len); break;
+    break;
+    
+  case DC_CAL_PROP_P:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calPropPower, data, *len); break;
     break;
 
+  case DC_CAL_PROP_U:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calPropVoltage, data, *len); break;
+    break;
+    
+  case DC_CAL_PROP_I:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calPropCurrent, data, *len); break;
+    break;
+    
+  case DC_CAL_PROP_FREQ:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calPropFreq, data, *len); break;
+    break;
+    
+  case DC_CAL_THRDI_DETECT:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].cal_currThrdDetect, data, *len); break;
+    break;
+    
+  case DC_CAL_THRDM_DETECT:
+    memcpy((uint8_t*)DC_calibr.channel_cal[channel].cal_energyThrdDetect, data, *len); break;
+    break;
+    
+  default:
+    return DEV_ERROR;
+  }
+  return DEV_OK;
+}
+//--------------------------------------------------------------------------------------------------
+//Relay out
+DEV_Status_t DC_getValues(uint8_t channel, V9203_line_t line, DC_valueID_t id, uint8_t *data, uint8_t *len)
+{
+  float floatBuf;
+  uint64_t uBuf;
+  
+  if( xSemaphoreTake( muxV9203, ( TickType_t ) 1000 ) == pdTRUE )
+  {
+    switch(id)
+    {
+    case DC_VAL_RMSV:
+      floatBuf = V9203_getRMS_Voltage(channel, line);
+      memcpy(data, (uint8_t*)&floatBuf, sizeof(floatBuf));
+      *len = 4;
+      break;
+    case DC_VAL_RMSI:
+      floatBuf = V9203_getRMS_Current(channel, line);
+      memcpy(data, (uint8_t*)&floatBuf, sizeof(floatBuf));
+      *len = 4;
+      break; 
+    case DC_VAL_RMSP:
+      floatBuf = V9203_getRMS_Power(channel, line);
+      memcpy(data, (uint8_t*)&floatBuf, sizeof(floatBuf));
+      *len = 4;
+      break;
+    case DC_VAL_RMSRP:
+      floatBuf = V9203_getRMS_reactivePower(channel, line);
+      memcpy(data, (uint8_t*)&floatBuf, sizeof(floatBuf));
+      *len = 4;
+      break; 
+    case DC_VAL_COSFI:
+      floatBuf = V9203_getCOSfi(channel, line);
+      memcpy(data, (uint8_t*)&floatBuf, sizeof(floatBuf));
+      *len = 4;
+      break; 
+     case DC_VAL_CONSSP:
+      uBuf = V9203_getSCons(channel, line);
+      memcpy(data, (uint8_t*)&uBuf, sizeof(uBuf));
+      *len = 8;
+      break;  
+    case DC_VAL_CONSP:
+      uBuf = V9203_getPCons(channel, line);
+      memcpy(data, (uint8_t*)&uBuf, sizeof(uBuf));
+      *len = 8;
+      break;
+    case DC_VAL_CONSRP:
+      uBuf = V9203_getQCons(channel, line);
+      memcpy(data, (uint8_t*)&uBuf, sizeof(uBuf));
+      *len = 8;
+      break;  
+    case DC_VAL_FREQ:
+      floatBuf = V9203_getFreq(channel, line);
+      memcpy(data, (uint8_t*)&floatBuf, sizeof(floatBuf));
+      *len = 4;
+      break;
+    }
+    xSemaphoreGive( muxV9203 );
   }
   
   return DEV_OK;

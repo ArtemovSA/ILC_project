@@ -369,15 +369,16 @@ typedef struct
   V9203_defSet_t V9203_defSet;
   
   //Calibtation total struct
-  V9203_Total_cal_t calTotalPhaseA;
-  V9203_Total_cal_t calTotalPhaseB;
-  V9203_Total_cal_t calTotalPhaseC;
-  
+  V9203_Total_cal_t calTotalPhase[3];
+  //N line total
+  uint32_t WARTIN;
+  uint32_t WWARTIN;
   
   //Calibtation Fundamental struct
-  V9203_Fund_cal_t calFundPhaseA;
-  V9203_Fund_cal_t calFundPhaseB;
-  V9203_Fund_cal_t calFundPhaseC;
+  V9203_Fund_cal_t calFundPhase[3];
+  //N line total
+  uint32_t WBRTIN;
+  uint32_t WWBRTIN;
   
   //Proportion coefficents
   uint32_t calPropPower;                //Proportiona Power coeff
