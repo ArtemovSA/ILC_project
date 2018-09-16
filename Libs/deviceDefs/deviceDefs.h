@@ -21,6 +21,7 @@ typedef enum
   DEV_CRC_ERROR,                //Ошибка контрольной суммы
   DEV_BUSY,                     //Ресурс занят
   DEV_TIMEOUT,                  //Таймаут
+  DEV_NAVAL,                    //Не доступно
   DEV_NEXIST,                   //Ресурс не существует
   DEV_CON_ERROR,                //Ошибка соединения
   DEV_VAL_ERROR,                //Ошибка значения

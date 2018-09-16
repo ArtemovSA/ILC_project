@@ -60,7 +60,7 @@ extern char DC_unic_idStr[13]; //Unic id str
 
 //EMS
 #define DC_DEF_EMS_OUT_PERIOD           5 //sec
-#define DC_DEF_EMS_SEND_EN              1 //Разрешить передачу данных
+#define DC_DEF_EMS_SEND_EN              0 //Разрешить передачу данных
 #define DC_DEF_EMS_CH_EN                3 //Channel enable in bit
 
 //Python
@@ -92,7 +92,7 @@ typedef enum{
   DC_SET_VM_AUTO_START
 }DC_settingID_t;
 
-#define DC_SET_MAGICKEY 0x01
+#define DC_SET_MAGICKEY 0x02
 
 typedef struct {
   
@@ -136,7 +136,7 @@ DEV_Status_t DC_writeSet(DC_set_t *settings, NAND_AddressTypeDef addr);
 typedef enum{
   
   //Default register settings
-  DC_CAL_REG_CTHH,              // Top judgment threshold register
+  DC_CAL_REG_CTHH = 1,              // Top judgment threshold register
   DC_CAL_REG_CTHL,              // Bottom judgment threshold register
   DC_CAL_REG_WAEC0,             // Angle difference 0
   DC_CAL_REG_MTPARA0,           // Metering data reg 0
@@ -148,7 +148,7 @@ typedef enum{
   DC_CAL_REG_ANCtrl3,           // Analog control register 3
   
   //Calibtation struct (Total)
-  DC_CAL_REG_WARTU,
+  DC_CAL_REG_WARTU, //11
   DC_CAL_REG_WARTI,
   DC_CAL_REG_WAPT,
   DC_CAL_REG_WAQT,
@@ -156,11 +156,11 @@ typedef enum{
   DC_CAL_REG_WWARTI,
   DC_CAL_REG_WWAPT,
   DC_CAL_REG_WWAQT,
-  DC_CAL_REG_WARTIN,
+  DC_CAL_REG_WARTIN, //19
   DC_CAL_REG_WWARTIN,
   
   //Calibtation struct (Fundamental)
-  DC_CAL_REG_WBRTU,
+  DC_CAL_REG_WBRTU, //21
   DC_CAL_REG_WBRTI,
   DC_CAL_REG_WBPT,
   DC_CAL_REG_WBQT,
@@ -172,12 +172,12 @@ typedef enum{
   DC_CAL_REG_WWBRTIN,
   
   //Proportion coefficents
-  DC_CAL_PROP_P,                //Proportiona Power coeff
+  DC_CAL_PROP_P, //31               //Proportiona Power coeff
   DC_CAL_PROP_U,                //Proportiona U coeff
   DC_CAL_PROP_I,                //Proportiona I coeff
   DC_CAL_PROP_FREQ,             //Propotrional Freq coeff
     
-  DC_CAL_THRDI_DETECT,         //Threshold current detect
+  DC_CAL_THRDI_DETECT,//35         //Threshold current detect
   DC_CAL_THRDM_DETECT          //Threshold energy meter detect
 }DC_calibrID_t;
 
@@ -192,6 +192,8 @@ typedef struct{
 
 extern DC_calibr_t DC_calibr; //Calibrate struct
 
+//Load calibrate
+DEV_Status_t DC_load_calibrate();
 //Get calibrate param
 DEV_Status_t DC_getCalParam(uint8_t channel, V9203_line_t line, DC_calibrID_t calID, uint8_t* data, uint8_t* len);
 //Set calibrate parametr
@@ -211,6 +213,9 @@ typedef enum{
   DC_VAL_CONSRP,
   DC_VAL_FREQ,  
 }DC_valueID_t;
+
+//values get
+DEV_Status_t DC_getValues(uint8_t channel, V9203_line_t line, DC_valueID_t id, uint8_t *data, uint8_t *len);
 
 //**********************************Flash log*******************************************************
 

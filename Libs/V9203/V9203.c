@@ -313,24 +313,28 @@ HAL_StatusTypeDef V9203_set_CS(uint8_t channel, uint8_t state)
 {
   uint8_t pin;
 
-  PCA9555_digitalWrite(PCA9555_DEF_ADDR, PCA9555_PIN_CS1, HIGH_LEVEL);
-  PCA9555_digitalWrite(PCA9555_DEF_ADDR, PCA9555_PIN_CS2, HIGH_LEVEL);
-  PCA9555_digitalWrite(PCA9555_DEF_ADDR, PCA9555_PIN_CS3, HIGH_LEVEL);
-  PCA9555_digitalWrite(PCA9555_DEF_ADDR, PCA9555_PIN_CS4, HIGH_LEVEL);
+//  PCA9555_digitalWrite(PCA9555_DEF_ADDR, PCA9555_PIN_CS1, HIGH_LEVEL);
+//  PCA9555_digitalWrite(PCA9555_DEF_ADDR, PCA9555_PIN_CS2, HIGH_LEVEL);
+//  PCA9555_digitalWrite(PCA9555_DEF_ADDR, PCA9555_PIN_CS3, HIGH_LEVEL);
+//  PCA9555_digitalWrite(PCA9555_DEF_ADDR, PCA9555_PIN_CS4, HIGH_LEVEL);
+//  
+  switch(channel)
+  {
+  case 0: pin = PCA9555_PIN_CS1; break;
+  case 1: pin = PCA9555_PIN_CS2; break;
+  case 2: pin = PCA9555_PIN_CS3; break;
+  case 3: pin = PCA9555_PIN_CS4; break;
+  default: DC_debugOut("# V9203 CS channel num ERROR\r\n"); return HAL_ERROR;
+  }
   
+  taskENTER_CRITICAL();
   if (state == LOW_LEVEL)
   {
-    switch(channel)
-    {
-    case 0: pin = PCA9555_PIN_CS1; break;
-    case 1: pin = PCA9555_PIN_CS2; break;
-    case 2: pin = PCA9555_PIN_CS3; break;
-    case 3: pin = PCA9555_PIN_CS4; break;
-    default: DC_debugOut("# V9203 CS channel num ERROR\r\n"); return HAL_ERROR;
-    };
-    
     PCA9555_digitalWrite(PCA9555_DEF_ADDR, pin, LOW_LEVEL);
+  }else{
+    PCA9555_digitalWrite(PCA9555_DEF_ADDR, pin, HIGH_LEVEL);
   }
+  taskEXIT_CRITICAL();
   
   return HAL_OK;
 }

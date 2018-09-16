@@ -422,15 +422,19 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
       channel = cmdData[2];
       line = cmdData[3];
       
-      if (DC_getValues(channel, (V9203_line_t)line, (DC_valueID_t)id, &cmdData[3], &lenByte) == DEV_OK)
+      if ((retStatus = DC_getValues(channel, (V9203_line_t)line, (DC_valueID_t)id, &cmdData[3], &lenByte)) == DEV_OK)
       {
         cmdData[0] = command; //Команда
         cmdData[1] = USBC_RET_OK;
         cmdData[2] = lenByte;
-        USBC_sendPayload(cmdData, len+3);//Send payload
-      }else{
+        USBC_sendPayload(cmdData, lenByte+3);//Send payload
+      }else if(retStatus == DEV_ERROR){
         cmdData[0] = command; //Команда
         cmdData[1] = USBC_RET_ERROR;
+        USBC_sendPayload(cmdData, 2);//Send payload
+      }else if(retStatus == DEV_NAVAL){
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_NAVAL;
         USBC_sendPayload(cmdData, 2);//Send payload
       }
       
