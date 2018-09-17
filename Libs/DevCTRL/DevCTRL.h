@@ -172,16 +172,18 @@ typedef enum{
   DC_CAL_REG_WWBRTIN,
   
   //Proportion coefficents
-  DC_CAL_PROP_P, //31               //Proportiona Power coeff
+  DC_CAL_PROP_P, //31           //Proportiona Power coeff
+  DC_CAL_PROP_RP,               //Proportiona RPower coeff
   DC_CAL_PROP_U,                //Proportiona U coeff
   DC_CAL_PROP_I,                //Proportiona I coeff
   DC_CAL_PROP_FREQ,             //Propotrional Freq coeff
-    
-  DC_CAL_THRDI_DETECT,//35         //Threshold current detect
+  DC_CAL_PROP_COSFI,            //Propotrional COS fi coeff
+   
+  DC_CAL_THRDI_DETECT,//37         //Threshold current detect
   DC_CAL_THRDM_DETECT          //Threshold energy meter detect
 }DC_calibrID_t;
 
-#define DC_CALIBR_MAGICKEY 0x01
+#define DC_CALIBR_MAGICKEY 0x06
 
 typedef struct{
   
@@ -194,6 +196,8 @@ extern DC_calibr_t DC_calibr; //Calibrate struct
 
 //Load calibrate
 DEV_Status_t DC_load_calibrate();
+//Write settings
+DEV_Status_t DC_writeCalibrate(DC_calibr_t *calibr, NAND_AddressTypeDef addr);
 //Get calibrate param
 DEV_Status_t DC_getCalParam(uint8_t channel, V9203_line_t line, DC_calibrID_t calID, uint8_t* data, uint8_t* len);
 //Set calibrate parametr

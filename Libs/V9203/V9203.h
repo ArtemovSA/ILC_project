@@ -298,11 +298,12 @@
 #define V9203_DEF_CAL_WWBQT   0x00000000
 
 //Proportional coeff
-#define V9203_DEF_PROP_VOLTAGE	  1
-#define V9203_DEF_PROP_CURRENT	  1
-#define V9203_DEF_PROP_POWER	  1
-#define V9203_DEF_PROP_RPOWER     1
-#define V9203_DEF_PROP_COSFI      1
+#define V9203_DEF_PROP_VOLTAGE	  1.0
+#define V9203_DEF_PROP_CURRENT	  1.0
+#define V9203_DEF_PROP_POWER	  1.0
+#define V9203_DEF_PROP_RPOWER     1.0
+#define V9203_DEF_PROP_COSFI      1.0
+#define V9203_DEF_PROP_FREQ       1.0
 
 //Threshold detect
 #define V9203_DEF_THRD_CURRENT_DETECT	        0x00000000
@@ -382,6 +383,8 @@ typedef struct
   
   //Proportion coefficents
   uint32_t calPropPower;                //Proportiona Power coeff
+  uint32_t calPropRPower;               //Proportiona RPower coeff
+  uint32_t calPropCOSfi;                //Proportiona cosFi coeff
   uint32_t calPropVoltage;              //Proportiona U coeff
   uint32_t calPropCurrent;              //Proportiona I coeff
   uint32_t calPropFreq;                 //Propotrional Freq coeff

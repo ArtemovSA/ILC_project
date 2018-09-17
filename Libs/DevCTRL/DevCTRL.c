@@ -109,23 +109,23 @@ void DC_init(osMessageQId *eventQueue)
       DC_debugOut("# PCA9555 TIMEOUT\r\n");
   }
   
-  //Log init
-  //  FATFS_res = f_mount(&FATFS_Obj, "0", 1);
-  //  if (FATFS_res != FR_OK)
-  //  {
-  //    DC_debugOut("# Mount error %d\r\n", FATFS_res);
-  //    DC_state.discMount = 0;
-  //  }else{
-  //    DC_debugOut("# Mount drive OK\r\n");
-  //    DC_state.discMount = 1;    
-  //  }
+  //SD card init
+  FATFS_res = f_mount(&FATFS_Obj, "0", 1);
+  if (FATFS_res != FR_OK)
+  {
+    DC_debugOut("# Mount error %d\r\n", FATFS_res);
+    DC_state.discMount = 0;
+  }else{
+    DC_debugOut("# Mount drive OK\r\n");
+    DC_state.discMount = 1;    
+  }
   
   //Start led task
   xTaskCreate(vTASK_led,(char*)"TASK_led", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY+5, &ledTask_handle);
 }
 //--------------------------------------------------------------------------------------------------
 //Log data
-void DC_log(char *str, ...)
+void DC_logData(char *str, ...)
 {
   char datetime[50];
   va_list args;
@@ -143,7 +143,7 @@ void DC_log(char *str, ...)
     strcat(strBuffer, datetime);
     strcat(strBuffer, "\r\n");
     
-    FATFS_res = f_open(&LOG_file, "LOG.txt", FA_WRITE | FA_OPEN_ALWAYS);
+    FATFS_res = f_open(&LOG_file, "LOG_data.txt", FA_WRITE | FA_OPEN_ALWAYS);
     if (FATFS_res != FR_OK)
     {
       DC_debugOut("# File log error%d\r\n", FATFS_res);
@@ -734,12 +734,129 @@ DEV_Status_t DC_getSetParam(DC_settingID_t setID, uint8_t* data, uint8_t* len)
 //Set calibrate parametr
 DEV_Status_t DC_setCalParam(uint8_t channel, V9203_line_t line, DC_calibrID_t calID, uint8_t* data, uint8_t len)
 {
-  switch(calID)
+  if (len == 4)
   {
+    switch(calID)
+    {
+    case DC_CAL_REG_CTHH:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.CTHH, data, 4); 
+      break;
+      
+    case DC_CAL_REG_CTHL:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.CTHL, data, 4);
+      break;
+      
+    case DC_CAL_REG_WAEC0:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.WAEC0, data, 4);
+      break;
+      
+    case DC_CAL_REG_MTPARA0:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.MTPARA0, data, 4);
+      break;
+      
+    case DC_CAL_REG_MTPARA1:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.MTPARA1, data, 4);
+      break;    
+      
+    case DC_CAL_REG_MTPARA2:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.MTPARA2, data, 4);
+      break;  
+      
+    case DC_CAL_REG_ANCtrl0:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.ANCtrl0, data, 4);
+      break;
+      
+    case DC_CAL_REG_ANCtrl1:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.ANCtrl1, data, 4);
+      break;    
+      
+    case DC_CAL_REG_ANCtrl2:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.ANCtrl2, data, 4);
+      break;  
+      
+    case DC_CAL_REG_ANCtrl3:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.ANCtrl3, data, 4);
+      break;  
+      
+    case DC_CAL_REG_WARTU:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WARTU, data, 4);
+      break;
+      
+    case DC_CAL_REG_WARTI:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WARTI, data, 4);
+      break;
+      
+    case DC_CAL_REG_WAPT:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WAPT, data, 4);
+      break;
+      
+    case DC_CAL_REG_WAQT:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WAQT, data, 4);
+      break;
+      
+    case DC_CAL_REG_WWARTU:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WWARTU, data, 4);
+      break;
+      
+    case DC_CAL_REG_WWARTI:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WARTI, data, 4);
+      break;
+      
+    case DC_CAL_REG_WWAPT:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WWAPT, data, 4);
+      break;
+      
+    case DC_CAL_REG_WWAQT:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WWAQT, data, 4);
+      break;
+      
+    case DC_CAL_REG_WARTIN:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].WARTIN, data, 4); break;
+      break;
+      
+    case DC_CAL_REG_WWARTIN:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].WBRTIN, data, 4); break;
+      break;
+      
+    case DC_CAL_PROP_P:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].calPropPower, data, 4);
+      break;
+      
+    case DC_CAL_PROP_RP:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].calPropRPower, data, 4);
+      break;
+      
+    case DC_CAL_PROP_U:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].calPropVoltage, data, 4);
+      break;
+      
+    case DC_CAL_PROP_I:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].calPropCurrent, data, 4);
+      break;
+      
+    case DC_CAL_PROP_FREQ:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].calPropFreq, data, 4);
+      break;
+      
+    case DC_CAL_PROP_COSFI:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].calPropCOSfi, data, 4);
+      break;
+      
+    case DC_CAL_THRDI_DETECT:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].cal_currThrdDetect, data, 4);
+      break;
+      
+    case DC_CAL_THRDM_DETECT:
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].cal_energyThrdDetect, data, 4);
+      break;
+      
+    default:
+      return DEV_ERROR;
+    }
     
+    return DEV_OK;
   }
-  
-  return DEV_OK;
+  return DEV_ERROR;
 }
 //--------------------------------------------------------------------------------------------------
 //Get calibrate param
@@ -750,107 +867,115 @@ DEV_Status_t DC_getCalParam(uint8_t channel, V9203_line_t line, DC_calibrID_t ca
   switch(calID)
   {
   case DC_CAL_REG_CTHH:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.CTHH, data, 4); 
+    memcpy(data,(uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.CTHH, 4); 
     break;
     
   case DC_CAL_REG_CTHL:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.CTHL, data, 4);
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.CTHL, 4);
     break;
     
   case DC_CAL_REG_WAEC0:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.WAEC0, data, 4);
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.WAEC0, 4);
     break;
     
   case DC_CAL_REG_MTPARA0:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.MTPARA0, data, 4);
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.MTPARA0, 4);
     break;
     
   case DC_CAL_REG_MTPARA1:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.MTPARA1, data, 4);
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.MTPARA1, 4);
     break;    
     
   case DC_CAL_REG_MTPARA2:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.MTPARA2, data, 4);
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.MTPARA2, 4);
     break;  
     
   case DC_CAL_REG_ANCtrl0:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.ANCtrl0, data, 4);
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.ANCtrl0, 4);
     break;
     
   case DC_CAL_REG_ANCtrl1:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.ANCtrl1, data, 4);
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.ANCtrl1, 4);
     break;    
     
   case DC_CAL_REG_ANCtrl2:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.ANCtrl2, data, 4);
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.ANCtrl2, 4);
     break;  
     
   case DC_CAL_REG_ANCtrl3:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].V9203_defSet.ANCtrl3, data, 4);
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].V9203_defSet.ANCtrl3, 4);
     break;  
     
   case DC_CAL_REG_WARTU:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WARTU, data, 4);
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WARTU, 4);
     break;
     
   case DC_CAL_REG_WARTI:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WARTI, data, 4);
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WARTI, 4);
     break;
     
   case DC_CAL_REG_WAPT:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WAPT, data, 4);
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WAPT, 4);
     break;
     
   case DC_CAL_REG_WAQT:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WAQT, data, 4);
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WAQT, 4);
     break;
     
   case DC_CAL_REG_WWARTU:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WWARTU, data, 4);
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WWARTU, 4);
     break;
     
   case DC_CAL_REG_WWARTI:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WARTI, data, 4);
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WWARTI, 4);
     break;
     
   case DC_CAL_REG_WWAPT:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WWAPT, data, 4);
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WWAPT, 4);
     break;
     
   case DC_CAL_REG_WWAQT:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WWAQT, data, 4);
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WWAQT, 4);
     break;
     
   case DC_CAL_REG_WARTIN:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].WARTIN, data, 4); break;
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].WARTIN, 4);
     break;
     
   case DC_CAL_REG_WWARTIN:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].WBRTIN, data, 4); break;
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].WBRTIN, 4);
     break;
     
   case DC_CAL_PROP_P:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calPropPower, data, 4); break;
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].calPropPower, 4);
     break;
-
+    
+  case DC_CAL_PROP_RP:
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].calPropRPower, 4);
+    break;
+    
   case DC_CAL_PROP_U:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calPropVoltage, data, 4); break;
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].calPropVoltage, 4);
     break;
     
   case DC_CAL_PROP_I:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calPropCurrent, data, 4); break;
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].calPropCurrent, 4);
     break;
     
   case DC_CAL_PROP_FREQ:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].calPropFreq, data, 4); break;
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].calPropFreq, 4);
+    break;
+    
+  case DC_CAL_PROP_COSFI:
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].calPropCOSfi, 4);
     break;
     
   case DC_CAL_THRDI_DETECT:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].cal_currThrdDetect, data, 4); break;
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].cal_currThrdDetect, 4);
     break;
     
   case DC_CAL_THRDM_DETECT:
-    memcpy((uint8_t*)DC_calibr.channel_cal[channel].cal_energyThrdDetect, data, 4); break;
+    memcpy(data, (uint8_t*)&DC_calibr.channel_cal[channel].cal_energyThrdDetect, 4);
     break;
     
   default:

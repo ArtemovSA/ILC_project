@@ -416,6 +416,22 @@ void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen)
       
       break;
       
+    case USBC_CMD_ASSIGN_CALIBR:
+      
+      addrNAND = MEM_NAND_ADDR_CALIBRATE;
+      
+      DC_calibr.magicKey = DC_CALIBR_MAGICKEY;
+      if (DC_writeCalibrate(&DC_calibr, addrNAND) == DEV_OK)
+      {
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_OK;
+      }else{
+        cmdData[0] = command; //Команда
+        cmdData[1] = USBC_RET_ERROR;
+      }
+      USBC_sendPayload(cmdData, 2);//Send payload
+      break;
+      
     case USBC_CMD_GET_VALUES:
       
       id = cmdData[1];

@@ -34,6 +34,7 @@ enum{
   USBC_CMD_SYSTEM_RESET,        //Reset system
   USBC_CMD_SET_CALIBR,          //Set calibratings data
   USBC_CMD_GET_CALIBR,          //Get calibrate data
+  USBC_CMD_ASSIGN_CALIBR,       //Assign Calibrate
   USBC_CMD_GET_VALUES           //Get values
 };
 
