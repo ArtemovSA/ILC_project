@@ -210,7 +210,7 @@ SemaphoreHandle_t muxV9203;
   debugTaskHandle = osThreadCreate(osThread(debugTask), NULL);
 
   /* definition and creation of EMS_task */
-  osThreadDef(EMS_task, startEMS_task, osPriorityIdle, 0, 1536);
+  osThreadDef(EMS_task, startEMS_task, osPriorityNormal, 0, 1536);
   EMS_taskHandle = osThreadCreate(osThread(EMS_task), NULL);
   vTaskSuspend(EMS_taskHandle);
   
@@ -817,7 +817,7 @@ void startDebugTask(void const * argument)
     
   //USB
   USBP_init();
-  USBC_init(1);
+  USBC_init(osPriorityHigh);
   
   //DNS init
   ip4_addr_t ipaddr;

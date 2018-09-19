@@ -358,6 +358,7 @@ HAL_StatusTypeDef V9203_data_cmd_flash(uint8_t channel, uint8_t cmd, uint16_t da
   txBuf[2] = dataTx & 0x00ff;
   txBuf[3] = ~((dataTx & 0x00ff) + (dataTx >> 8) + txBuf[0]);
 
+  vTaskDelay(1);
   if ((state = V9203_set_CS(channel, LOW_LEVEL)) != HAL_OK)
     return state;
   
@@ -477,7 +478,7 @@ float V9203_getRMS_Voltage(uint8_t channel, V9203_line_t line)
   if (regData == 0xFFFFFFFF)
     return -1;
   
-  return (float)regData*(*(float*)&DC_calibr.channel_cal[channel].calPropVoltage);
+  return (double)regData*(*(float*)&DC_calibr.channel_cal[channel].calPropVoltage);
 }
 //----------------------------------------------------------------------------------
 //Get RMS current
@@ -719,7 +720,7 @@ uint64_t V9203_getQCons(uint8_t channel, V9203_line_t line)
   if (value >= 0xFFFFFFFF)
     return 0;
   
-  return (float)value*(*(float*)&DC_calibr.channel_cal[channel].calPropRPower);
+  return (uint64_t)round(value*(*(float*)&DC_calibr.channel_cal[channel].calPropRPower));
 }
 //----------------------------------------------------------------------------------
 //Get cos Fi

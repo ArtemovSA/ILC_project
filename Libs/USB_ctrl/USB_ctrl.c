@@ -1,6 +1,5 @@
 
 #include "USB_ctrl.h"
-#include "cmsis_os.h"
 #include "Memory.h"
 #include "deviceDefs.h"
 #include "crc16.h"
@@ -24,17 +23,20 @@ extern xTaskHandle script_handle; //Хендл скрипта
 //Command process
 void USBC_cmd_proc(uint8_t* cmdData, uint16_t cmdLen);
 //USB command task
-void vUSBC_task(void *pvParameters);
+void vUSBC_task(void const * argument);
 
 //--------------------------------------------------------------------------------------------------
 //USB command init
-void USBC_init(uint8_t priority)
+void USBC_init(osPriority priority)
 {
-  xTaskCreate(vUSBC_task,(char*)"USBC_task", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY + priority, &USBC_handle);
+  osThreadDef(USBC_task, vUSBC_task, priority, 0, configMINIMAL_STACK_SIZE);
+  USBC_handle = osThreadCreate(osThread(USBC_task), NULL);
+
+//  xTaskCreate(vUSBC_task,(char*)"USBC_task", configMINIMAL_STACK_SIZE, NULL, osPriorityNormal + priority, &USBC_handle);
 }
 //--------------------------------------------------------------------------------------------------
 //USB command task
-void vUSBC_task(void *pvParameters) 
+void vUSBC_task(void const * argument) 
 {
   while(1)
   {

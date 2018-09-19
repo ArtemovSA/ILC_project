@@ -3,6 +3,7 @@
 #define USB_CTRL_H
 
 #include "stdint.h"
+#include "cmsis_os.h"
 
 #define USBC_CMD_BUF_LEN        300
 #define USBC_LOAD_PART_LEN      256
@@ -58,7 +59,7 @@ enum{
 };
 
 //USB command init
-void USBC_init(uint8_t priority);
+void USBC_init(osPriority priority);
 //Recive commnd process
 void USBC_Receive_proc(uint8_t *data, uint16_t len);
 
