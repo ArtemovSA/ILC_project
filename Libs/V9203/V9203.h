@@ -124,8 +124,8 @@
 //Full wave active / reactive power correction register 
 //=============================================================
 #define   RegWAPTA      0xE95A
-#define   RegWAPTB      0xE95E
-#define   RegWAPTC      0xE962
+#define   RegWAPTB      0xE95D
+#define   RegWAPTC      0xE961
 
 #define   RegWAQTA      0xE965
 #define   RegWAQTB      0xE966

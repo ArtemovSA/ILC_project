@@ -28,7 +28,7 @@ static void USBP_runtime( TimerHandle_t xTimer );
 void USBP_init()
 {
   USBP_timer = xTimerCreate( "USBP_Timer", 1, pdTRUE, (void*)0, USBP_runtime );
-  xTimerStart( USBP_timer, 20);
+  xTimerStart( USBP_timer, 50);
 }
 //--------------------------------------------------------------------------------------------------
 //Отправить данные
@@ -50,6 +50,7 @@ static void USBP_runtime( TimerHandle_t xTimer )
   
   if (USBD_LL_DevConnected(&hUsbDeviceFS) == USBD_OK)
   {
+    taskENTER_CRITICAL();
     //Scrypt mode
     if (USBP_mode != USBP_MODE_SCRIPT)
     {
@@ -71,5 +72,6 @@ static void USBP_runtime( TimerHandle_t xTimer )
         }    
       }
     }
+    taskEXIT_CRITICAL();
   }
 }

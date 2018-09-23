@@ -110,15 +110,15 @@ void DC_init(osMessageQId *eventQueue)
   }
   
   //SD card init
-  FATFS_res = f_mount(&FATFS_Obj, "0", 1);
-  if (FATFS_res != FR_OK)
-  {
-    DC_debugOut("# Mount error %d\r\n", FATFS_res);
-    DC_state.discMount = 0;
-  }else{
-    DC_debugOut("# Mount drive OK\r\n");
-    DC_state.discMount = 1;    
-  }
+//  FATFS_res = f_mount(&FATFS_Obj, "0", 1);
+//  if (FATFS_res != FR_OK)
+//  {
+//    DC_debugOut("# Mount error %d\r\n", FATFS_res);
+//    DC_state.discMount = 0;
+//  }else{
+//    DC_debugOut("# Mount drive OK\r\n");
+//    DC_state.discMount = 1;    
+//  }
   
   //Start led task
   xTaskCreate(vTASK_led,(char*)"TASK_led", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY+5, &ledTask_handle);
@@ -271,13 +271,14 @@ void DC_debugOut(char *str, ...)
   vsprintf(strBuffer, str, args);
   va_end(args);
   
+#ifdef DEBUG_MODE
   if ((CoreDebug->DHCSR & CoreDebug_DHCSR_C_DEBUGEN_Msk) ? true : false)
   {
     //taskENTER_CRITICAL();
     printf(strBuffer);
     //taskEXIT_CRITICAL();
   }
-  
+#endif
   //Debug mode
   if (USBP_mode == USBP_MODE_DEBUG)
   {
@@ -799,7 +800,7 @@ DEV_Status_t DC_setCalParam(uint8_t channel, V9203_line_t line, DC_calibrID_t ca
       break;
       
     case DC_CAL_REG_WWARTI:
-      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WARTI, data, 4);
+      memcpy((uint8_t*)&DC_calibr.channel_cal[channel].calTotalPhase[line].Cal_WWARTI, data, 4);
       break;
       
     case DC_CAL_REG_WWAPT:

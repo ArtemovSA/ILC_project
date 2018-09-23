@@ -132,16 +132,16 @@ static void V9203_setupReg(uint8_t channel, V9203_calibrate_t *calibr)
   checkSum += calibr->calTotalPhase[LINE_A].Cal_WAQT;
   // offset voltage RMS
   V9203_wr_flash(channel, RegWWARTUA, calibr->calTotalPhase[LINE_A].Cal_WWARTU);
-  checkSum += calibr->calTotalPhase[LINE_A].Cal_WARTU;
+  checkSum += calibr->calTotalPhase[LINE_A].Cal_WWARTU;
   // offset current RMS
   V9203_wr_flash(channel, RegWWARTIA, calibr->calTotalPhase[LINE_A].Cal_WWARTI);
-  checkSum += calibr->calTotalPhase[LINE_A].Cal_WARTI;
+  checkSum += calibr->calTotalPhase[LINE_A].Cal_WWARTI;
   // offset active power
   V9203_wr_flash(channel, RegWWAPTA, calibr->calTotalPhase[LINE_A].Cal_WWAPT);
-  checkSum += calibr->calTotalPhase[LINE_A].Cal_WAPT;
+  checkSum += calibr->calTotalPhase[LINE_A].Cal_WWAPT;
   // offset reactive power
   V9203_wr_flash(channel, RegWWAQTA, calibr->calTotalPhase[LINE_A].Cal_WWAQT);
-  checkSum += calibr->calTotalPhase[LINE_A].Cal_WAQT;
+  checkSum += calibr->calTotalPhase[LINE_A].Cal_WWAQT;
   
   // Phase B Total
   // gain voltage RMS
@@ -158,16 +158,16 @@ static void V9203_setupReg(uint8_t channel, V9203_calibrate_t *calibr)
   checkSum += calibr->calTotalPhase[LINE_B].Cal_WAQT;
   // offset voltage RMS
   V9203_wr_flash(channel, RegWWARTUB, calibr->calTotalPhase[LINE_B].Cal_WWARTU);
-  checkSum += calibr->calTotalPhase[LINE_B].Cal_WARTU;
+  checkSum += calibr->calTotalPhase[LINE_B].Cal_WWARTU;
   // offset current RMS
   V9203_wr_flash(channel, RegWWARTIB, calibr->calTotalPhase[LINE_B].Cal_WWARTI);
-  checkSum += calibr->calTotalPhase[LINE_B].Cal_WARTI;
+  checkSum += calibr->calTotalPhase[LINE_B].Cal_WWARTI;
   // offset active power
   V9203_wr_flash(channel, RegWWAPTB, calibr->calTotalPhase[LINE_B].Cal_WWAPT);
-  checkSum += calibr->calTotalPhase[LINE_B].Cal_WAPT;
+  checkSum += calibr->calTotalPhase[LINE_B].Cal_WWAPT;
   // offset reactive power
   V9203_wr_flash(channel, RegWWAQTB, calibr->calTotalPhase[LINE_B].Cal_WWAQT);
-  checkSum += calibr->calTotalPhase[LINE_B].Cal_WAQT;
+  checkSum += calibr->calTotalPhase[LINE_B].Cal_WWAQT;
   
   // Phase C Total
   // gain voltage RMS
@@ -184,16 +184,16 @@ static void V9203_setupReg(uint8_t channel, V9203_calibrate_t *calibr)
   checkSum += calibr->calTotalPhase[LINE_C].Cal_WAQT;
   // offset voltage RMS
   V9203_wr_flash(channel, RegWWARTUC, calibr->calTotalPhase[LINE_C].Cal_WWARTU);
-  checkSum += calibr->calTotalPhase[LINE_C].Cal_WARTU;
+  checkSum += calibr->calTotalPhase[LINE_C].Cal_WWARTU;
   // offset current RMS
   V9203_wr_flash(channel, RegWWARTIC, calibr->calTotalPhase[LINE_C].Cal_WWARTI);
-  checkSum += calibr->calTotalPhase[LINE_C].Cal_WARTI;
+  checkSum += calibr->calTotalPhase[LINE_C].Cal_WWARTI;
   // offset active power
   V9203_wr_flash(channel, RegWWAPTC, calibr->calTotalPhase[LINE_C].Cal_WWAPT);
-  checkSum += calibr->calTotalPhase[LINE_C].Cal_WAPT;
+  checkSum += calibr->calTotalPhase[LINE_C].Cal_WWAPT;
   // offset reactive power
   V9203_wr_flash(channel, RegWWAQTC, calibr->calTotalPhase[LINE_C].Cal_WWAQT);
-  checkSum += calibr->calTotalPhase[LINE_C].Cal_WAQT;
+  checkSum += calibr->calTotalPhase[LINE_C].Cal_WWAQT;
   
  
   //**********************************Others********************************************************
@@ -584,7 +584,7 @@ float V9203_getRMS_reactivePower(uint8_t channel, V9203_line_t line)
   if (regData == 0xFFFFFFFF)
     return -1;
   
-  return (float)regData*(*(float*)&DC_calibr.channel_cal[channel].calPropRPower);
+  return (double)regData*(*(float*)&DC_calibr.channel_cal[channel].calPropRPower);
 }
 //----------------------------------------------------------------------------------
 //Get S Consamption

@@ -817,7 +817,7 @@ void startDebugTask(void const * argument)
     
   //USB
   USBP_init();
-  USBC_init(osPriorityHigh);
+  USBC_init(osPriorityNormal);
   
   //DNS init
   ip4_addr_t ipaddr;
