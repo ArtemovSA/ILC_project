@@ -225,12 +225,17 @@ DEV_Status_t DC_getValues(uint8_t channel, V9203_line_t line, DC_valueID_t id, u
 
 //**********************************Flash log*******************************************************
 
+#define LOG_DEBUG_FILE_NAME "LOG_debug.log"
+
 typedef struct
 {
   uint32_t logID;
   uint64_t UTC_timeshtamp;
   
 }DC_log_t;
+
+//Log data
+void DC_logData(char* file, char *str, ...);
 
 //**********************************Main Functions**************************************************
 
@@ -286,10 +291,13 @@ void DC_LedBlink(LED_t led, uint16_t rate_Hz, uint16_t count);
 
 //**********************************DC state********************************************************
 
+#define DC_TRY_MQTT_CONN_ERROR          5 //Count trys reconnections to MQTT
+
 enum{
-  DC_ERR_ALL_OK = 0,
+  DC_ERR_MQTT = 0,
+  DC_ERR_ETH,
   DC_ERR_PCA9555,
-  DC_ERR_CHANNEL  
+  DC_ERR_CHANNEL
 };
 
 typedef struct{

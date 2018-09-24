@@ -68,35 +68,6 @@ void EMS_init()
   hooks.malloc_fn = pvPortMalloc;
   hooks.free_fn = vPortFree;
   cJSON_InitHooks(&hooks);
-
-//  extern char SDPath[4]; /* SD logical drive path */
-//  FATFS fileSystem;
-//  FIL testFile;
-//  FRESULT res;
-//  uint8_t testBuffer[16] = "SD write success";
-//  char path[] = "testfile.txt";
-//  uint32_t testBytes;
-//  
-//  Init log file on sd
-//  if(FATFS_LinkDriver(&SD_Driver, SDPath) == 0)
-//  {    
-//    if(f_mount(&fileSystem, (TCHAR const*)SDPath, 1) == FR_OK)
-//    {
-//      DC_debugOut("# Mount OK\r\r\n");
-//      if (f_open(&testFile, "testfile.txt", FA_WRITE | FA_CREATE_ALWAYS) == FR_OK)
-//      {
-//        res = f_write(&testFile, testBuffer, 16, &testBytes);
-//        res = f_close(&testFile);
-//      }
-//    }else{
-//      DC_debugOut("# Mount error\r\r\n");
-//    }
-//  }else{
-//    if(f_mkfs((TCHAR const*)SDPath, FM_FAT32, 512, 0, 0) == FR_OK)
-//    {
-//      DC_debugOut("# SD format OK\r\r\n");
-//    }
-//  }
 }
 //------------------------------------------------------------------------------
 //Get ip addres by name in JSON
@@ -571,15 +542,29 @@ void EMS_sendChannelVars(uint8_t channel_num)
 void EMS_ChannelDebugOut(uint8_t channel)
 {
   DC_debugOut("@ ch %d FREQ: %2f | RMSNI: %2f | CONSSP: %2f | COSFIS: %2f\r\r\n", channel, meshChan[channel].FREQ, meshChan[channel].RMSNI, meshChan[channel].CONSSP, meshChan[channel].COSFIS);
-  DC_debugOut("@ ch %d RMSU A: %2f | RMSU B: %2f | RMSU C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSV, meshChan[channel].phaseB.RMSV, meshChan[channel].phaseC.RMSV);
-  DC_debugOut("@ ch %d RMSI A: %2f | RMSI B: %2f | RMSI C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSI, meshChan[channel].phaseB.RMSI, meshChan[channel].phaseC.RMSI);
-  DC_debugOut("@ ch %d RMSP A: %2f | RMSP B: %2f | RMSP C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSP, meshChan[channel].phaseB.RMSP, meshChan[channel].phaseC.RMSP);
-  DC_debugOut("@ ch %d RMSRP A: %2f | RMSRP B: %2f | RMSRP C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSRP, meshChan[channel].phaseB.RMSRP, meshChan[channel].phaseC.RMSRP);
-  DC_debugOut("@ ch %d CONSSP A: %lld | CONSSP B: %lld | CONSSP C: %lld\r\r\n", channel, meshChan[channel].phaseA.CONSSP, meshChan[channel].phaseB.CONSSP, meshChan[channel].phaseC.CONSSP);
-  DC_debugOut("@ ch %d CONSP A: %lld | CONSP B: %lld | CONSP C: %lld\r\r\n", channel, meshChan[channel].phaseA.CONSP, meshChan[channel].phaseB.CONSP, meshChan[channel].phaseC.CONSP);
-  DC_debugOut("@ ch %d CONSRP A: %lld | CONSRP B: %lld | CONSRP C: %lld\r\r\n", channel, meshChan[channel].phaseA.CONSRP, meshChan[channel].phaseB.CONSRP, meshChan[channel].phaseC.CONSRP);
+  DC_debugOut("@ ch %d RMSU A: %2f      | RMSU B: %2f           | RMSU C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSV, meshChan[channel].phaseB.RMSV, meshChan[channel].phaseC.RMSV);
+  DC_debugOut("@ ch %d RMSI A: %2f      | RMSI B: %2f           | RMSI C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSI, meshChan[channel].phaseB.RMSI, meshChan[channel].phaseC.RMSI);
+  DC_debugOut("@ ch %d RMSP A: %2f      | RMSP B: %2f           | RMSP C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSP, meshChan[channel].phaseB.RMSP, meshChan[channel].phaseC.RMSP);
+  DC_debugOut("@ ch %d RMSRP A: %2f     | RMSRP B: %2f          | RMSRP C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSRP, meshChan[channel].phaseB.RMSRP, meshChan[channel].phaseC.RMSRP);
+  DC_debugOut("@ ch %d CONSSP A: %lld   | CONSSP B: %lld        | CONSSP C: %lld\r\r\n", channel, meshChan[channel].phaseA.CONSSP, meshChan[channel].phaseB.CONSSP, meshChan[channel].phaseC.CONSSP);
+  DC_debugOut("@ ch %d CONSP A: %lld    | CONSP B: %lld         | CONSP C: %lld\r\r\n", channel, meshChan[channel].phaseA.CONSP, meshChan[channel].phaseB.CONSP, meshChan[channel].phaseC.CONSP);
+  DC_debugOut("@ ch %d CONSRP A: %lld   | CONSRP B: %lld        | CONSRP C: %lld\r\r\n", channel, meshChan[channel].phaseA.CONSRP, meshChan[channel].phaseB.CONSRP, meshChan[channel].phaseC.CONSRP);
 }
-
+//------------------------------------------------------------------------------
+//Log mesh data
+void EMS_logMesh(uint8_t channel)
+{
+  //Log data
+  DC_logData(LOG_DATA_FILE_NAME, "%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%lld;%lld;%lld;%lld;%lld;%lld;%lld;%lld;%lld\r\n", 
+             channel, meshChan[channel].FREQ, meshChan[channel].RMSNI, meshChan[channel].CONSSP, meshChan[channel].COSFIS,
+             meshChan[channel].phaseA.RMSV, meshChan[channel].phaseB.RMSV, meshChan[channel].phaseC.RMSV,
+             meshChan[channel].phaseA.RMSI, meshChan[channel].phaseB.RMSI, meshChan[channel].phaseC.RMSI,
+             meshChan[channel].phaseA.RMSP, meshChan[channel].phaseB.RMSP, meshChan[channel].phaseC.RMSP,
+             meshChan[channel].phaseA.RMSRP, meshChan[channel].phaseB.RMSRP, meshChan[channel].phaseC.RMSRP,
+             meshChan[channel].phaseA.CONSSP, meshChan[channel].phaseB.CONSSP, meshChan[channel].phaseC.CONSSP,
+             meshChan[channel].phaseA.CONSRP, meshChan[channel].phaseB.CONSRP, meshChan[channel].phaseC.CONSRP
+             );
+}
 //******************************************************************************
 // startEMS_task function
 void startEMS_task(void const * argument)
@@ -612,6 +597,7 @@ void startEMS_task(void const * argument)
   
   while(1)
   {
+
     for (int i=0; i < V9203_COUNT_CHANNELS; i++)
     {
       if (DC_state.V9203_channelsActive & (1<<i))
@@ -675,6 +661,7 @@ void startEMS_task(void const * argument)
         
         //Debug out counter outputs variables
         EMS_ChannelDebugOut(i);
+        EMS_logMesh(i);
       }
     }
     
@@ -689,7 +676,7 @@ void startEMS_task(void const * argument)
     {
       //vTaskDelay(DC_set.EMS_out_period*1000);
     
-      vTaskDelayUntil( &xLastWakeTime, (const TickType_t) DC_set.EMS_out_period*1000);
+      vTaskDelayUntil( &xLastWakeTime, (const TickType_t) (DC_set.EMS_out_period*1000/portTICK_PERIOD_MS));
     }
     
     if (DC_set.EMS_autoSendEn == 1)

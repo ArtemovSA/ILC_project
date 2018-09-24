@@ -10,6 +10,9 @@
 #define EMS_TOPIC_CTRL_PREFIX "ctrl"
 #define EMS_TOPIC_DEB_PREFIX "debug"
 
+//Log file
+#define LOG_DATA_FILE_NAME              "LOG_meshData.log"
+
 //Topics names
 #define EMS_TOPIC_CHANNEL               "channel"
 #define EMS_TOPIC_CALIBRATE             "calibrate"

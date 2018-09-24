@@ -165,7 +165,7 @@ int main(void)
   HAL_GPIO_WritePin(LED_STATUS_GPIO_Port, LED_STATUS_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(LED_RUN_GPIO_Port, LED_RUN_Pin, GPIO_PIN_SET);
   
-  jump_to_application();
+  //jump_to_application();
   
   //Init memory
   MEM_init(&hsram1, &hsram2, &hnand1);

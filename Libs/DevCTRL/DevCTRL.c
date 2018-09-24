@@ -56,7 +56,6 @@ volatile ledState_t runState = LED_OFF;
 //Fat variables
 FRESULT FATFS_res;
 FATFS FATFS_Obj;
-FIL LOG_file;
 
 //--------------------------------------------------------------------------------------------------
 //Init
@@ -110,23 +109,48 @@ void DC_init(osMessageQId *eventQueue)
   }
   
   //SD card init
-//  FATFS_res = f_mount(&FATFS_Obj, "0", 1);
-//  if (FATFS_res != FR_OK)
-//  {
-//    DC_debugOut("# Mount error %d\r\n", FATFS_res);
-//    DC_state.discMount = 0;
-//  }else{
-//    DC_debugOut("# Mount drive OK\r\n");
-//    DC_state.discMount = 1;    
-//  }
+  FATFS_res = f_mount(&FATFS_Obj, SDPath, 1);
+  if (FATFS_res != FR_OK)
+  {
+    DC_debugOut("# Mount error %d\r\n", FATFS_res);
+    DC_state.discMount = 0;
+  }else{
+    DC_debugOut("# Mount drive OK\r\n");
+    DC_state.discMount = 1;    
+  }
   
   //Start led task
   xTaskCreate(vTASK_led,(char*)"TASK_led", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY+5, &ledTask_handle);
 }
 //--------------------------------------------------------------------------------------------------
 //Log data
-void DC_logData(char *str, ...)
+void DC_logData(char* file, char *str, ...)
 {
+  FIL LOG_file;
+  va_list args;
+  va_start(args, str);
+  va_end(args);
+  
+  vsprintf(strBuffer, str, args);
+  va_end(args);
+  
+  FATFS_res = f_open(&LOG_file, file, FA_WRITE | FA_OPEN_ALWAYS);
+  if (FATFS_res != FR_OK)
+  {
+    DC_debugOut("# File log error%d\r\n", FATFS_res);
+  }
+  FATFS_res = f_lseek(&LOG_file, f_size(&LOG_file));
+  
+  f_printf(&LOG_file, strBuffer);
+  f_close(&LOG_file);
+  
+  va_end(args);
+}
+//--------------------------------------------------------------------------------------------------
+//Log data
+void DC_logDebug(char *str, ...)
+{
+  FIL LOG_file;
   char datetime[50];
   va_list args;
   va_start(args, str);
@@ -143,7 +167,7 @@ void DC_logData(char *str, ...)
     strcat(strBuffer, datetime);
     strcat(strBuffer, "\r\n");
     
-    FATFS_res = f_open(&LOG_file, "LOG_data.txt", FA_WRITE | FA_OPEN_ALWAYS);
+    FATFS_res = f_open(&LOG_file, LOG_DEBUG_FILE_NAME, FA_CREATE_NEW | FA_WRITE | FA_OPEN_ALWAYS);
     if (FATFS_res != FR_OK)
     {
       DC_debugOut("# File log error%d\r\n", FATFS_res);
@@ -156,7 +180,6 @@ void DC_logData(char *str, ...)
   
   va_end(args);
 }
-
 //--------------------------------------------------------------------------------------------------
 //LED task
 void vTASK_led(void *pvParameters)
@@ -241,7 +264,7 @@ void DC_LedBlink(LED_t led, uint16_t rate_Hz, uint16_t count)
     }else{
       state = 1;
     }
-    
+
     DC_LedOut(led, state);
     vTaskDelay(delay);
   }
@@ -285,6 +308,9 @@ void DC_debugOut(char *str, ...)
     //Отправить данные
     USBP_Send((uint8_t*)strBuffer, strlen(strBuffer));
   }
+  
+  if (DC_state.discMount == 1)
+    DC_logDebug(strBuffer);
   
   va_end(args);
 }
