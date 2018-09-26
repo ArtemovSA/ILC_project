@@ -17,5 +17,7 @@ void CL_setSystem_Timestamp(uint32_t sec);
 DEV_Status_t CL_getSystem_Timestamp(time_t *timestamp);
 //Get format date time
 DEV_Status_t CL_getFormat_DateTime(char* buf);
+//Get dateTime
+DEV_Status_t CL_getDateTime(uint8_t* year, uint8_t* month, uint8_t* date, uint8_t* hours, uint8_t* minutes, uint8_t* sec);
 
 #endif

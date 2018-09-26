@@ -11,7 +11,7 @@
 #define EMS_TOPIC_DEB_PREFIX "debug"
 
 //Log file
-#define LOG_DATA_FILE_NAME              "LOG_meshData.log"
+#define LOG_DATA_FILE_NAME_PX           "LOG_meshData"
 
 //Topics names
 #define EMS_TOPIC_CHANNEL               "channel"

@@ -359,6 +359,7 @@
           <state>$PROJ_DIR$\..\Libs\VM_python</state>
           <state>$PROJ_DIR$\..\Libs\USB_port</state>
           <state>$PROJ_DIR$\..\Libs\VM_python\pymite\src\vm</state>
+          <state>$PROJ_DIR$\..\Libs\Modem_lib</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1264,6 +1265,15 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\Libs\Memory\Memory.h</name>
+      </file>
+    </group>
+    <group>
+      <name>Modem</name>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\Modem_lib\Modem.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\Modem_lib\Modem.h</name>
       </file>
     </group>
     <group>
