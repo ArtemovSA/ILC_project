@@ -57,6 +57,7 @@ volatile ledState_t runState = LED_OFF;
 FRESULT FATFS_res;
 FATFS FATFS_Obj;
 
+uint8_t work[2048];
 //--------------------------------------------------------------------------------------------------
 //Init
 void DC_init(osMessageQId *eventQueue)
@@ -107,9 +108,8 @@ void DC_init(osMessageQId *eventQueue)
     if (stat == HAL_TIMEOUT)
       DC_debugOut("# PCA9555 TIMEOUT\r\n");
   }
-  
-  //SD card init
-  FATFS_res = f_mount(&FATFS_Obj, SDPath, 1); //SDPath
+
+  FATFS_res = f_mount(&FATFS_Obj,SDPath, 1); //SDPath
   if (FATFS_res != FR_OK)
   {
     DC_debugOut("# Mount error %d\r\n", FATFS_res);
@@ -148,7 +148,7 @@ void DC_logData(char* fileNamePx, char *str, ...)
     sprintf(timeStr, ";%d:%d:%d\r\n", hours, minutes, sec);
     strcat(strBuffer,timeStr);
     
-    FATFS_res = f_open(&LOG_file, fileName, FA_WRITE | FA_OPEN_ALWAYS);
+    FATFS_res = f_open(&LOG_file, fileName, FA_OPEN_APPEND | FA_WRITE );
     if (FATFS_res != FR_OK)
     {
       //DC_debugOut("# File data log error %d\r\n", FATFS_res);
@@ -160,10 +160,10 @@ void DC_logData(char* fileNamePx, char *str, ...)
   }
 }
 //--------------------------------------------------------------------------------------------------
+FIL LOG_fileDebug;
 //Log data
 void DC_logDebug(char *str, ...)
 {
-  FIL LOG_fileDebug;
   char fileName[50];
   char timeStr[50];
   uint8_t year, month, date;
@@ -178,22 +178,21 @@ void DC_logDebug(char *str, ...)
   if (CL_getDateTime(&year, &month, &date, &hours, &minutes, &sec) == DEV_OK)
   {
     if (year == 100)
-      strcpy(fileName, "LOG_start.log");
+      strcpy(fileName, "LOGS.txt");
     else
       sprintf(fileName, "%s_%d_%d_%d.log", LOG_DEBUG_FILE_NAME_PX, year, month, date);
     
-    sprintf(timeStr, ";%d:%d:%d\r\n", hours, minutes, sec);
-    strcat(strBuffer,timeStr);
-    
-    FATFS_res = f_open(&LOG_fileDebug, "log", FA_CREATE_NEW | FA_WRITE );
-    if (FATFS_res != FR_OK)
+    //sprintf(timeStr, ";%d:%d:%d\r\n", hours, minutes, sec);
+    //strcat(strBuffer,timeStr);
+
+    FATFS_res = f_open(&LOG_fileDebug, fileName, FA_OPEN_ALWAYS | FA_OPEN_APPEND | FA_WRITE );
+
+    if (FATFS_res == FR_OK)
     {
-      //DC_debugOut("# File debug log error %d\r\n", FATFS_res);
+      f_printf(&LOG_fileDebug, strBuffer);
+      f_close(&LOG_fileDebug);
     }
-    FATFS_res = f_lseek(&LOG_fileDebug, f_size(&LOG_fileDebug));
-    
-    f_printf(&LOG_fileDebug, strBuffer);
-    f_close(&LOG_fileDebug);
+
   }
   
 }

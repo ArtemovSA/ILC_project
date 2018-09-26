@@ -225,7 +225,7 @@ DEV_Status_t DC_getValues(uint8_t channel, V9203_line_t line, DC_valueID_t id, u
 
 //**********************************Flash log*******************************************************
 
-#define LOG_DEBUG_FILE_NAME_PX "LOG_debug"
+#define LOG_DEBUG_FILE_NAME_PX "LOGD"
 
 typedef struct
 {

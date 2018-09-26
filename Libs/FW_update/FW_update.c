@@ -81,6 +81,11 @@ DEV_Status_t FW_readCardMetadata(FW_metadata_t* metadata)
   //Открыть файл информации
   ret = f_open(&fileInf, FW_SD_INF_FILE_NAME, FA_OPEN_EXISTING | FA_READ);
   
+  ret = f_open(&fileInf, FW_SD_INF_FILE_NAME, FA_CREATE_ALWAYS | FA_WRITE );
+  f_printf(&fileInf, "Hello");
+    f_close(&fileInf);
+  ret =  f_mount(&filesystem, SDPath, 0);
+    
   //If inf file exist
   if (ret == FR_OK) {
 

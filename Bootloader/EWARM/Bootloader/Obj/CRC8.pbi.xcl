@@ -1,30 +1,30 @@
-"D:\Sergey\ILC_project\Libs\CRC8\CRC8.c"
+"C:\Users\user\Desktop\ILC\ILC_project\Libs\CRC8\CRC8.c"
 -std=c99
 -ferror-limit=100
 -I
-D:\Sergey\ILC_project\Bootloader\EWARM/../Inc
+C:\Users\user\Desktop\ILC\ILC_project\Bootloader\EWARM/../Inc
 -I
-D:\Sergey\ILC_project\Bootloader\EWARM/../Drivers/STM32F4xx_HAL_Driver/Inc
+C:\Users\user\Desktop\ILC\ILC_project\Bootloader\EWARM/../Drivers/STM32F4xx_HAL_Driver/Inc
 -I
-D:\Sergey\ILC_project\Bootloader\EWARM/../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
+C:\Users\user\Desktop\ILC\ILC_project\Bootloader\EWARM/../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
 -I
-D:\Sergey\ILC_project\Bootloader\EWARM/../Drivers/CMSIS/Device/ST/STM32F4xx/Include
+C:\Users\user\Desktop\ILC\ILC_project\Bootloader\EWARM/../Drivers/CMSIS/Device/ST/STM32F4xx/Include
 -I
-D:\Sergey\ILC_project\Bootloader\EWARM/../Drivers/CMSIS/Include
+C:\Users\user\Desktop\ILC\ILC_project\Bootloader\EWARM/../Drivers/CMSIS/Include
 -I
-D:\Sergey\ILC_project\Bootloader\EWARM\..\..\Libs\Memory
+C:\Users\user\Desktop\ILC\ILC_project\Bootloader\EWARM\..\..\Libs\Memory
 -I
-D:\Sergey\ILC_project\Bootloader\EWARM\..\..\Libs\FW_update
+C:\Users\user\Desktop\ILC\ILC_project\Bootloader\EWARM\..\..\Libs\FW_update
 -I
-D:\Sergey\ILC_project\Bootloader\EWARM\..\..\Libs\CRC8
+C:\Users\user\Desktop\ILC\ILC_project\Bootloader\EWARM\..\..\Libs\CRC8
 -I
-D:\Sergey\ILC_project\Bootloader\EWARM/../Middlewares/Third_Party/FatFs/src
+C:\Users\user\Desktop\ILC\ILC_project\Bootloader\EWARM/../Middlewares/Third_Party/FatFs/src
 -I
-D:\Sergey\ILC_project\Bootloader\EWARM\..\..\Libs\deviceDefs
+C:\Users\user\Desktop\ILC\ILC_project\Bootloader\EWARM\..\..\Libs\deviceDefs
 -I
-D:\Sergey\ILC_project\Bootloader\EWARM\..\..\Libs\FW_update
+C:\Users\user\Desktop\ILC\ILC_project\Bootloader\EWARM\..\..\Libs\FW_update
 -I
-D:\Sergey\ILC_project\Bootloader\EWARM\..\..\Libs\CRC16
+C:\Users\user\Desktop\ILC\ILC_project\Bootloader\EWARM\..\..\Libs\CRC16
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -I
@@ -32,29 +32,29 @@ C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\inc
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\inc\c
 -I
-D:\Sergey\ILC_project\Bootloader\Inc
+C:\Users\user\Desktop\ILC\ILC_project\Bootloader\Inc
 -I
-D:\Sergey\ILC_project\Bootloader\Drivers\STM32F4xx_HAL_Driver\Inc
+C:\Users\user\Desktop\ILC\ILC_project\Bootloader\Drivers\STM32F4xx_HAL_Driver\Inc
 -I
-D:\Sergey\ILC_project\Bootloader\Drivers\STM32F4xx_HAL_Driver\Inc\Legacy
+C:\Users\user\Desktop\ILC\ILC_project\Bootloader\Drivers\STM32F4xx_HAL_Driver\Inc\Legacy
 -I
-D:\Sergey\ILC_project\Bootloader\Drivers\CMSIS\Device\ST\STM32F4xx\Include
+C:\Users\user\Desktop\ILC\ILC_project\Bootloader\Drivers\CMSIS\Device\ST\STM32F4xx\Include
 -I
-D:\Sergey\ILC_project\Bootloader\Drivers\CMSIS\Include
+C:\Users\user\Desktop\ILC\ILC_project\Bootloader\Drivers\CMSIS\Include
 -I
-D:\Sergey\ILC_project\Libs\Memory
+C:\Users\user\Desktop\ILC\ILC_project\Libs\Memory
 -I
-D:\Sergey\ILC_project\Libs\FW_update
+C:\Users\user\Desktop\ILC\ILC_project\Libs\FW_update
 -I
-D:\Sergey\ILC_project\Libs\CRC8
+C:\Users\user\Desktop\ILC\ILC_project\Libs\CRC8
 -I
-D:\Sergey\ILC_project\Bootloader\Middlewares\Third_Party\FatFs\src
+C:\Users\user\Desktop\ILC\ILC_project\Bootloader\Middlewares\Third_Party\FatFs\src
 -I
-D:\Sergey\ILC_project\Libs\deviceDefs
+C:\Users\user\Desktop\ILC\ILC_project\Libs\deviceDefs
 -I
-D:\Sergey\ILC_project\Libs\FW_update
+C:\Users\user\Desktop\ILC\ILC_project\Libs\FW_update
 -I
-D:\Sergey\ILC_project\Libs\CRC16
+C:\Users\user\Desktop\ILC\ILC_project\Libs\CRC16
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -DUSE_HAL_DRIVER=1
@@ -197,8 +197,8 @@ C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -D__JMP_BUF_ELEMENT_TYPE__=unsigned long long int
 -D__JMP_BUF_NUM_ELEMENTS__=16
 -D__TID__=0xcf60
--D__VER__=7080004
--D__BUILD_NUMBER__=12462
+-D__VER__=7080003
+-D__BUILD_NUMBER__=12102
 -D__IAR_SYSTEMS_ICC__=8
 -D__LITTLE_ENDIAN__=1
 -D__BOOL_TYPE__=unsigned char
@@ -307,7 +307,7 @@ C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -D__EDG_CPP11_IL_EXTENSIONS_SUPPORTED=1
 -D_DLIB_CONFIG_FILE_HEADER_NAME="C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\INC\c\DLib_Config_Normal.h"
 -D_DLIB_CONFIG_FILE_STRING="C:\\Program Files (x86)\\IAR Systems\\Embedded Workbench 7.5\\arm\\INC\\c\\DLib_Config_Normal.h"
--D__VERSION__="IAR ANSI C/C++ Compiler V7.80.4.12462/W32 for ARM"
+-D__VERSION__="IAR ANSI C/C++ Compiler V7.80.3.12102/W32 for ARM"
 -D__CODE_MEMORY_LIST1__()=__CODE_MEM_HELPER1__(__code, 0 )
 -D__CODE_MEMORY_LIST2__(_P1)=__CODE_MEM_HELPER2__(__code, 0 ,  _P1 )
 -D__CODE_MEMORY_LIST3__(_P1, _P2)=__CODE_MEM_HELPER3__(__code, 0 ,  _P1 ,  _P2 )
