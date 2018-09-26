@@ -1,11 +1,8 @@
 
 #include "Modem.h"
-#include "Delay.h"
-#include "em_gpio.h"
 #include "Task_transfer.h"
 #include "stdio.h"
 #include "string.h"
-#include "UART.h"
 
 #include "FreeRTOS.h"
 #include "queue.h"

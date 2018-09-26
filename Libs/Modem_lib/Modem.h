@@ -2,7 +2,6 @@
 #define Modem_LIB
 
 #include "stdint.h"
-#include "InitDevice.h"
 
 #define Modem_GSM_EN_PORT V_GSM_EN_PORT
 #define Modem_GSM_EN_PIN V_GSM_EN_PIN
