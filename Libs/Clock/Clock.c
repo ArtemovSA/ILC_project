@@ -84,6 +84,21 @@ DEV_Status_t CL_getSystem_Timestamp(time_t *timestamp)
   return DEV_OK;
 }
 //------------------------------------------------------------------------------------------------
+//Get date
+DEV_Status_t CL_getDate(uint8_t* year, uint8_t* month, uint8_t* date)
+{
+  RTC_DateTypeDef currentDate;
+  
+  if (HAL_RTC_GetDate(&hrtc, &currentDate, RTC_FORMAT_BIN) != HAL_OK)
+    return DEV_ERROR;
+  
+  *year = currentDate.Year + 100;
+  *date = currentDate.Date;
+  *month = currentDate.Month - 1;
+  
+  return DEV_OK;
+}
+//------------------------------------------------------------------------------------------------
 //Get format date time
 DEV_Status_t CL_getFormat_DateTime(char* buf)
 {

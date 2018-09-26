@@ -155,14 +155,16 @@ void DC_logDebug(char *str, ...)
   va_list args;
   va_start(args, str);
   va_end(args);
+  RTC_DateTypeDef currentDate;
   
   vsprintf(strBuffer, str, args);
   va_end(args);
   
-  
   //Get format date time
-  if (CL_getFormat_DateTime(datetime) == DEV_OK)
+  if (HAL_RTC_GetDate(&hrtc, &currentDate, RTC_FORMAT_BIN) == HAL_OK)
   {
+    currentDate.
+      
     strcat(strBuffer,";");
     strcat(strBuffer, datetime);
     strcat(strBuffer, "\r\n");
