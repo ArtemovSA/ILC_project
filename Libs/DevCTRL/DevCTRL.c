@@ -108,7 +108,12 @@ void DC_init(osMessageQId *eventQueue)
       DC_debugOut("# PCA9555 TIMEOUT\r\n");
   }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+  
+  //SD card init
+>>>>>>> parent of 14ddd8d... log debug
 =======
   
   //SD card init
@@ -174,7 +179,10 @@ void DC_logDebug(char *str, ...)
 {
   FIL LOG_fileDebug;
 <<<<<<< HEAD
+<<<<<<< HEAD
   uint16_t written;
+=======
+>>>>>>> parent of 14ddd8d... log debug
 =======
 >>>>>>> parent of 14ddd8d... log debug
   char fileName[50];
@@ -191,6 +199,7 @@ void DC_logDebug(char *str, ...)
   if (CL_getDateTime(&year, &month, &date, &hours, &minutes, &sec) == DEV_OK)
   {
     if (year == 100)
+<<<<<<< HEAD
 <<<<<<< HEAD
       strcpy(fileName, "LOGS");
     else
@@ -219,10 +228,27 @@ void DC_logDebug(char *str, ...)
     {
       //DC_debugOut("# File debug log error %d\r\n", FATFS_res);
     }
+=======
+      strcpy(fileName, "LOG_start.log");
+    else
+      sprintf(fileName, "%s_%d_%d_%d.log", LOG_DEBUG_FILE_NAME_PX, year, month, date);
+    
+    sprintf(timeStr, ";%d:%d:%d\r\n", hours, minutes, sec);
+    strcat(strBuffer,timeStr);
+    
+    FATFS_res = f_open(&LOG_fileDebug, "log", FA_CREATE_NEW | FA_WRITE );
+    if (FATFS_res != FR_OK)
+    {
+      //DC_debugOut("# File debug log error %d\r\n", FATFS_res);
+    }
+>>>>>>> parent of 14ddd8d... log debug
     FATFS_res = f_lseek(&LOG_fileDebug, f_size(&LOG_fileDebug));
     
     f_printf(&LOG_fileDebug, strBuffer);
     f_close(&LOG_fileDebug);
+<<<<<<< HEAD
+>>>>>>> parent of 14ddd8d... log debug
+=======
 >>>>>>> parent of 14ddd8d... log debug
   }
 }
