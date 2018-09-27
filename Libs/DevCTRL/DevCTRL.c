@@ -57,7 +57,6 @@ volatile ledState_t runState = LED_OFF;
 FRESULT FATFS_res;
 FATFS FATFS_Obj;
 
-uint8_t work[2048];
 //--------------------------------------------------------------------------------------------------
 //Init
 void DC_init(osMessageQId *eventQueue)
@@ -108,7 +107,12 @@ void DC_init(osMessageQId *eventQueue)
     if (stat == HAL_TIMEOUT)
       DC_debugOut("# PCA9555 TIMEOUT\r\n");
   }
+<<<<<<< HEAD
 
+=======
+  
+  //SD card init
+>>>>>>> parent of 14ddd8d... log debug
   FATFS_res = f_mount(&FATFS_Obj, SDPath, 1); //SDPath
   if (FATFS_res != FR_OK)
   {
@@ -146,8 +150,16 @@ void DC_logData(char* fileNamePx, char *str, ...)
       sprintf(fileName, "%s_%d_%d_%d.log", fileNamePx, year, month, date);
 
     
+<<<<<<< HEAD
     FATFS_res = f_open(&LOG_file, fileName, FA_OPEN_ALWAYS | FA_WRITE );
     if (FATFS_res == FR_OK)
+=======
+    sprintf(timeStr, ";%d:%d:%d\r\n", hours, minutes, sec);
+    strcat(strBuffer,timeStr);
+    
+    FATFS_res = f_open(&LOG_file, fileName, FA_WRITE | FA_OPEN_ALWAYS);
+    if (FATFS_res != FR_OK)
+>>>>>>> parent of 14ddd8d... log debug
     {
       sprintf(timeStr, "%d:%d:%d ", hours, minutes, sec);
       strcat(timeStr, strBuffer);
@@ -161,7 +173,10 @@ void DC_logData(char* fileNamePx, char *str, ...)
 void DC_logDebug(char *str, ...)
 {
   FIL LOG_fileDebug;
+<<<<<<< HEAD
   uint16_t written;
+=======
+>>>>>>> parent of 14ddd8d... log debug
   char fileName[50];
   char timeStr[50];
   uint8_t year, month, date;
@@ -176,6 +191,7 @@ void DC_logDebug(char *str, ...)
   if (CL_getDateTime(&year, &month, &date, &hours, &minutes, &sec) == DEV_OK)
   {
     if (year == 100)
+<<<<<<< HEAD
       strcpy(fileName, "LOGS");
     else
       sprintf(fileName, "%s_%d_%d_%d.log", LOG_DEBUG_FILE_NAME_PX, year, month, date);
@@ -190,6 +206,24 @@ void DC_logDebug(char *str, ...)
       if ((FATFS_res = f_write(&LOG_fileDebug, strBuffer, strlen(strBuffer), (UINT*)&written)) == FR_OK)
         f_close(&LOG_fileDebug);
     }
+=======
+      strcpy(fileName, "LOG_start.log");
+    else
+      sprintf(fileName, "%s_%d_%d_%d.log", LOG_DEBUG_FILE_NAME_PX, year, month, date);
+    
+    sprintf(timeStr, ";%d:%d:%d\r\n", hours, minutes, sec);
+    strcat(strBuffer,timeStr);
+    
+    FATFS_res = f_open(&LOG_fileDebug, "log", FA_CREATE_NEW | FA_WRITE );
+    if (FATFS_res != FR_OK)
+    {
+      //DC_debugOut("# File debug log error %d\r\n", FATFS_res);
+    }
+    FATFS_res = f_lseek(&LOG_fileDebug, f_size(&LOG_fileDebug));
+    
+    f_printf(&LOG_fileDebug, strBuffer);
+    f_close(&LOG_fileDebug);
+>>>>>>> parent of 14ddd8d... log debug
   }
 }
 //--------------------------------------------------------------------------------------------------

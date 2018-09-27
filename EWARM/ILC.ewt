@@ -1416,6 +1416,15 @@
       </file>
     </group>
     <group>
+      <name>Modem</name>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\Modem_lib\Modem.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\Modem_lib\Modem.h</name>
+      </file>
+    </group>
+    <group>
       <name>MQTT</name>
       <file>
         <name>$PROJ_DIR$\..\Libs\MQTT\devMQTT.c</name>

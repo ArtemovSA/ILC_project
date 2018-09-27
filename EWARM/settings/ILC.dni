@@ -16,7 +16,11 @@ stlinkfoundProbes=
 stlinkResetStyle=0
 stlinkResetStrategy=1
 [DebugChecksum]
+<<<<<<< HEAD
 Checksum=1589676344
+=======
+Checksum=1408558853
+>>>>>>> parent of 14ddd8d... log debug
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
