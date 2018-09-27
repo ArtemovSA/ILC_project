@@ -109,7 +109,7 @@ void DC_init(osMessageQId *eventQueue)
       DC_debugOut("# PCA9555 TIMEOUT\r\n");
   }
 
-  FATFS_res = f_mount(&FATFS_Obj,SDPath, 1); //SDPath
+  FATFS_res = f_mount(&FATFS_Obj, SDPath, 1); //SDPath
   if (FATFS_res != FR_OK)
   {
     DC_debugOut("# Mount error %d\r\n", FATFS_res);
@@ -144,26 +144,24 @@ void DC_logData(char* fileNamePx, char *str, ...)
       strcpy(fileName, "LOG_startData.log");
     else
       sprintf(fileName, "%s_%d_%d_%d.log", fileNamePx, year, month, date);
+
     
-    sprintf(timeStr, ";%d:%d:%d\r\n", hours, minutes, sec);
-    strcat(strBuffer,timeStr);
-    
-    FATFS_res = f_open(&LOG_file, fileName, FA_OPEN_APPEND | FA_WRITE );
-    if (FATFS_res != FR_OK)
+    FATFS_res = f_open(&LOG_file, fileName, FA_OPEN_ALWAYS | FA_WRITE );
+    if (FATFS_res == FR_OK)
     {
-      //DC_debugOut("# File data log error %d\r\n", FATFS_res);
+      sprintf(timeStr, "%d:%d:%d ", hours, minutes, sec);
+      strcat(timeStr, strBuffer);
+      f_printf(&LOG_file, strBuffer);
+      f_close(&LOG_file);
     }
-    FATFS_res = f_lseek(&LOG_file, f_size(&LOG_file));
-    
-    f_printf(&LOG_file, strBuffer);
-    f_close(&LOG_file);
   }
 }
 //--------------------------------------------------------------------------------------------------
-FIL LOG_fileDebug;
 //Log data
 void DC_logDebug(char *str, ...)
 {
+  FIL LOG_fileDebug;
+  uint16_t written;
   char fileName[50];
   char timeStr[50];
   uint8_t year, month, date;
@@ -178,23 +176,21 @@ void DC_logDebug(char *str, ...)
   if (CL_getDateTime(&year, &month, &date, &hours, &minutes, &sec) == DEV_OK)
   {
     if (year == 100)
-      strcpy(fileName, "LOGS.txt");
+      strcpy(fileName, "LOGS");
     else
       sprintf(fileName, "%s_%d_%d_%d.log", LOG_DEBUG_FILE_NAME_PX, year, month, date);
-    
-    //sprintf(timeStr, ";%d:%d:%d\r\n", hours, minutes, sec);
-    //strcat(strBuffer,timeStr);
 
-    FATFS_res = f_open(&LOG_fileDebug, fileName, FA_OPEN_ALWAYS | FA_OPEN_APPEND | FA_WRITE );
+    FATFS_res = f_open(&LOG_fileDebug, fileName, FA_CREATE_NEW | FA_OPEN_APPEND | FA_WRITE );
 
     if (FATFS_res == FR_OK)
     {
-      f_printf(&LOG_fileDebug, strBuffer);
-      f_close(&LOG_fileDebug);
+      sprintf(timeStr, "%d:%d:%d ", hours, minutes, sec);
+      strcat(timeStr, strBuffer);
+      
+      if ((FATFS_res = f_write(&LOG_fileDebug, strBuffer, strlen(strBuffer), (UINT*)&written)) == FR_OK)
+        f_close(&LOG_fileDebug);
     }
-
   }
-  
 }
 //--------------------------------------------------------------------------------------------------
 //LED task
