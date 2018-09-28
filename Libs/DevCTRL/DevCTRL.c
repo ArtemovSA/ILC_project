@@ -56,6 +56,8 @@ volatile ledState_t runState = LED_OFF;
 //Fat variables
 FRESULT FATFS_res;
 FATFS FATFS_Obj;
+FIL LOG_fileDebug;
+FIL LOG_fileData;
 
 //--------------------------------------------------------------------------------------------------
 //Init
@@ -127,7 +129,6 @@ void DC_init(osMessageQId *eventQueue)
 //Log data
 void DC_logData(char* fileNamePx, char *str, ...)
 {
-  FIL LOG_file;
   char fileName[50];
   char timeStr[50];
   uint8_t year, month, date;
@@ -142,17 +143,17 @@ void DC_logData(char* fileNamePx, char *str, ...)
   if (CL_getDateTime(&year, &month, &date, &hours, &minutes, &sec) == DEV_OK)
   {
     if (year == 100)
-      strcpy(fileName, "LOG_startData.log");
+      FATFS_res = f_open(&LOG_fileData, "LOG_startData.log", FA_CREATE_ALWAYS | FA_WRITE );
     else
       sprintf(fileName, "%s_%d_%d_%d.log", fileNamePx, year, month, date);
 
-    FATFS_res = f_open(&LOG_file, fileName, FA_WRITE | FA_OPEN_ALWAYS);
+    FATFS_res = f_open(&LOG_fileData, fileName, FA_WRITE | FA_OPEN_ALWAYS);
     if (FATFS_res != FR_OK)
     {
       sprintf(timeStr, "%d:%d:%d ", hours, minutes, sec);
       strcat(timeStr, strBuffer);
-      f_printf(&LOG_file, strBuffer);
-      f_close(&LOG_file);
+      f_printf(&LOG_fileData, strBuffer);
+      f_close(&LOG_fileData);
     }
   }
 }
@@ -160,11 +161,8 @@ void DC_logData(char* fileNamePx, char *str, ...)
 //Log data
 void DC_logDebug(char *str, ...)
 {
-  FIL LOG_fileDebug;
-  uint16_t written;
-
   char fileName[50];
-  char timeStr[50];
+  char writeStr[150];
   uint8_t year, month, date;
   uint8_t hours, minutes, sec;
   
@@ -177,18 +175,19 @@ void DC_logDebug(char *str, ...)
   if (CL_getDateTime(&year, &month, &date, &hours, &minutes, &sec) == DEV_OK)
   {
     if (year == 100)
-      strcpy(fileName, "LOGS");
+      FATFS_res = f_open(&LOG_fileDebug, "LOG_start.log", FA_CREATE_ALWAYS | FA_WRITE );
     else
+    {
       sprintf(fileName, "%s_%d_%d_%d.log", LOG_DEBUG_FILE_NAME_PX, year, month, date);
-    
-    FATFS_res = f_open(&LOG_fileDebug, fileName, FA_OPEN_APPEND | FA_WRITE );
+      FATFS_res = f_open(&LOG_fileDebug, fileName, FA_OPEN_APPEND | FA_WRITE );
+    }
     
     if (FATFS_res == FR_OK)
     {
-      sprintf(timeStr, "%d:%d:%d ", hours, minutes, sec);
-      strcat(timeStr, strBuffer);
+      sprintf(writeStr, "%d:%d:%d ", hours, minutes, sec);
+      strcat(writeStr, strBuffer);
       
-      f_printf(&LOG_fileDebug, strBuffer);
+      f_printf(&LOG_fileDebug, writeStr);
       f_close(&LOG_fileDebug);
     }
   }
@@ -321,8 +320,9 @@ void DC_debugOut(char *str, ...)
     //Отправить данные
     USBP_Send((uint8_t*)strBuffer, strlen(strBuffer));
   }
-
-  va_end(args);
+  
+  if (DC_state.discMount == 1)
+    DC_logDebug(strBuffer);
 }
 //--------------------------------------------------------------------------------------------------
 //IP out

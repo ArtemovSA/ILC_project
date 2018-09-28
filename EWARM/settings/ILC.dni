@@ -11,14 +11,14 @@ ByteLimit=50
 [StLinkDriver]
 CStepIntDis=_ 0
 LeaveTargetRunning=_ 0
-stlinkserialNo=40450487
+stlinkserialNo=30303031
 stlinkfoundProbes=
 stlinkResetStyle=0
 stlinkResetStrategy=1
 [DebugChecksum]
 <<<<<<< HEAD
 <<<<<<< HEAD
-Checksum=2099925015
+Checksum=1168719617
 =======
 Checksum=1408558853
 >>>>>>> parent of 14ddd8d... log debug
@@ -212,11 +212,8 @@ Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_interp.c}.1
 Bp1=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\WM_python\board\py_plat.c}.180.14" 0 0 1 "" 0 "" 0
 Bp2=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Src\usbd_cdc_if.c}.451.5" 0 0 1 "" 0 "" 0
 Bp3=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Src\usbd_cdc_if.c}.442.5" 0 0 1 "" 0 "" 0
-Bp4=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Src\stm32f4xx_it.c}.74.3" 0 0 1 "" 0 "" 0
-Bp5=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Src\main.c}.845.8" 0 0 1 "" 0 "" 0
-Bp6=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\DevCTRL\DevCTRL.c}.193.1" 0 0 1 "" 0 "" 0
-Bp7=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\DevCTRL\DevCTRL.c}.186.7" 0 0 1 "" 0 "" 0
-Count=8
+Bp4=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\Src\stm32f4xx_it.c}.76.3" 0 0 1 "" 0 "" 0
+Count=5
 [Aliases]
 A0=_ "C:\Users\Sergey\Desktop\INS\ILC\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c" ""
 A1=_ "C:\Users\Sergey\Desktop\INS\ILC\Middlewares\Third_Party\FreeRTOS\Source\tasks.c" ""
