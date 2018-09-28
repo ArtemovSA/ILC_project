@@ -56,6 +56,8 @@ volatile ledState_t runState = LED_OFF;
 //Fat variables
 FRESULT FATFS_res;
 FATFS FATFS_Obj;
+FIL LOG_fileDebug;
+FIL LOG_fileData;
 
 //--------------------------------------------------------------------------------------------------
 //Init
@@ -107,9 +109,10 @@ void DC_init(osMessageQId *eventQueue)
     if (stat == HAL_TIMEOUT)
       DC_debugOut("# PCA9555 TIMEOUT\r\n");
   }
-  
+
   //SD card init
-  FATFS_res = f_mount(&FATFS_Obj, SDPath, 1);
+  FATFS_res = f_mount(&FATFS_Obj, SDPath, 1); //SDPath
+  
   if (FATFS_res != FR_OK)
   {
     DC_debugOut("# Mount error %d\r\n", FATFS_res);
@@ -124,61 +127,70 @@ void DC_init(osMessageQId *eventQueue)
 }
 //--------------------------------------------------------------------------------------------------
 //Log data
-void DC_logData(char* file, char *str, ...)
+void DC_logData(char* fileNamePx, char *str, ...)
 {
-  FIL LOG_file;
+  char fileName[50];
+  char timeStr[50];
+  uint8_t year, month, date;
+  uint8_t hours, minutes, sec;
+  
   va_list args;
   va_start(args, str);
   va_end(args);
-  
   vsprintf(strBuffer, str, args);
-  va_end(args);
   
-  FATFS_res = f_open(&LOG_file, file, FA_WRITE | FA_OPEN_ALWAYS);
-  if (FATFS_res != FR_OK)
+  //Get dateTime
+  if (CL_getDateTime(&year, &month, &date, &hours, &minutes, &sec) == DEV_OK)
   {
-    DC_debugOut("# File log error%d\r\n", FATFS_res);
+    if (year == 100)
+      FATFS_res = f_open(&LOG_fileData, "LOG_startData.log", FA_CREATE_ALWAYS | FA_WRITE );
+    else
+      sprintf(fileName, "%s_%d_%d_%d.log", fileNamePx, year, month, date);
+
+    FATFS_res = f_open(&LOG_fileData, fileName, FA_WRITE | FA_OPEN_ALWAYS);
+    if (FATFS_res != FR_OK)
+    {
+      sprintf(timeStr, "%d:%d:%d ", hours, minutes, sec);
+      strcat(timeStr, strBuffer);
+      f_printf(&LOG_fileData, strBuffer);
+      f_close(&LOG_fileData);
+    }
   }
-  FATFS_res = f_lseek(&LOG_file, f_size(&LOG_file));
-  
-  f_printf(&LOG_file, strBuffer);
-  f_close(&LOG_file);
-  
-  va_end(args);
 }
 //--------------------------------------------------------------------------------------------------
 //Log data
 void DC_logDebug(char *str, ...)
 {
-  FIL LOG_file;
-  char datetime[50];
+  char fileName[50];
+  char writeStr[150];
+  uint8_t year, month, date;
+  uint8_t hours, minutes, sec;
+  
   va_list args;
   va_start(args, str);
   va_end(args);
-  
   vsprintf(strBuffer, str, args);
-  va_end(args);
-  
-  
-  //Get format date time
-  if (CL_getFormat_DateTime(datetime) == DEV_OK)
+      
+  //Get dateTime
+  if (CL_getDateTime(&year, &month, &date, &hours, &minutes, &sec) == DEV_OK)
   {
-    strcat(strBuffer,";");
-    strcat(strBuffer, datetime);
-    strcat(strBuffer, "\r\n");
-    
-    FATFS_res = f_open(&LOG_file, LOG_DEBUG_FILE_NAME, FA_CREATE_NEW | FA_WRITE | FA_OPEN_ALWAYS);
-    if (FATFS_res != FR_OK)
+    if (year == 100)
+      FATFS_res = f_open(&LOG_fileDebug, "LOG_start.log", FA_CREATE_ALWAYS | FA_WRITE );
+    else
     {
-      DC_debugOut("# File log error%d\r\n", FATFS_res);
+      sprintf(fileName, "%s_%d_%d_%d.log", LOG_DEBUG_FILE_NAME_PX, year, month, date);
+      FATFS_res = f_open(&LOG_fileDebug, fileName, FA_OPEN_APPEND | FA_WRITE );
     }
-    FATFS_res = f_lseek(&LOG_file, f_size(&LOG_file));
     
-    f_printf(&LOG_file, strBuffer);
-    f_close(&LOG_file);
+    if (FATFS_res == FR_OK)
+    {
+      sprintf(writeStr, "%d:%d:%d ", hours, minutes, sec);
+      strcat(writeStr, strBuffer);
+      
+      f_printf(&LOG_fileDebug, writeStr);
+      f_close(&LOG_fileDebug);
+    }
   }
-  
-  va_end(args);
 }
 //--------------------------------------------------------------------------------------------------
 //LED task
@@ -311,8 +323,6 @@ void DC_debugOut(char *str, ...)
   
   if (DC_state.discMount == 1)
     DC_logDebug(strBuffer);
-  
-  va_end(args);
 }
 //--------------------------------------------------------------------------------------------------
 //IP out

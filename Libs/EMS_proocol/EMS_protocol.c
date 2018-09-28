@@ -555,7 +555,7 @@ void EMS_ChannelDebugOut(uint8_t channel)
 void EMS_logMesh(uint8_t channel)
 {
   //Log data
-  DC_logData(LOG_DATA_FILE_NAME, "%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%lld;%lld;%lld;%lld;%lld;%lld;%lld;%lld;%lld\r\n", 
+  DC_logData(LOG_DATA_FILE_NAME_PX, "%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%lld;%lld;%lld;%lld;%lld;%lld;%lld;%lld;%lld", 
              channel, meshChan[channel].FREQ, meshChan[channel].RMSNI, meshChan[channel].CONSSP, meshChan[channel].COSFIS,
              meshChan[channel].phaseA.RMSV, meshChan[channel].phaseB.RMSV, meshChan[channel].phaseC.RMSV,
              meshChan[channel].phaseA.RMSI, meshChan[channel].phaseB.RMSI, meshChan[channel].phaseC.RMSI,

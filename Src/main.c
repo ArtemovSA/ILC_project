@@ -71,6 +71,10 @@
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
+SD_HandleTypeDef hsd;
+DMA_HandleTypeDef hdma_sdio_rx;
+DMA_HandleTypeDef hdma_sdio_tx;
+
 ADC_HandleTypeDef hadc3;
 
 CRC_HandleTypeDef hcrc;
@@ -104,6 +108,7 @@ osTimerId SampleTimerHandle;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_ADC3_Init(void);
 static void MX_FSMC_Init(void);
 static void MX_I2C1_Init(void);
@@ -165,6 +170,7 @@ SemaphoreHandle_t muxV9203;
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_ADC3_Init();
   MX_FSMC_Init();
   MX_I2C1_Init();
@@ -206,7 +212,7 @@ SemaphoreHandle_t muxV9203;
 
   /* Create the thread(s) */
   /* definition and creation of debugTask */
-  osThreadDef(debugTask, startDebugTask, osPriorityNormal, 0, 128);
+  osThreadDef(debugTask, startDebugTask, osPriorityNormal, 0, 256);
   debugTaskHandle = osThreadCreate(osThread(debugTask), NULL);
 
   /* definition and creation of EMS_task */
@@ -219,6 +225,7 @@ SemaphoreHandle_t muxV9203;
   /* USER CODE END RTOS_THREADS */
 
   /* Create the queue(s) */
+
   /* definition and creation of debug_TTqueue */
   osMessageQDef(debug_TTqueue, 5, uint16_t);
   debug_TTqueueHandle = osMessageCreate(osMessageQ(debug_TTqueue), NULL);
@@ -318,6 +325,23 @@ void SystemClock_Config(void)
 
   /* SysTick_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(SysTick_IRQn, 15, 0);
+}
+
+/** 
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void) 
+{
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA2_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA2_Stream3_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream3_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream3_IRQn);
+  /* DMA2_Stream6_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream6_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream6_IRQn);
 }
 
 /* ADC3 init function */
@@ -463,11 +487,12 @@ static void MX_SDIO_SD_Init(void)
 {
   hsd.Instance = SDIO;
   hsd.Init.ClockEdge = SDIO_CLOCK_EDGE_RISING;
-  hsd.Init.ClockBypass = SDIO_CLOCK_BYPASS_ENABLE;
+  hsd.Init.ClockBypass = SDIO_CLOCK_BYPASS_DISABLE;
   hsd.Init.ClockPowerSave = SDIO_CLOCK_POWER_SAVE_DISABLE;
   hsd.Init.BusWide = SDIO_BUS_WIDE_1B;
   hsd.Init.HardwareFlowControl = SDIO_HARDWARE_FLOW_CONTROL_DISABLE;
-  hsd.Init.ClockDiv = 50;
+  hsd.Init.ClockDiv = 0;
+
 }
 
 /* SPI1 init function */
@@ -782,6 +807,10 @@ static void MX_FSMC_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+  FRESULT FATF_res;
+  FATFS FATF_Obj;
+  FIL fileDebug;
+  
 /* USER CODE END 4 */
 
 /* startDebugTask function */
@@ -789,12 +818,12 @@ void startDebugTask(void const * argument)
 {  
   /* init code for USB_DEVICE */
   MX_USB_DEVICE_Init();
-
+  
   /* init code for FATFS */
   MX_FATFS_Init();
-  
-  /* USER CODE BEGIN 5 */
-  DC_init(&debug_TTqueueHandle);
+ 
+   /* USER CODE BEGIN 5 */
+  DC_init(&debug_TTqueueHandle);   
 
   V9203_init(&hspi1, &DC_set.EMS_channelEn, &DC_state.V9203_channelsActive, DC_calibr.channel_cal);
 
@@ -812,7 +841,7 @@ void startDebugTask(void const * argument)
     DC_debug_ipAdrrOut("# Static IP: ", DC_set.net_dev_ip_addr);
   }
   stateState = LED_PROC_OK;
-    
+
   //USB
   USBP_init();
   USBC_init(osPriorityNormal);
@@ -831,6 +860,8 @@ void startDebugTask(void const * argument)
   //Start sample timer
   osTimerStart(SampleTimerHandle, 1000);
     
+  /* Infinite loop */
+  
   vTaskResume(EMS_taskHandle);
 
   //Инициализация задачи

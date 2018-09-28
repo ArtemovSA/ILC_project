@@ -14,7 +14,7 @@ LeaveTargetRunning=_ 0
 stlinkserialNo=30303031
 stlinkfoundProbes=
 stlinkResetStyle=0
-stlinkResetStrategy=3
+stlinkResetStrategy=1
 [DebugChecksum]
 Checksum=1039882008
 [Exceptions]
