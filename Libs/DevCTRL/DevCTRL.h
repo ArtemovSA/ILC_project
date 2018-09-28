@@ -236,6 +236,8 @@ typedef struct
 
 //Log data
 void DC_logData(char* file, char *str, ...);
+//Log data
+void DC_logDebug(char *str, ...);
 
 //**********************************Main Functions**************************************************
 
