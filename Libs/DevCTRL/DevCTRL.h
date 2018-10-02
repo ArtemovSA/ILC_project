@@ -52,17 +52,17 @@ extern char DC_unic_idStr[13]; //Unic id str
 #define DC_DEF_DNS                      {8,8,8,8}
 
 //MQTT
-#define DC_DEF_MQTT_BROC_CH             0 //0 - IP, 1 - DOMEN
-#define DC_DEF_MQTT_BROC_IP             {82,202,249,110}
-#define DC_DEF_MQTT_BROC_DOMEN          "ems.insyte.ru"
+#define DC_DEF_MQTT_BROC_CH             1 //0 - IP, 1 - DOMEN
+#define DC_DEF_MQTT_BROC_IP             {198,41,30,241} //{82,202,249,110}
+#define DC_DEF_MQTT_BROC_DOMEN          "iot.eclipse.org" //ems.insyte.ru
 #define DC_DEF_MQTT_PORT                1883
 #define DC_DEF_MQTT_USER                "user"
 #define DC_DEF_MQTT_PASS                "123"
 #define DC_DEF_MQTT_QOS                 1
 
 //EMS
-#define DC_DEF_EMS_OUT_PERIOD           5 //sec
-#define DC_DEF_EMS_SEND_EN              0 //Разрешить передачу данных
+#define DC_DEF_EMS_OUT_PERIOD           20 //sec
+#define DC_DEF_EMS_SEND_EN              1 //Разрешить передачу данных
 #define DC_DEF_EMS_CH_EN                3 //Channel enable in bit
 
 //Python
@@ -94,7 +94,7 @@ typedef enum{
   DC_SET_VM_AUTO_START
 }DC_settingID_t;
 
-#define DC_SET_MAGICKEY 0x02
+#define DC_SET_MAGICKEY 0x01
 
 typedef struct {
   

@@ -529,9 +529,13 @@ void EMS_sendChannelVars(uint8_t channel_num)
       
     }else{
       uint8_t broc_ip;
-      NW_getIP_byDomen(DC_set.MQTT_broc_domen, &broc_ip);
-      devMQTT_connect(&broc_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
-      DC_debugOut("# MQTT connection server by Domen#: %s OK\r\r\n", DC_set.MQTT_broc_domen);
+      if (NW_getIP_byDomen(DC_set.MQTT_broc_domen, &broc_ip) != HAL_OK)
+      {
+        DC_debugOut("# DNS ERROR\r\n");
+      }else{
+        devMQTT_connect(&broc_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
+        DC_debugOut("# MQTT connection server by Domen#: %s OK\r\n", DC_set.MQTT_broc_domen);
+      }
     }
   }
   
@@ -542,30 +546,34 @@ void EMS_sendChannelVars(uint8_t channel_num)
 void EMS_ChannelDebugOut(uint8_t channel)
 {
   DC_debugOut("@ ch %d FREQ: %2f | RMSNI: %2f | CONSSP: %2f | COSFIS: %2f\r\r\n", channel, meshChan[channel].FREQ, meshChan[channel].RMSNI, meshChan[channel].CONSSP, meshChan[channel].COSFIS);
-  DC_debugOut("@ ch %d RMSU A: %2f      | RMSU B: %2f           | RMSU C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSV, meshChan[channel].phaseB.RMSV, meshChan[channel].phaseC.RMSV);
-  DC_debugOut("@ ch %d RMSI A: %2f      | RMSI B: %2f           | RMSI C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSI, meshChan[channel].phaseB.RMSI, meshChan[channel].phaseC.RMSI);
-  DC_debugOut("@ ch %d RMSP A: %2f      | RMSP B: %2f           | RMSP C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSP, meshChan[channel].phaseB.RMSP, meshChan[channel].phaseC.RMSP);
-  DC_debugOut("@ ch %d RMSRP A: %2f     | RMSRP B: %2f          | RMSRP C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSRP, meshChan[channel].phaseB.RMSRP, meshChan[channel].phaseC.RMSRP);
-  DC_debugOut("@ ch %d CONSSP A: %lld   | CONSSP B: %lld        | CONSSP C: %lld\r\r\n", channel, meshChan[channel].phaseA.CONSSP, meshChan[channel].phaseB.CONSSP, meshChan[channel].phaseC.CONSSP);
-  DC_debugOut("@ ch %d CONSP A: %lld    | CONSP B: %lld         | CONSP C: %lld\r\r\n", channel, meshChan[channel].phaseA.CONSP, meshChan[channel].phaseB.CONSP, meshChan[channel].phaseC.CONSP);
-  DC_debugOut("@ ch %d CONSRP A: %lld   | CONSRP B: %lld        | CONSRP C: %lld\r\r\n", channel, meshChan[channel].phaseA.CONSRP, meshChan[channel].phaseB.CONSRP, meshChan[channel].phaseC.CONSRP);
+  DC_debugOut("@ ch %d RMSU A: %2f | RMSU B: %2f | RMSU C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSV, meshChan[channel].phaseB.RMSV, meshChan[channel].phaseC.RMSV);
+  DC_debugOut("@ ch %d RMSI A: %2f | RMSI B: %2f | RMSI C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSI, meshChan[channel].phaseB.RMSI, meshChan[channel].phaseC.RMSI);
+  DC_debugOut("@ ch %d RMSP A: %2f| RMSP B: %2f | RMSP C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSP, meshChan[channel].phaseB.RMSP, meshChan[channel].phaseC.RMSP);
+  DC_debugOut("@ ch %d RMSRP A: %2f | RMSRP B: %2f | RMSRP C: %2f\r\r\n", channel, meshChan[channel].phaseA.RMSRP, meshChan[channel].phaseB.RMSRP, meshChan[channel].phaseC.RMSRP);
+  DC_debugOut("@ ch %d CONSSP A: %lld | CONSSP B: %lld | CONSSP C: %lld\r\r\n", channel, meshChan[channel].phaseA.CONSSP, meshChan[channel].phaseB.CONSSP, meshChan[channel].phaseC.CONSSP);
+  DC_debugOut("@ ch %d CONSP A: %lld | CONSP B: %lld | CONSP C: %lld\r\r\n", channel, meshChan[channel].phaseA.CONSP, meshChan[channel].phaseB.CONSP, meshChan[channel].phaseC.CONSP);
+  DC_debugOut("@ ch %d CONSRP A: %lld | CONSRP B: %lld | CONSRP C: %lld\r\r\n", channel, meshChan[channel].phaseA.CONSRP, meshChan[channel].phaseB.CONSRP, meshChan[channel].phaseC.CONSRP);
 }
 //------------------------------------------------------------------------------
 //Log mesh data
 void EMS_logMesh(uint8_t channel)
 {
-  //Log data
-  DC_logData(LOG_DATA_FILE_NAME_PX, "%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%lld;%lld;%lld;%lld;%lld;%lld;%lld;%lld;%lld", 
-             channel, meshChan[channel].FREQ, meshChan[channel].RMSNI, meshChan[channel].CONSSP, meshChan[channel].COSFIS,
-             meshChan[channel].phaseA.RMSV, meshChan[channel].phaseB.RMSV, meshChan[channel].phaseC.RMSV,
-             meshChan[channel].phaseA.RMSI, meshChan[channel].phaseB.RMSI, meshChan[channel].phaseC.RMSI,
-             meshChan[channel].phaseA.RMSP, meshChan[channel].phaseB.RMSP, meshChan[channel].phaseC.RMSP,
-             meshChan[channel].phaseA.RMSRP, meshChan[channel].phaseB.RMSRP, meshChan[channel].phaseC.RMSRP,
-             meshChan[channel].phaseA.CONSSP, meshChan[channel].phaseB.CONSSP, meshChan[channel].phaseC.CONSSP,
-             meshChan[channel].phaseA.CONSRP, meshChan[channel].phaseB.CONSRP, meshChan[channel].phaseC.CONSRP
-             );
+  if (DC_state.discMount == 1)
+  {
+    //Log data
+    DC_logData(LOG_DATA_FILE_NAME_PX, "%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%lld;%lld;%lld;%lld;%lld;%lld;%lld;%lld;%lld", 
+               channel, meshChan[channel].FREQ, meshChan[channel].RMSNI, meshChan[channel].CONSSP, meshChan[channel].COSFIS,
+               meshChan[channel].phaseA.RMSV, meshChan[channel].phaseB.RMSV, meshChan[channel].phaseC.RMSV,
+               meshChan[channel].phaseA.RMSI, meshChan[channel].phaseB.RMSI, meshChan[channel].phaseC.RMSI,
+               meshChan[channel].phaseA.RMSP, meshChan[channel].phaseB.RMSP, meshChan[channel].phaseC.RMSP,
+               meshChan[channel].phaseA.RMSRP, meshChan[channel].phaseB.RMSRP, meshChan[channel].phaseC.RMSRP,
+               meshChan[channel].phaseA.CONSSP, meshChan[channel].phaseB.CONSSP, meshChan[channel].phaseC.CONSSP,
+               meshChan[channel].phaseA.CONSRP, meshChan[channel].phaseB.CONSRP, meshChan[channel].phaseC.CONSRP
+                 );
+  }
 }
 //******************************************************************************
+TickType_t ticks;
 // startEMS_task function
 void startEMS_task(void const * argument)
 { 
@@ -667,16 +675,16 @@ void startEMS_task(void const * argument)
     
     //Alive msg
     //devMQTT_publish(emsTopics[EMS_TOPID_DEBUG].name, EMS_DBG_MES_ALIVE, strlen(EMS_DBG_MES_ALIVE), DC_set.MQTT_qos);
-    
+
     if (DC_set.EMS_out_period == 0)
     {
       vTaskDelay(1000);
     }
     else
     {
-      //vTaskDelay(DC_set.EMS_out_period*1000);
-    
-      vTaskDelayUntil( &xLastWakeTime, (const TickType_t) (DC_set.EMS_out_period*1000/portTICK_PERIOD_MS));
+      ticks = DC_set.EMS_out_period*1000;
+      vTaskDelay(ticks);
+      //vTaskDelayUntil( &xLastWakeTime, (const TickType_t) (DC_set.EMS_out_period*1000/portTICK_PERIOD_MS));
     }
     
     if (DC_set.EMS_autoSendEn == 1)
@@ -687,6 +695,8 @@ void startEMS_task(void const * argument)
           EMS_sendChannelVars(i);//Send vars
       }
     }
+    
+    
     
   }
 }

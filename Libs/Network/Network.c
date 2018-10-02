@@ -12,10 +12,10 @@ HAL_StatusTypeDef NW_getIP_byDomen(char* domen, uint8_t* ip)
   
   if (retVal == ERR_OK)
   {
-    *ip = (ipAddress.addr & 0xff000000) >> 24;  //ip4_addr1
-    *(ip+1) = (ipAddress.addr & 0x00ff0000) >> 16;
-    *(ip+2) = (ipAddress.addr & 0x0000ff00) >> 8;
-    *(ip+3) = (ipAddress.addr & 0x000000ff);
+    *(ip+3) = (ipAddress.addr & 0xff000000) >> 24;  //ip4_addr1
+    *(ip+2) = (ipAddress.addr & 0x00ff0000) >> 16;
+    *(ip+1) = (ipAddress.addr & 0x0000ff00) >> 8;
+    *(ip) = (ipAddress.addr & 0x000000ff);
     
     return HAL_OK;
   }

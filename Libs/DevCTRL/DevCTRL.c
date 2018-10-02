@@ -321,6 +321,7 @@ void DC_debugOut(char *str, ...)
     USBP_Send((uint8_t*)strBuffer, strlen(strBuffer));
   }
   
+  vTaskDelay(50);
   if (DC_state.discMount == 1)
     DC_logDebug(strBuffer);
 }
@@ -726,7 +727,7 @@ DEV_Status_t DC_getSetParam(DC_settingID_t setID, uint8_t* data, uint8_t* len)
     
   case DC_SET_MQTT_PORT:
     *len = 2;
-    memcpy(data, (uint8_t*)DC_set.MQTT_port, 2);
+    memcpy(data, (uint8_t*)&DC_set.MQTT_port, 2);
     break;
     
   case DC_SET_MQTT_USER:
@@ -746,7 +747,7 @@ DEV_Status_t DC_getSetParam(DC_settingID_t setID, uint8_t* data, uint8_t* len)
     
   case DC_SET_EMS_PERIOD:
     *len = 2;
-    memcpy(data, (uint8_t*)DC_set.EMS_out_period, 2);
+    memcpy(data, (uint8_t*)&DC_set.EMS_out_period, 2);
     break;
     
   case DC_SET_EMS_AUTO_SEND:
