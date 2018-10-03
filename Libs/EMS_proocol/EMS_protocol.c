@@ -16,11 +16,21 @@ extern SPI_HandleTypeDef hspi1;
 
 //Measure and channels
 EMC_chan_mesh_t meshChan[V9203_COUNT_CHANNELS];
+EMC_chan_mesh_t sendChan[V9203_COUNT_CHANNELS];
 
 //Task
 osThreadId EMS_taskHandle;
+osThreadId EMS_dataTaskHandle;
 osMessageQId EMS_TTqueueHandle;
+
+// startEMSdata_task
+void startEMSdata_task(void const * argument);
+//startEMS_task function
+void startEMS_task(void const * argument);
+
+//Mux
 extern SemaphoreHandle_t muxV9203;
+extern SemaphoreHandle_t muxData;
 
 //Callback
 void EMS_callBack(uint16_t topic_ID, uint8_t* data, uint16_t len);
@@ -29,7 +39,17 @@ void EMS_callBack(uint16_t topic_ID, uint8_t* data, uint16_t len);
 //Init EMS
 void EMS_init()
 {   
-  // topic: id/varibles/channel
+  osThreadDef(EMS_task, startEMS_task, osPriorityNormal, 0, 1024);
+  EMS_taskHandle = osThreadCreate(osThread(EMS_task), NULL);
+  
+  osThreadDef(EMS_data_task, startEMSdata_task, osPriorityNormal, 0, 1024);
+  EMS_dataTaskHandle = osThreadCreate(osThread(EMS_data_task), NULL);
+}
+//------------------------------------------------------------------------------
+//Init MQTT connection
+void EMS_initMQTTConn()
+{
+// topic: id/varibles/channel
   emsTopics[EMS_TOPID_VAR_CHAN].sub_pub = MQTT_PUB;
   sprintf(emsTopics[EMS_TOPID_VAR_CHAN].name, "%s/%s/%s", EMS_TOPIC_VAR_PREFIX, DC_unic_idef, EMS_TOPIC_CHANNEL);
   
@@ -458,39 +478,38 @@ void EMS_sendChannelVars(uint8_t channel_num)
   cJSON *phaseB = NULL;
   cJSON *phaseC = NULL;
   cJSON *channel = NULL;
-  
-  
+    
   //Phase values
   phaseA = cJSON_CreateObject();
   
-  EMS_AddFloatToObject(phaseA, EMS_JSON_VAL_RMSV, meshChan[channel_num].phaseA.RMSV);
-  EMS_AddFloatToObject(phaseA, EMS_JSON_VAL_RMSI, meshChan[channel_num].phaseA.RMSI);
-  EMS_AddFloatToObject(phaseA, EMS_JSON_VAL_RMSP, meshChan[channel_num].phaseA.RMSP);
-  EMS_AddFloatToObject(phaseA, EMS_JSON_VAL_RMSRP, meshChan[channel_num].phaseA.RMSRP);
-  EMS_AddFloatToObject(phaseA, EMS_JSON_VAL_COSFI, meshChan[channel_num].phaseA.COSFI);
-  EMS_AddIntToObject(phaseA, EMS_JSON_VAL_CONSSP, meshChan[channel_num].phaseA.CONSSP);
-  EMS_AddIntToObject(phaseA, EMS_JSON_VAL_CONSP, meshChan[channel_num].phaseA.CONSP);
-  EMS_AddIntToObject(phaseA, EMS_JSON_VAL_CONSRP, meshChan[channel_num].phaseA.CONSRP);
+  EMS_AddFloatToObject(phaseA, EMS_JSON_VAL_RMSV, sendChan[channel_num].phaseA.RMSV);
+  EMS_AddFloatToObject(phaseA, EMS_JSON_VAL_RMSI, sendChan[channel_num].phaseA.RMSI);
+  EMS_AddFloatToObject(phaseA, EMS_JSON_VAL_RMSP, sendChan[channel_num].phaseA.RMSP);
+  EMS_AddFloatToObject(phaseA, EMS_JSON_VAL_RMSRP, sendChan[channel_num].phaseA.RMSRP);
+  EMS_AddFloatToObject(phaseA, EMS_JSON_VAL_COSFI, sendChan[channel_num].phaseA.COSFI);
+  EMS_AddIntToObject(phaseA, EMS_JSON_VAL_CONSSP, sendChan[channel_num].phaseA.CONSSP);
+  EMS_AddIntToObject(phaseA, EMS_JSON_VAL_CONSP, sendChan[channel_num].phaseA.CONSP);
+  EMS_AddIntToObject(phaseA, EMS_JSON_VAL_CONSRP, sendChan[channel_num].phaseA.CONSRP);
   
   phaseB = cJSON_CreateObject();
-  EMS_AddFloatToObject(phaseB, EMS_JSON_VAL_RMSV, meshChan[channel_num].phaseB.RMSV);
-  EMS_AddFloatToObject(phaseB, EMS_JSON_VAL_RMSI, meshChan[channel_num].phaseB.RMSI);
-  EMS_AddFloatToObject(phaseB, EMS_JSON_VAL_RMSP, meshChan[channel_num].phaseB.RMSP);
-  EMS_AddFloatToObject(phaseB, EMS_JSON_VAL_RMSRP, meshChan[channel_num].phaseB.RMSRP);
-  EMS_AddFloatToObject(phaseB, EMS_JSON_VAL_COSFI, meshChan[channel_num].phaseB.COSFI);
-  EMS_AddIntToObject(phaseB, EMS_JSON_VAL_CONSSP, meshChan[channel_num].phaseB.CONSSP);
-  EMS_AddIntToObject(phaseB, EMS_JSON_VAL_CONSP, meshChan[channel_num].phaseB.CONSP);
-  EMS_AddIntToObject(phaseB, EMS_JSON_VAL_CONSRP, meshChan[channel_num].phaseB.CONSRP);
+  EMS_AddFloatToObject(phaseB, EMS_JSON_VAL_RMSV, sendChan[channel_num].phaseB.RMSV);
+  EMS_AddFloatToObject(phaseB, EMS_JSON_VAL_RMSI, sendChan[channel_num].phaseB.RMSI);
+  EMS_AddFloatToObject(phaseB, EMS_JSON_VAL_RMSP, sendChan[channel_num].phaseB.RMSP);
+  EMS_AddFloatToObject(phaseB, EMS_JSON_VAL_RMSRP, sendChan[channel_num].phaseB.RMSRP);
+  EMS_AddFloatToObject(phaseB, EMS_JSON_VAL_COSFI, sendChan[channel_num].phaseB.COSFI);
+  EMS_AddIntToObject(phaseB, EMS_JSON_VAL_CONSSP, sendChan[channel_num].phaseB.CONSSP);
+  EMS_AddIntToObject(phaseB, EMS_JSON_VAL_CONSP, sendChan[channel_num].phaseB.CONSP);
+  EMS_AddIntToObject(phaseB, EMS_JSON_VAL_CONSRP, sendChan[channel_num].phaseB.CONSRP);
   
   phaseC = cJSON_CreateObject();
-  EMS_AddFloatToObject(phaseC, EMS_JSON_VAL_RMSV, meshChan[channel_num].phaseC.RMSV);
-  EMS_AddFloatToObject(phaseC, EMS_JSON_VAL_RMSI, meshChan[channel_num].phaseC.RMSI);
-  EMS_AddFloatToObject(phaseC, EMS_JSON_VAL_RMSP, meshChan[channel_num].phaseC.RMSP);
-  EMS_AddFloatToObject(phaseC, EMS_JSON_VAL_RMSRP, meshChan[channel_num].phaseC.RMSRP);
-  EMS_AddFloatToObject(phaseC, EMS_JSON_VAL_COSFI, meshChan[channel_num].phaseC.COSFI);
-  EMS_AddIntToObject(phaseC, EMS_JSON_VAL_CONSSP, meshChan[channel_num].phaseC.CONSSP);
-  EMS_AddIntToObject(phaseC, EMS_JSON_VAL_CONSP, meshChan[channel_num].phaseC.CONSP);
-  EMS_AddIntToObject(phaseC, EMS_JSON_VAL_CONSRP, meshChan[channel_num].phaseC.CONSRP);
+  EMS_AddFloatToObject(phaseC, EMS_JSON_VAL_RMSV, sendChan[channel_num].phaseC.RMSV);
+  EMS_AddFloatToObject(phaseC, EMS_JSON_VAL_RMSI, sendChan[channel_num].phaseC.RMSI);
+  EMS_AddFloatToObject(phaseC, EMS_JSON_VAL_RMSP, sendChan[channel_num].phaseC.RMSP);
+  EMS_AddFloatToObject(phaseC, EMS_JSON_VAL_RMSRP, sendChan[channel_num].phaseC.RMSRP);
+  EMS_AddFloatToObject(phaseC, EMS_JSON_VAL_COSFI, sendChan[channel_num].phaseC.COSFI);
+  EMS_AddIntToObject(phaseC, EMS_JSON_VAL_CONSSP, sendChan[channel_num].phaseC.CONSSP);
+  EMS_AddIntToObject(phaseC, EMS_JSON_VAL_CONSP, sendChan[channel_num].phaseC.CONSP);
+  EMS_AddIntToObject(phaseC, EMS_JSON_VAL_CONSRP, sendChan[channel_num].phaseC.CONSRP);
   
   //Channel values
   channel = cJSON_CreateObject();
@@ -499,10 +518,10 @@ void EMS_sendChannelVars(uint8_t channel_num)
   cJSON_AddItemToObject(channel, EMS_JSON_CAL_PHASEC_NAME, phaseC);
   
   //Main parameters
-  EMS_AddFloatToObject(channel, EMS_JSON_VAL_FREQ, meshChan[channel_num].FREQ);
-  EMS_AddFloatToObject(channel, EMS_JSON_VAL_RMSIN, meshChan[channel_num].RMSNI);
-  EMS_AddIntToObject(channel, EMS_JSON_VAL_CONSSP, meshChan[channel_num].CONSSP);
-  EMS_AddFloatToObject(channel, EMS_JSON_VAL_COSFIS, meshChan[channel_num].COSFIS);
+  EMS_AddFloatToObject(channel, EMS_JSON_VAL_FREQ, sendChan[channel_num].FREQ);
+  EMS_AddFloatToObject(channel, EMS_JSON_VAL_RMSIN, sendChan[channel_num].RMSNI);
+  EMS_AddIntToObject(channel, EMS_JSON_VAL_CONSSP, sendChan[channel_num].CONSSP);
+  EMS_AddFloatToObject(channel, EMS_JSON_VAL_COSFIS, sendChan[channel_num].COSFIS);
   
   cJSON_AddItemToObject(vars, EMS_JSON_VAL_CHANNEL_VAL, channel);
   cJSON_AddNumberToObject(vars, EMS_JSON_VAL_CHANNEL_NUM, channel_num);
@@ -573,13 +592,47 @@ void EMS_logMesh(uint8_t channel)
   }
 }
 //******************************************************************************
-TickType_t ticks;
 // startEMS_task function
 void startEMS_task(void const * argument)
 { 
   TickType_t xLastWakeTime = xTaskGetTickCount();
+
+  //Init MQTT connection
+  EMS_initMQTTConn();
   
-  EMS_init();
+  while(1)
+  {
+    //Alive msg
+    //devMQTT_publish(emsTopics[EMS_TOPID_DEBUG].name, EMS_DBG_MES_ALIVE, strlen(EMS_DBG_MES_ALIVE), DC_set.MQTT_qos);
+    
+    if (DC_set.EMS_autoSendEn == 1)
+    {
+      if( xSemaphoreTake( muxData, ( TickType_t ) 5000 ) == pdTRUE )
+      {
+        memcpy(sendChan, meshChan, sizeof(sendChan));
+        xSemaphoreGive( muxData );
+      }
+      
+      for (int i=0; i < V9203_COUNT_CHANNELS; i++)
+      {
+        if (DC_state.V9203_channelsActive & (1<<i))
+          EMS_sendChannelVars(i);//Send vars
+      }
+    }
+    
+    if (DC_set.EMS_out_period == 0)
+    {
+      vTaskDelay(5000);
+    }else{
+      vTaskDelayUntil( &xLastWakeTime, (const TickType_t) (DC_set.EMS_out_period*1000/portTICK_PERIOD_MS));
+    }
+  }
+}
+//******************************************************************************
+// startEMSdata_task
+void startEMSdata_task(void const * argument)
+{
+  TickType_t xLastWakeTime = xTaskGetTickCount();
   
   if( xSemaphoreTake( muxV9203, ( TickType_t ) 2000 ) == pdTRUE )
   {
@@ -605,98 +658,84 @@ void startEMS_task(void const * argument)
   
   while(1)
   {
-
-    for (int i=0; i < V9203_COUNT_CHANNELS; i++)
-    {
-      if (DC_state.V9203_channelsActive & (1<<i))
-      {
-        if( xSemaphoreTake( muxV9203, ( TickType_t ) 5000 ) == pdTRUE )
-        {
-          //Get frequency
-          meshChan[i].FREQ = V9203_getFreq(i, LINE_A);
-          
-          //S power consamption
-          meshChan[i].CONSSP = V9203_getSCons(i, LINE_S);
-          
-          //RMS N current
-          meshChan[i].RMSNI = V9203_getRMS_Current(i, LINE_N);
-          
-          //Get cos Fi
-          meshChan[i].COSFIS = V9203_getCOSfi(i, LINE_S);
-          
-          //Get RMS voltage
-          meshChan[i].phaseA.RMSV = V9203_getRMS_Voltage(i, LINE_A);
-          meshChan[i].phaseB.RMSV = V9203_getRMS_Voltage(i, LINE_B);
-          meshChan[i].phaseC.RMSV = V9203_getRMS_Voltage(i, LINE_C);
-          
-          //Get RMS current
-          meshChan[i].phaseA.RMSI = V9203_getRMS_Current(i, LINE_A);
-          meshChan[i].phaseB.RMSI = V9203_getRMS_Current(i, LINE_B);
-          meshChan[i].phaseC.RMSI = V9203_getRMS_Current(i, LINE_C);
-          
-          //Get RMS power
-          meshChan[i].phaseA.RMSP = V9203_getRMS_Power(i, LINE_A);
-          meshChan[i].phaseB.RMSP = V9203_getRMS_Power(i, LINE_B);
-          meshChan[i].phaseC.RMSP = V9203_getRMS_Power(i, LINE_C);
-          
-          //Get RMSRP power
-          meshChan[i].phaseA.RMSRP = V9203_getRMS_reactivePower(i, LINE_A);
-          meshChan[i].phaseB.RMSRP = V9203_getRMS_reactivePower(i, LINE_B);
-          meshChan[i].phaseC.RMSRP = V9203_getRMS_reactivePower(i, LINE_C);
-          
-          //Get cos Fi
-          meshChan[i].phaseA.COSFI = V9203_getCOSfi(i, LINE_A);
-          meshChan[i].phaseB.COSFI = V9203_getCOSfi(i, LINE_B);
-          meshChan[i].phaseC.COSFI = V9203_getCOSfi(i, LINE_C);
-          
-          //Get full Consamption
-          meshChan[i].phaseA.CONSSP = V9203_getSCons(i, LINE_A);
-          meshChan[i].phaseB.CONSSP = V9203_getSCons(i, LINE_B);
-          meshChan[i].phaseC.CONSSP = V9203_getSCons(i, LINE_C);
-          
-          //Get active Consamption
-          meshChan[i].phaseA.CONSP = V9203_getPCons(i, LINE_A);
-          meshChan[i].phaseB.CONSP = V9203_getPCons(i, LINE_B);
-          meshChan[i].phaseC.CONSP = V9203_getPCons(i, LINE_C);
-          
-          //Get active Consamption
-          meshChan[i].phaseA.CONSRP = V9203_getQCons(i, LINE_A);
-          meshChan[i].phaseB.CONSRP = V9203_getQCons(i, LINE_B);
-          meshChan[i].phaseC.CONSRP = V9203_getQCons(i, LINE_C);
-          
-          xSemaphoreGive( muxV9203 );
-        }
-        
-        //Debug out counter outputs variables
-        EMS_ChannelDebugOut(i);
-        EMS_logMesh(i);
-      }
-    }
-    
-    //Alive msg
-    //devMQTT_publish(emsTopics[EMS_TOPID_DEBUG].name, EMS_DBG_MES_ALIVE, strlen(EMS_DBG_MES_ALIVE), DC_set.MQTT_qos);
-
-    if (DC_set.EMS_out_period == 0)
-    {
-      vTaskDelay(1000);
-    }
-    else
-    {
-      ticks = DC_set.EMS_out_period*1000;
-      vTaskDelay(ticks);
-      //vTaskDelayUntil( &xLastWakeTime, (const TickType_t) (DC_set.EMS_out_period*1000/portTICK_PERIOD_MS));
-    }
-    
-    if (DC_set.EMS_autoSendEn == 1)
+    if( xSemaphoreTake( muxData, ( TickType_t ) 5000 ) == pdTRUE )
     {
       for (int i=0; i < V9203_COUNT_CHANNELS; i++)
       {
         if (DC_state.V9203_channelsActive & (1<<i))
-          EMS_sendChannelVars(i);//Send vars
+        {
+          if( xSemaphoreTake( muxV9203, ( TickType_t ) 5000 ) == pdTRUE )
+          {
+            
+            //Get frequency
+            meshChan[i].FREQ = V9203_getFreq(i, LINE_A);
+            
+            //S power consamption
+            meshChan[i].CONSSP = V9203_getSCons(i, LINE_S);
+            
+            //RMS N current
+            meshChan[i].RMSNI = V9203_getRMS_Current(i, LINE_N);
+            
+            //Get cos Fi
+            meshChan[i].COSFIS = V9203_getCOSfi(i, LINE_S);
+            
+            //Get RMS voltage
+            meshChan[i].phaseA.RMSV = V9203_getRMS_Voltage(i, LINE_A);
+            meshChan[i].phaseB.RMSV = V9203_getRMS_Voltage(i, LINE_B);
+            meshChan[i].phaseC.RMSV = V9203_getRMS_Voltage(i, LINE_C);
+            
+            //Get RMS current
+            meshChan[i].phaseA.RMSI = V9203_getRMS_Current(i, LINE_A);
+            meshChan[i].phaseB.RMSI = V9203_getRMS_Current(i, LINE_B);
+            meshChan[i].phaseC.RMSI = V9203_getRMS_Current(i, LINE_C);
+            
+            //Get RMS power
+            meshChan[i].phaseA.RMSP = V9203_getRMS_Power(i, LINE_A);
+            meshChan[i].phaseB.RMSP = V9203_getRMS_Power(i, LINE_B);
+            meshChan[i].phaseC.RMSP = V9203_getRMS_Power(i, LINE_C);
+            
+            //Get RMSRP power
+            meshChan[i].phaseA.RMSRP = V9203_getRMS_reactivePower(i, LINE_A);
+            meshChan[i].phaseB.RMSRP = V9203_getRMS_reactivePower(i, LINE_B);
+            meshChan[i].phaseC.RMSRP = V9203_getRMS_reactivePower(i, LINE_C);
+            
+            //Get cos Fi
+            meshChan[i].phaseA.COSFI = V9203_getCOSfi(i, LINE_A);
+            meshChan[i].phaseB.COSFI = V9203_getCOSfi(i, LINE_B);
+            meshChan[i].phaseC.COSFI = V9203_getCOSfi(i, LINE_C);
+            
+            //Get full Consamption
+            meshChan[i].phaseA.CONSSP = V9203_getSCons(i, LINE_A);
+            meshChan[i].phaseB.CONSSP = V9203_getSCons(i, LINE_B);
+            meshChan[i].phaseC.CONSSP = V9203_getSCons(i, LINE_C);
+            
+            //Get active Consamption
+            meshChan[i].phaseA.CONSP = V9203_getPCons(i, LINE_A);
+            meshChan[i].phaseB.CONSP = V9203_getPCons(i, LINE_B);
+            meshChan[i].phaseC.CONSP = V9203_getPCons(i, LINE_C);
+            
+            //Get active Consamption
+            meshChan[i].phaseA.CONSRP = V9203_getQCons(i, LINE_A);
+            meshChan[i].phaseB.CONSRP = V9203_getQCons(i, LINE_B);
+            meshChan[i].phaseC.CONSRP = V9203_getQCons(i, LINE_C);
+
+            xSemaphoreGive( muxV9203 );
+          }
+
+          //Debug out counter outputs variables
+          EMS_ChannelDebugOut(i);
+          EMS_logMesh(i);
+        }
       }
+      
+      xSemaphoreGive( muxData );
     }
-    
-    
-    
+      
+    if (DC_set.EMS_collect_period == 0)
+    {
+      vTaskDelay(5000);
+    }else{
+      vTaskDelayUntil( &xLastWakeTime, (const TickType_t) (DC_set.EMS_collect_period*1000/portTICK_PERIOD_MS));
+    }
   }
 }

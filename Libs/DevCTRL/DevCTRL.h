@@ -62,6 +62,7 @@ extern char DC_unic_idStr[13]; //Unic id str
 
 //EMS
 #define DC_DEF_EMS_OUT_PERIOD           20 //sec
+#define DC_DEF_EMS_DATA_PERIOD          20 //sec
 #define DC_DEF_EMS_SEND_EN              1 //Разрешить передачу данных
 #define DC_DEF_EMS_CH_EN                3 //Channel enable in bit
 
@@ -89,12 +90,13 @@ typedef enum{
   DC_SET_MQTT_PASS,
   DC_SET_MQTT_QOS,
   DC_SET_EMS_PERIOD,
+  DC_SET_EMS_DATA_PERIOD,
   DC_SET_EMS_AUTO_SEND,
   DC_SET_EMS_CHANNEL_EN,
   DC_SET_VM_AUTO_START
 }DC_settingID_t;
 
-#define DC_SET_MAGICKEY 0x01
+#define DC_SET_MAGICKEY 0x02
 
 typedef struct {
   
@@ -120,6 +122,7 @@ typedef struct {
   
   //EMS
   uint16_t EMS_out_period; //Send period
+  uint16_t EMS_collect_period; //Collect period
   uint8_t EMS_autoSendEn; //Enable periodic send
   uint8_t EMS_channelEn;  //Enable channels
   

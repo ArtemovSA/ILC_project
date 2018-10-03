@@ -456,6 +456,7 @@ DEV_Status_t DC_load_settings()
   
   //EMS
   DC_set.EMS_out_period = DC_DEF_EMS_OUT_PERIOD;
+  DC_set.EMS_collect_period = DC_DEF_EMS_DATA_PERIOD;
   DC_set.EMS_autoSendEn = DC_DEF_EMS_SEND_EN;
   DC_set.EMS_channelEn = DC_DEF_EMS_CH_EN;
   
@@ -634,7 +635,16 @@ DEV_Status_t DC_setSetParam(DC_settingID_t setID, uint8_t* data, uint8_t len)
     if (len == 2)
     {
       memcpy((uint8_t*)DC_tempSet.EMS_out_period, data, 2);
-      DC_debugOut("* Witten EMS period: %d\r\n", DC_tempSet.EMS_out_period);
+      DC_debugOut("* Witten EMS out period: %d\r\n", DC_tempSet.EMS_out_period);
+      return DEV_OK;
+    }
+    break;
+    
+  case DC_SET_EMS_DATA_PERIOD:
+    if (len == 2)
+    {
+      memcpy((uint8_t*)DC_tempSet.EMS_collect_period, data, 2);
+      DC_debugOut("* Witten EMS data period: %d\r\n", DC_tempSet.EMS_collect_period);
       return DEV_OK;
     }
     break;
@@ -748,6 +758,11 @@ DEV_Status_t DC_getSetParam(DC_settingID_t setID, uint8_t* data, uint8_t* len)
   case DC_SET_EMS_PERIOD:
     *len = 2;
     memcpy(data, (uint8_t*)&DC_set.EMS_out_period, 2);
+    break;
+    
+  case DC_SET_EMS_DATA_PERIOD:
+    *len = 2;
+    memcpy(data, (uint8_t*)&DC_set.EMS_collect_period, 2);
     break;
     
   case DC_SET_EMS_AUTO_SEND:

@@ -141,7 +141,5 @@ extern osMessageQId EMS_TTqueueHandle;
 
 //Init EMS
 void EMS_init();
-//startEMS_task function
-void startEMS_task(void const * argument);
 
 #endif

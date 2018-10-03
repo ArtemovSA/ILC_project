@@ -135,6 +135,7 @@ SemaphoreHandle_t muxSRAM1;
 SemaphoreHandle_t muxSRAM2;
 SemaphoreHandle_t muxUSB;
 SemaphoreHandle_t muxV9203;
+SemaphoreHandle_t muxData;
 
 /* USER CODE END 0 */
 
@@ -194,6 +195,7 @@ SemaphoreHandle_t muxV9203;
   muxSRAM2 = xSemaphoreCreateMutex();
   muxUSB = xSemaphoreCreateMutex();
   muxV9203 = xSemaphoreCreateMutex();
+  muxData = xSemaphoreCreateMutex();
   
   /* USER CODE END RTOS_MUTEX */
 
@@ -214,11 +216,6 @@ SemaphoreHandle_t muxV9203;
   /* definition and creation of debugTask */
   osThreadDef(debugTask, startDebugTask, osPriorityNormal, 0, 256);
   debugTaskHandle = osThreadCreate(osThread(debugTask), NULL);
-
-  /* definition and creation of EMS_task */
-  osThreadDef(EMS_task, startEMS_task, osPriorityNormal, 0, 1536);
-  EMS_taskHandle = osThreadCreate(osThread(EMS_task), NULL);
-  vTaskSuspend(EMS_taskHandle);
   
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -859,10 +856,9 @@ void startDebugTask(void const * argument)
 
   //Start sample timer
   osTimerStart(SampleTimerHandle, 1000);
-    
-  /* Infinite loop */
   
-  vTaskResume(EMS_taskHandle);
+  //Init EMS
+  EMS_init();
 
   //Инициализация задачи
   TASK_script_init(0);
