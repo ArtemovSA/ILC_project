@@ -96,7 +96,7 @@ DEV_Status_t CL_getDateTime(uint8_t* year, uint8_t* month, uint8_t* date, uint8_
   if (HAL_RTC_GetTime(&hrtc, &currentTime, RTC_FORMAT_BIN) != HAL_OK)
     return DEV_ERROR;
 
-  *year = currentDate.Year + 100;
+  *year = currentDate.Year;
   *date = currentDate.Date;
   *month = currentDate.Month - 1;
   

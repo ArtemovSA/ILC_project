@@ -136,6 +136,7 @@ SemaphoreHandle_t muxSRAM2;
 SemaphoreHandle_t muxUSB;
 SemaphoreHandle_t muxV9203;
 SemaphoreHandle_t muxData;
+SemaphoreHandle_t muxSD;
 
 /* USER CODE END 0 */
 
@@ -196,6 +197,7 @@ SemaphoreHandle_t muxData;
   muxUSB = xSemaphoreCreateMutex();
   muxV9203 = xSemaphoreCreateMutex();
   muxData = xSemaphoreCreateMutex();
+  muxSD = xSemaphoreCreateMutex();
   
   /* USER CODE END RTOS_MUTEX */
 

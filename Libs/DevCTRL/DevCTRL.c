@@ -41,6 +41,7 @@ extern SRAM_HandleTypeDef hsram1;
 extern SRAM_HandleTypeDef hsram2;
 extern NAND_HandleTypeDef hnand1;
 extern SemaphoreHandle_t muxV9203;
+extern SemaphoreHandle_t muxSD;
 
 //Get unic ID
 void DC_getUnicID();
@@ -142,18 +143,24 @@ void DC_logData(char* fileNamePx, char *str, ...)
   //Get dateTime
   if (CL_getDateTime(&year, &month, &date, &hours, &minutes, &sec) == DEV_OK)
   {
-    if (year == 100)
-      FATFS_res = f_open(&LOG_fileData, "LOG_startData.log", FA_CREATE_ALWAYS | FA_WRITE );
-    else
-      sprintf(fileName, "%s_%d_%d_%d.log", fileNamePx, year, month, date);
-
-    FATFS_res = f_open(&LOG_fileData, fileName, FA_WRITE | FA_OPEN_ALWAYS);
-    if (FATFS_res != FR_OK)
+    if( xSemaphoreTake( muxSD, ( TickType_t ) 2000 ) == pdTRUE )
     {
-      sprintf(timeStr, "%d:%d:%d ", hours, minutes, sec);
-      strcat(timeStr, strBuffer);
-      f_printf(&LOG_fileData, strBuffer);
-      f_close(&LOG_fileData);
+      if (year == 0)
+      {
+        FATFS_res = f_open(&LOG_fileData, "LOG_startData.log", FA_CREATE_ALWAYS | FA_WRITE );
+      }else{
+        sprintf(fileName, "%s_%d_%d_%d.log", fileNamePx, year, month, date);
+        FATFS_res = f_open(&LOG_fileData, fileName,  FA_OPEN_APPEND | FA_WRITE );
+      }
+      
+      if (FATFS_res == FR_OK)
+      {
+        sprintf(timeStr, "%d:%d:%d ", hours, minutes, sec);
+        strcat(timeStr, strBuffer);
+        f_printf(&LOG_fileData, strBuffer);
+        f_close(&LOG_fileData);
+      }
+      xSemaphoreGive( muxSD );
     }
   }
 }
@@ -170,25 +177,29 @@ void DC_logDebug(char *str, ...)
   va_start(args, str);
   va_end(args);
   vsprintf(strBuffer, str, args);
-      
+  
   //Get dateTime
   if (CL_getDateTime(&year, &month, &date, &hours, &minutes, &sec) == DEV_OK)
   {
-    if (year == 100)
-      FATFS_res = f_open(&LOG_fileDebug, "LOG_start.log", FA_CREATE_ALWAYS | FA_WRITE );
-    else
+    if( xSemaphoreTake( muxSD, ( TickType_t ) 2000 ) == pdTRUE )
     {
-      sprintf(fileName, "%s_%d_%d_%d.log", LOG_DEBUG_FILE_NAME_PX, year, month, date);
-      FATFS_res = f_open(&LOG_fileDebug, fileName, FA_OPEN_APPEND | FA_WRITE );
-    }
-    
-    if (FATFS_res == FR_OK)
-    {
-      sprintf(writeStr, "%d:%d:%d ", hours, minutes, sec);
-      strcat(writeStr, strBuffer);
+      if (year == 0)
+      {
+        FATFS_res = f_open(&LOG_fileDebug, "LOG_start.log", FA_CREATE_ALWAYS | FA_WRITE );
+      }else{
+        sprintf(fileName, "%s_%d_%d_%d.log", LOG_DEBUG_FILE_NAME_PX, year, month, date);
+        FATFS_res = f_open(&LOG_fileDebug, fileName, FA_OPEN_APPEND | FA_WRITE );
+      }
       
-      f_printf(&LOG_fileDebug, writeStr);
-      f_close(&LOG_fileDebug);
+      if (FATFS_res == FR_OK)
+      {
+        sprintf(writeStr, "%d:%d:%d ", hours, minutes, sec);
+        strcat(writeStr, strBuffer);
+        
+        f_printf(&LOG_fileDebug, writeStr);
+        f_close(&LOG_fileDebug);
+      }
+      xSemaphoreGive( muxSD );
     }
   }
 }
