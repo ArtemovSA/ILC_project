@@ -2,18 +2,23 @@
 #define Modem_LIB
 
 #include "stdint.h"
+#include "main.h"
+#include "stm32f4xx_hal.h"
 
-#define Modem_GSM_EN_PORT V_GSM_EN_PORT
-#define Modem_GSM_EN_PIN V_GSM_EN_PIN
+#define Modem_GSM_EN_PORT RF_PE12_GPIO_Port
+#define Modem_GSM_EN_PIN RF_PE12_Pin
 
-#define Modem_GSM_EN_ON GPIO_PinOutSet(Modem_GSM_EN_PORT, Modem_GSM_EN_PIN)
-#define Modem_GSM_EN_OFF GPIO_PinOutClear(Modem_GSM_EN_PORT, Modem_GSM_EN_PIN)
+#define Modem_GSM_EN_ON HAL_GPIO_WritePin(Modem_GSM_EN_PORT, Modem_GSM_EN_PIN, GPIO_PIN_SET)
+#define Modem_GSM_EN_OFF HAL_GPIO_WritePin(Modem_GSM_EN_PORT, Modem_GSM_EN_PIN, GPIO_PIN_RESET)
 
-#define Modem_GSM_PWR_PORT GSM_PWR_KEY_PORT
-#define Modem_GSM_PWR_PIN GSM_PWR_KEY_PIN
+#define Modem_GSM_PWR_PORT RF_PF10_GPIO_Port
+#define Modem_GSM_PWR_PIN RF_PF10_Pin
 
-#define Modem_GSM_PWR_ON GPIO_PinOutSet(Modem_GSM_PWR_PORT, Modem_GSM_PWR_PIN)
-#define Modem_GSM_PWR_OFF GPIO_PinOutClear(Modem_GSM_PWR_PORT, Modem_GSM_PWR_PIN)
+#define Modem_GSM_PWR_ON HAL_GPIO_WritePin(Modem_GSM_PWR_PORT, Modem_GSM_PWR_PIN, GPIO_PIN_SET)
+#define Modem_GSM_PWR_OFF HAL_GPIO_WritePin(Modem_GSM_PWR_PORT, Modem_GSM_PWR_PIN, GPIO_PIN_RESET)
+
+#define Modem_TIMEOUT_VAL 500
+#define Modem_UART_handler huart6
 
 //*****************************************APN settings*********************************************
 
@@ -31,7 +36,7 @@ typedef enum {
 
 //Return
 typedef enum {
-  Modem_ERROR_ANS = 0x00,
+  Modem_ERROR_ANS = 0,
   Modem_TIMEOUT,
   Modem_OK
 } Modem_ans_t;

@@ -21,7 +21,7 @@ EMC_chan_mesh_t sendChan[V9203_COUNT_CHANNELS];
 //Task
 osThreadId EMS_taskHandle;
 osThreadId EMS_dataTaskHandle;
-osMessageQId EMS_TTqueueHandle;
+extern osMessageQId EMS_TTqueueHandle;
 
 // startEMSdata_task
 void startEMSdata_task(void const * argument);

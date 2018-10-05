@@ -71,6 +71,9 @@ extern char DC_unic_idStr[13]; //Unic id str
 #define DC_DEF_PY_NAME                  "main"          //Имя старта скрипта
 #define DC_DEF_PY_MEM                   MEM_ID_SRAM1    //Память скрипта
 
+//Modem
+
+
 //**********************************Settings*****************************************************
 
 //Settings List
@@ -129,6 +132,9 @@ typedef struct {
   //Python VM
   uint8_t PY_autoStartEn; //Enable autostart script
   PY_scryptData_t PY_scryptData; //Описание скрипта
+  
+  //Modem
+  
   
 }DC_set_t;
 

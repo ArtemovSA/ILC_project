@@ -7,9 +7,9 @@
 //Tasks
 typedef enum {
   TT_DEBUG_TASK = 0,
-  TT_WM_TASK,
-  TT_PW_TASK,
-  TT_CL_TASK,
+  TT_MODEM_TASK,
+  TT_EMS_TASK,
+  TT_VM_TASK,
   TT_TASK_COUNT
 }TT_taskID_t;
 

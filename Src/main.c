@@ -97,8 +97,11 @@ SRAM_HandleTypeDef hsram2;
 NAND_HandleTypeDef hnand1;
 
 osThreadId debugTaskHandle;
-osMessageQId debug_TTqueueHandle;
 osTimerId SampleTimerHandle;
+
+osMessageQId debug_TTqueueHandle;
+osMessageQId EMS_TTqueueHandle;
+osMessageQId Modem_TTqueueHandle;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -198,64 +201,33 @@ SemaphoreHandle_t muxSD;
   muxV9203 = xSemaphoreCreateMutex();
   muxData = xSemaphoreCreateMutex();
   muxSD = xSemaphoreCreateMutex();
-  
-  /* USER CODE END RTOS_MUTEX */
-
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
-  /* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
 
   /* Create the timer(s) */
-  /* definition and creation of SampleTimer */
   osTimerDef(SampleTimer, sampleTimerCall);
   SampleTimerHandle = osTimerCreate(osTimer(SampleTimer), osTimerPeriodic, NULL);
 
-  /* USER CODE BEGIN RTOS_TIMERS */
-  /* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
-
-  /* Create the thread(s) */
   /* definition and creation of debugTask */
   osThreadDef(debugTask, startDebugTask, osPriorityNormal, 0, 256);
   debugTaskHandle = osThreadCreate(osThread(debugTask), NULL);
-  
-  /* USER CODE BEGIN RTOS_THREADS */
-  /* add threads, ... */
-  /* USER CODE END RTOS_THREADS */
 
   /* Create the queue(s) */
-
-  /* definition and creation of debug_TTqueue */
   osMessageQDef(debug_TTqueue, 5, uint16_t);
   debug_TTqueueHandle = osMessageCreate(osMessageQ(debug_TTqueue), NULL);
 
-   /* definition and creation of EMS_TTqueue */
   osMessageQDef(EMS_TTqueue, 5, uint16_t);
   EMS_TTqueueHandle = osMessageCreate(osMessageQ(EMS_TTqueue), NULL);
   
-  
-  /* USER CODE BEGIN RTOS_QUEUES */
-  /* add queues, ... */
-  /* USER CODE END RTOS_QUEUES */
-  
+  osMessageQDef(EMS_TTqueue, 5, uint16_t);
+  Modem_TTqueueHandle = osMessageCreate(osMessageQ(Modem_TTqueue), NULL);
 
   /* Start scheduler */
   osKernelStart();
-  
-  /* We should never get here as control is now taken by the scheduler */
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
   while (1)
   {
 
-  /* USER CODE END WHILE */
-
-  /* USER CODE BEGIN 3 */
 
   }
-  /* USER CODE END 3 */
-
 }
 
 /**

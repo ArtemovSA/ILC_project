@@ -1416,6 +1416,15 @@
       </file>
     </group>
     <group>
+      <name>Modem</name>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\Modem\Modem.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\Libs\Modem\Modem.h</name>
+      </file>
+    </group>
+    <group>
       <name>MQTT</name>
       <file>
         <name>$PROJ_DIR$\..\Libs\MQTT\devMQTT.c</name>
@@ -1967,6 +1976,15 @@
         <name>$PROJ_DIR$\..\Middlewares\ST\STM32_USB_Device_Library\Core\Src\usbd_ioreq.c</name>
       </file>
     </group>
+  </group>
+  <group>
+    <name>Modem_gate</name>
+    <file>
+      <name>$PROJ_DIR$\..\Libs\Modem_gate\Modem_gate.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Libs\Modem_gate\Modem_gate.h</name>
+    </file>
   </group>
 </project>
 

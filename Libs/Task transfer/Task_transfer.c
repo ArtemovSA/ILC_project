@@ -7,10 +7,10 @@
 TT_tasksDesc_t tasksDesc[TT_TASK_COUNT]; //Tasks description
 
 //Queues connection
-extern osMessageQId debug_TTqueueHandle;
-extern osMessageQId WM_TTqueueHandle;
-extern osMessageQId PW_TTqueueHandle;
-extern osMessageQId CL_TTqueueHandle;
+osMessageQId debug_TTqueueHandle;
+osMessageQId EMS_TTqueueHandle;
+osMessageQId Modem_TTqueueHandle;
+osMessageQId VM_TTqueueHandle;
 
 //--------------------------------------------------------------------------------------------------
 //Send event
@@ -83,13 +83,13 @@ void TT_init() {
   tasksDesc[TT_DEBUG_TASK].conQueue = &debug_TTqueueHandle;
   strcpy(tasksDesc[TT_DEBUG_TASK].taskName, "Debug_Task");
   
-  tasksDesc[TT_WM_TASK].conQueue = &WM_TTqueueHandle;
-  strcpy(tasksDesc[TT_WM_TASK].taskName, "WM_Task");
+  tasksDesc[TT_MODEM_TASK].conQueue = &Modem_TTqueueHandle;
+  strcpy(tasksDesc[TT_MODEM_TASK].taskName, "Modem_Task");
   
-  tasksDesc[TT_PW_TASK].conQueue = &PW_TTqueueHandle;
-  strcpy(tasksDesc[TT_PW_TASK].taskName, "PW_Task");
+  tasksDesc[TT_EMS_TASK].conQueue = &EMS_TTqueueHandle;
+  strcpy(tasksDesc[TT_EMS_TASK].taskName, "EMS_Task");
   
-  tasksDesc[TT_CL_TASK].conQueue = &CL_TTqueueHandle;
-  strcpy(tasksDesc[TT_CL_TASK].taskName, "CL_Task");
+  tasksDesc[TT_VM_TASK].conQueue = &VM_TTqueueHandle;
+  strcpy(tasksDesc[TT_VM_TASK].taskName, "VM_Task");
  
 }

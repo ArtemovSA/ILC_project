@@ -155,8 +155,8 @@ void DC_logData(char* fileNamePx, char *str, ...)
       
       if (FATFS_res == FR_OK)
       {
-        sprintf(timeStr, "%d:%d:%d ", hours, minutes, sec);
-        strcat(timeStr, strBuffer);
+        sprintf(timeStr, " ;%d:%d:%d", hours, minutes, sec);
+        strcat(strBuffer, timeStr);
         f_printf(&LOG_fileData, strBuffer);
         f_close(&LOG_fileData);
       }

@@ -135,10 +135,6 @@ typedef struct{
   EMS_phase_mesh_t phaseC;
 }EMC_chan_mesh_t;
 
-//Task
-extern osThreadId EMS_taskHandle;
-extern osMessageQId EMS_TTqueueHandle;
-
 //Init EMS
 void EMS_init();
 

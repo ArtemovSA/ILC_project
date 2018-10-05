@@ -8,6 +8,8 @@
 #include "queue.h"
 #include "task.h"
 
+extern UART_HandleTypeDef Modem_UART_handler;
+
 //Cmd texts
 const char cmd_text_NULL[]              = "";
 const char cmd_text_AT[]                = "AT\r\n";
@@ -75,20 +77,20 @@ Modem_cmd_t Modem_current_cmd; //Curent exec cmd
 void Modem_sendCR()
 {
   char cr = 0x0d;
-  UART_SendData(&cr, 1);
+  HAL_UART_Transmit(&Modem_UART_handler, (uint8_t*)&cr, 1, Modem_TIMEOUT_VAL);
 }
 //--------------------------------------------------------------------------------------------------
 //Send str
 void Modem_sendStr(char* str, uint16_t len)
 {
-  UART_SendData(str, len);
+  HAL_UART_Transmit(&Modem_UART_handler, (uint8_t*)str, len, Modem_TIMEOUT_VAL);
 }
 //--------------------------------------------------------------------------------------------------
 //PrepareAndSendCmd
 void Modem_PrepareAndSendCmd(Modem_str_query_t *data)
 {  
   sprintf(Modem_buf, data->cmd_str, data->str1, data->str2, data->str3, data->str4);
-  UART_SendData(Modem_buf, strlen(Modem_buf));
+  HAL_UART_Transmit(&Modem_UART_handler, (uint8_t*)Modem_buf, strlen(Modem_buf), Modem_TIMEOUT_VAL);
 }
 //--------------------------------------------------------------------------------------------------
 //Check IMEI
@@ -112,18 +114,18 @@ uint8_t  Modem_check_IMEI(char *IMEI)
 //Включить модем
 void Modem_on_seq() {
   Modem_GSM_PWR_OFF;
-  _delay_ms(200);
+  vTaskDelay(200);
   Modem_GSM_PWR_ON;
-  _delay_ms(1200);
+  vTaskDelay(1200);
   Modem_GSM_PWR_OFF;
 }
 //--------------------------------------------------------------------------------------------------
 //Выключить модем
 void Modem_off_seq() {
   Modem_GSM_PWR_ON;
-  _delay_ms(100);
+  vTaskDelay(100);
   Modem_GSM_PWR_OFF;
-  _delay_ms(500);
+  vTaskDelay(500);
   Modem_GSM_PWR_ON;
-  _delay_ms(100);
+  vTaskDelay(100);
 }
