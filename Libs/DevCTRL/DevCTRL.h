@@ -53,8 +53,8 @@ extern char DC_unic_idStr[13]; //Unic id str
 
 //MQTT
 #define DC_DEF_MQTT_BROC_CH             1 //0 - IP, 1 - DOMEN
-#define DC_DEF_MQTT_BROC_IP             {198,41,30,241} //{82,202,249,110}
-#define DC_DEF_MQTT_BROC_DOMEN          "iot.eclipse.org" //ems.insyte.ru
+#define DC_DEF_MQTT_BROC_IP             {82,202,249,110} //{198,41,30,241} //{82,202,249,110}
+#define DC_DEF_MQTT_BROC_DOMEN          "ems.insyte.ru" //"iot.eclipse.org" //"ems.insyte.ru"
 #define DC_DEF_MQTT_PORT                1883
 #define DC_DEF_MQTT_USER                "user"
 #define DC_DEF_MQTT_PASS                "123"
@@ -99,7 +99,7 @@ typedef enum{
   DC_SET_VM_AUTO_START
 }DC_settingID_t;
 
-#define DC_SET_MAGICKEY 0x02
+#define DC_SET_MAGICKEY 0x01
 
 typedef struct {
   

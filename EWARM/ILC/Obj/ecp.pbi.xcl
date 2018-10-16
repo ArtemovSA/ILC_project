@@ -90,6 +90,10 @@ C:\Users\user\Desktop\ILC\ILC_project\EWARM\..\Libs\USB_port
 -I
 C:\Users\user\Desktop\ILC\ILC_project\EWARM\..\Libs\VM_python\pymite\src\vm
 -I
+C:\Users\user\Desktop\ILC\ILC_project\EWARM\..\Libs\Modem
+-I
+C:\Users\user\Desktop\ILC\ILC_project\EWARM\..\Libs\Modem_gate
+-I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\inc
@@ -183,6 +187,10 @@ C:\Users\user\Desktop\ILC\ILC_project\Libs\VM_python
 C:\Users\user\Desktop\ILC\ILC_project\Libs\USB_port
 -I
 C:\Users\user\Desktop\ILC\ILC_project\Libs\VM_python\pymite\src\vm
+-I
+C:\Users\user\Desktop\ILC\ILC_project\Libs\Modem
+-I
+C:\Users\user\Desktop\ILC\ILC_project\Libs\Modem_gate
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\CMSIS\Include
 -DUSE_HAL_DRIVER=1

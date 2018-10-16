@@ -1,4 +1,6 @@
 
+#include "string.h"
+
 #include "Modem_gate.h"
 #include "DEvCTRL.h"
 #include "stdio.h"
@@ -46,8 +48,8 @@ MGT_cmd_auto_t MGT_cmd_auto = MGT_CMD_WAIT; //Automat for cmd execution
 MGT_event_auto_t MGT_event_auto = MGT_EVENT_WAIT; //Automat for event reciving
 Modem_event_t Modem_event = Modem_EVENT_NULL; //Current event
 Modem_std_ans_t MGT_std_ans = Modem_STD_NULL; //Current standart ansver
-TT_mes_type MGT_cmd_msg; //Connection gate message
-TT_mes_type MGT_event_msg; //Event message
+TT_mes_t MGT_cmd_msg; //Connection gate message
+TT_mes_t MGT_event_msg; //Event message
 uint8_t status; //Status execute
 uint8_t MGT_ansver_step = 0; //Step of ansver
 uint8_t MGT_event_step = 0; //Step of event
@@ -69,18 +71,18 @@ void MGT_reset()
 {
   data_count = 0;
   memset(MGT_recive,0,MGT_RECIVE_BUFF_SIZE);
-  NVIC_ClearPendingIRQ(USART0_RX_IRQn);
+  //NVIC_ClearPendingIRQ(USART0_RX_IRQn);
 }
 //--------------------------------------------------------------------------------------------------
 //Return message
-void DC_returnMsg(TT_type mes_type, QueueHandle_t *queue, void *message ,uint8_t status)
+void DC_returnMsg(TT_mes_t mes_type, QueueHandle_t *queue, void *message ,uint8_t status)
 {
-  TT_mes_type return_msg;
+  TT_mes_t return_msg;
   
-  return_msg.type = mes_type;
-  return_msg.task = TT_MGT_TASK;
-  return_msg.status = (TT_status_type)status;
-  return_msg.message = message;
+//  return_msg.type = mes_type;
+//  return_msg.task = TT_MGT_TASK;
+//  return_msg.status = (TT_stat_t)status;
+//  return_msg.message = message;
 
   //Return queue
   if( xQueueSend( queue, &return_msg, ( TickType_t ) 500 ) != pdPASS )
@@ -1276,11 +1278,11 @@ const MGT_cmd_event_t MGT_event[Modem_EVENT_COUNT] = {
 //                                      MGT functions
 //**************************************************************************************************
 //Send request
-TT_status_type MGT_send_req(Modem_str_query_t *query)
+TT_stat_t MGT_send_req(Modem_str_query_t *query)
 {
   uint8_t currentTaskID = getCurrentTaskID()-1; //User function Get Current task ID
   
-  return TT_send_query((TT_taskID)currentTaskID, MGT_con_Queue, tasksDesc[currentTaskID].conQueue, query, Modem_PrepareAndSendCmd);
+  return TT_send_query((TT_taskID_t)currentTaskID, MGT_con_Queue, tasksDesc[currentTaskID].conQueue, query, Modem_PrepareAndSendCmd);
 }
 //--------------------------------------------------------------------------------------------------
 //Check modem
@@ -1317,7 +1319,7 @@ Modem_std_ans_t MGT_getReg(Modem_CREG_Q_ans_t *reg)
 }
 //--------------------------------------------------------------------------------------------------
 //Get quality
-Modem_std_ans_t MGT_getQuality(uint8_t *level, TT_status_type* status)
+Modem_std_ans_t MGT_getQuality(uint8_t *level, TT_stat_t* status)
 {
   Modem_str_query_t query;
   Modem_std_ans_t std_ans = Modem_STD_NULL;

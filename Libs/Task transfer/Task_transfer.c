@@ -7,10 +7,10 @@
 TT_tasksDesc_t tasksDesc[TT_TASK_COUNT]; //Tasks description
 
 //Queues connection
-osMessageQId debug_TTqueueHandle;
-osMessageQId EMS_TTqueueHandle;
-osMessageQId Modem_TTqueueHandle;
-osMessageQId VM_TTqueueHandle;
+extern osMessageQId debug_TTqueueHandle;
+extern osMessageQId EMS_TTqueueHandle;
+extern osMessageQId Modem_TTqueueHandle;
+extern osMessageQId VM_TTqueueHandle;
 
 //--------------------------------------------------------------------------------------------------
 //Send event

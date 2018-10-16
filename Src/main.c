@@ -217,7 +217,7 @@ SemaphoreHandle_t muxSD;
   osMessageQDef(EMS_TTqueue, 5, uint16_t);
   EMS_TTqueueHandle = osMessageCreate(osMessageQ(EMS_TTqueue), NULL);
   
-  osMessageQDef(EMS_TTqueue, 5, uint16_t);
+  osMessageQDef(Modem_TTqueue, 5, uint16_t);
   Modem_TTqueueHandle = osMessageCreate(osMessageQ(Modem_TTqueue), NULL);
 
   /* Start scheduler */

@@ -37,7 +37,7 @@ extern uint16_t MGT_status; //Status byte
 
 Modem_std_ans_t MGT_modem_check();//Check modem
 Modem_std_ans_t MGT_getReg(Modem_CREG_Q_ans_t *reg); //Get regmodem
-Modem_std_ans_t MGT_getQuality(uint8_t *level, TT_status_type* status); //Get quality
+Modem_std_ans_t MGT_getQuality(uint8_t *level, TT_stat_t* status); //Get quality
 Modem_std_ans_t MGT_setAPN(char *APN, uint16_t* error_n); //setAPN
 Modem_std_ans_t MGT_setGPRS(uint8_t active); //activate GPRS
 Modem_std_ans_t MGT_getGPRS(uint8_t *status); //Get status GPRS
