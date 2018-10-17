@@ -232,8 +232,9 @@ void vTASK_led(void *pvParameters)
       runLedState = !runLedState;
     }
     
-    if (slowCnt >= 2)
+    if (slowCnt >= 4)
     {
+      slowCnt = 0;
       if (linkState == LED_PROC_OK)
       {
         DC_LedOut(LED_LINK, (GPIO_PinState)linkLedState);
@@ -257,7 +258,7 @@ void vTASK_led(void *pvParameters)
       slowCnt++;
     }
     
-    vTaskDelay(500);
+    vTaskDelay(250);
   }
 }
 //--------------------------------------------------------------------------------------------------

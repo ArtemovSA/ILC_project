@@ -22,8 +22,10 @@ typedef struct
 
 //Init
 void devMQTT_init(devMQTT_topic* topics, uint16_t count, void (*callBackPoint)(uint16_t, uint8_t*, uint16_t));
+//MQTT connection by source
+DEV_Status_t devMQTT_conBySource();
 //MQTT connection
-HAL_StatusTypeDef devMQTT_connect(uint8_t* MQTT_IP, uint16_t MQTT_port, char* MQTT_clintID, char* MQTT_user, char* MQTT_pass);
+DEV_Status_t devMQTT_conByIP(uint8_t* MQTT_IP, uint16_t MQTT_port, char* MQTT_clintID, char* MQTT_user, char* MQTT_pass);
 //Publish
 HAL_StatusTypeDef devMQTT_publish(char *topicName, uint8_t *payload, uint16_t len, uint8_t qos);
 

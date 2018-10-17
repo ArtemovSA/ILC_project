@@ -119,24 +119,48 @@ static void mqtt_connection_cb(mqtt_client_t *client, void *arg, mqtt_connection
     if (mqttMainClient == NULL)
       mqttMainClient = mqtt_client_new();
     
-    if (DC_set.MQTT_broc_ch == 0) //If was IP
-    {
-      DC_set.MQTT_broc_ch = 1;
-      uint8_t broc_ip;
-      NW_getIP_byDomen(DC_set.MQTT_broc_domen, &broc_ip);
-      devMQTT_connect(&broc_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass);
-      DC_debugOut("# MQTT connection server by Domen#: %s OK\r\n", DC_set.MQTT_broc_domen);
-    }else{
-      DC_set.MQTT_broc_ch = 0;
-      devMQTT_connect(DC_set.MQTT_broc_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass);
-      DC_debug_ipAdrrOut("# MQTT connection server by IP#: ", DC_set.MQTT_broc_ip);
-    }
+    //MQTT connection by source
+    devMQTT_conBySource();
     
   }
 }
 //******************************************API*****************************************************
+//MQTT connection by source
+DEV_Status_t devMQTT_conBySource()
+{
+  DEV_Status_t stat = DEV_ERROR;
+    
+  if (DC_set.MQTT_broc_ch == 0)
+  {
+    if ((stat = devMQTT_conByIP(DC_set.MQTT_broc_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass)) == DEV_OK)
+    {
+      DC_state.mqttLink = 1;
+      DC_debug_ipAdrrOut("# MQTT connection OK by IP#: ", DC_set.MQTT_broc_ip);
+    }else{
+      DC_state.mqttLink = 0;
+      DC_debug_ipAdrrOut("# MQTT connection ERROR by IP#: ", DC_set.MQTT_broc_ip);
+    }
+    
+  }else{
+    uint8_t broc_ip[4];
+    
+    NW_getIP_byDomen(DC_set.MQTT_broc_domen, broc_ip);
+    
+    if ((stat = devMQTT_conByIP(broc_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass)) == DEV_OK)
+    {
+      DC_state.mqttLink = 1;
+      DC_debugOut("# MQTT connection OK by Domen#: %s OK\r\r\n", DC_set.MQTT_broc_domen);
+    }else{
+      DC_state.mqttLink = 0;
+      DC_debugOut("# MQTT connection ERROR by Domen#: %s OK\r\r\n", DC_set.MQTT_broc_domen);
+    }
+  }
+  
+  return stat;
+}
+//--------------------------------------------------------------------------------------------------
 //MQTT connection
-HAL_StatusTypeDef devMQTT_connect(uint8_t* MQTT_IP, uint16_t MQTT_port, char* MQTT_clintID, char* MQTT_user, char* MQTT_pass)
+DEV_Status_t devMQTT_conByIP(uint8_t* MQTT_IP, uint16_t MQTT_port, char* MQTT_clintID, char* MQTT_user, char* MQTT_pass)
 {
   ip4_addr_t mqttIPaddr;
   struct mqtt_connect_client_info_t ci; //Client info
@@ -147,7 +171,7 @@ HAL_StatusTypeDef devMQTT_connect(uint8_t* MQTT_IP, uint16_t MQTT_port, char* MQ
   if (mqttMainClient == NULL)
   {
     DC_debugOut("# MQTT Client create error");
-    return HAL_ERROR;
+    return DEV_ERROR;
   }
   
   IP4_ADDR(&mqttIPaddr, *MQTT_IP, *(MQTT_IP+1), *(MQTT_IP+2), *(MQTT_IP+3));
@@ -161,26 +185,24 @@ HAL_StatusTypeDef devMQTT_connect(uint8_t* MQTT_IP, uint16_t MQTT_port, char* MQ
 
   if (mqtt_client_connect(mqttMainClient, &mqttIPaddr, MQTT_port, mqtt_connection_cb, NULL, &ci) == ERR_OK)
   {
-    DC_debug_ipAdrrOut("# MQTT connection OK: ", MQTT_IP);
-    return HAL_OK;    
+    return DEV_OK;    
   }else{
     mqtt_disconnect(mqttMainClient);
-    DC_debug_ipAdrrOut("# MQTT connection ERROR: ", MQTT_IP);
     mem_free(mqttMainClient);
     mqttMainClient = mqtt_client_new();
     if (mqttMainClient == NULL)
     {
       DC_debugOut("# MQTT Client create error");
-      return HAL_ERROR;
+      return DEV_ERROR;
     }
     if (mqtt_client_connect(mqttMainClient, &mqttIPaddr, MQTT_port, mqtt_connection_cb, NULL, &ci) == ERR_OK)
     {
       DC_debugOut("# recoonect OK\r\n");
-      return HAL_OK;
+      return DEV_OK;
     }
   }
   
-  return HAL_ERROR;
+  return DEV_ERROR;
 }
 //--------------------------------------------------------------------------------------------------
 //Public message

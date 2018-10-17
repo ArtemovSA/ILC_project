@@ -1832,6 +1832,9 @@
   </group>
   <group>
     <name>Modem_gate</name>
+    <excluded>
+      <configuration>ILC_edit</configuration>
+    </excluded>
     <file>
       <name>$PROJ_DIR$\..\Libs\Modem_gate\Modem_gate.c</name>
     </file>

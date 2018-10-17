@@ -316,6 +316,7 @@ typedef struct{
   uint32_t errorFlags;
   uint8_t discMount;
   uint8_t ethLink;
+  uint8_t mqttLink;
 } DC_state_t;
 
 extern DC_state_t DC_state;

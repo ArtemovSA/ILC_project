@@ -811,6 +811,8 @@ void startDebugTask(void const * argument)
   }else{
     DC_debug_ipAdrrOut("# Static IP: ", DC_set.net_dev_ip_addr);
   }
+  
+  //Set led status
   stateState = LED_PROC_OK;
 
   //USB
@@ -854,6 +856,11 @@ void sampleTimerCall(void const * argument)
   /* USER CODE BEGIN sampleTimerCall */
   
   MX_link_sample(); //Link sample function  
+  
+  if (DC_state.ethLink == 1)
+  linkState = LED_PROC_OK;
+    else
+  linkState = LED_PROC_ERROR;
   
   /* USER CODE END sampleTimerCall */
 }

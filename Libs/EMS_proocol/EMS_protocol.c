@@ -72,16 +72,8 @@ void EMS_initMQTTConn()
   //MQTT connection
   devMQTT_init(emsTopics, EMS_TOPID_COUNT, &EMS_callBack); //Init MQTT
   
-  if (DC_set.MQTT_broc_ch == 0)
-  {
-    devMQTT_connect(DC_set.MQTT_broc_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
-    DC_debug_ipAdrrOut("# MQTT connection server by IP#: ", DC_set.MQTT_broc_ip);
-  }else{
-    uint8_t broc_ip;
-    NW_getIP_byDomen(DC_set.MQTT_broc_domen, &broc_ip);
-    devMQTT_connect(&broc_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
-    DC_debugOut("# MQTT connection server by Domen#: %s OK\r\r\n", DC_set.MQTT_broc_domen);
-  }
+  //MQTT connection by source
+  devMQTT_conBySource();
 
   //JSON init
   cJSON_Hooks hooks;
@@ -541,21 +533,8 @@ void EMS_sendChannelVars(uint8_t channel_num)
   
   if (devMQTT_publish(emsTopics[EMS_TOPID_VAR_CHAN].name, (uint8_t*)out, strlen(out), DC_set.MQTT_qos) != HAL_OK)
   {
-    if (DC_set.MQTT_broc_ch == 0)
-    {
-      devMQTT_connect(DC_set.MQTT_broc_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
-      DC_debug_ipAdrrOut("# MQTT connection server by IP#: ", DC_set.MQTT_broc_ip);
-      
-    }else{
-      uint8_t broc_ip;
-      if (NW_getIP_byDomen(DC_set.MQTT_broc_domen, &broc_ip) != HAL_OK)
-      {
-        DC_debugOut("# DNS ERROR\r\n");
-      }else{
-        devMQTT_connect(&broc_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass); //Connect
-        DC_debugOut("# MQTT connection server by Domen#: %s OK\r\n", DC_set.MQTT_broc_domen);
-      }
-    }
+    //MQTT connection by source
+    devMQTT_conBySource();
   }
   
   vPortFree(out);
@@ -605,27 +584,38 @@ void startEMS_task(void const * argument)
     //Alive msg
     //devMQTT_publish(emsTopics[EMS_TOPID_DEBUG].name, EMS_DBG_MES_ALIVE, strlen(EMS_DBG_MES_ALIVE), DC_set.MQTT_qos);
     
-    if (DC_set.EMS_autoSendEn == 1)
-    {
-      if( xSemaphoreTake( muxData, ( TickType_t ) 5000 ) == pdTRUE )
+    if (DC_state.ethLink == 1)
+    {      
+      if (DC_set.EMS_autoSendEn == 1)
       {
-        memcpy(sendChan, meshChan, sizeof(sendChan));
-        xSemaphoreGive( muxData );
+        if( xSemaphoreTake( muxData, ( TickType_t ) 5000 ) == pdTRUE )
+        {
+          memcpy(sendChan, meshChan, sizeof(sendChan));
+          xSemaphoreGive( muxData );
+        }
+        
+        for (int i=0; i < V9203_COUNT_CHANNELS; i++)
+        {
+          if (DC_state.V9203_channelsActive & (1<<i))
+            EMS_sendChannelVars(i);//Send vars
+        }
       }
       
-      for (int i=0; i < V9203_COUNT_CHANNELS; i++)
+      if (DC_set.EMS_out_period == 0)
       {
-        if (DC_state.V9203_channelsActive & (1<<i))
-          EMS_sendChannelVars(i);//Send vars
+        vTaskDelay(5000);
+      }else{
+        vTaskDelayUntil( &xLastWakeTime, (const TickType_t) (DC_set.EMS_out_period*1000/portTICK_PERIOD_MS));
       }
+      
+    }else{
+      vTaskDelay(1000);
+      
+      DC_debugOut("# Ethernet link down. Wait...\n");
     }
     
-    if (DC_set.EMS_out_period == 0)
-    {
-      vTaskDelay(5000);
-    }else{
-      vTaskDelayUntil( &xLastWakeTime, (const TickType_t) (DC_set.EMS_out_period*1000/portTICK_PERIOD_MS));
-    }
+    
+    
   }
 }
 //******************************************************************************

@@ -146,19 +146,18 @@ void MX_LWIP_Init(uint8_t* ipAddr, uint8_t* netMask, uint8_t* gatewayIP, uint8_t
 //Link sample function
 void MX_link_sample()
 {
-//  uint32_t regvalue=0;
-//  HAL_ETH_ReadPHYRegister(&heth, 0x01, &regvalue); // Get Link Status
-//  bool linkup=!!(regvalue & 0x0001);
-//  
-//  if (linkup)
-//  {
-//    DC_debugOut(" @ ETH LINK UP\r\n");
-//  }
-//  else
-//  {
-//    DC_debugOut(" @ ETH LINK DOWN\r\n");
-//  }; // linkup
-  
+  uint32_t regvalue=0;
+  HAL_ETH_ReadPHYRegister(&heth, PHY_BSR, &regvalue); // Get Link Status
+  bool linkup = (regvalue & PHY_LINKED_STATUS) > 0 ? true : false;
+   
+  if (linkup)
+  {
+    DC_state.ethLink = 1;
+  }
+  else
+  {
+    DC_state.ethLink = 0;
+  }
 }
 
 void link_callback(struct netif *net)  

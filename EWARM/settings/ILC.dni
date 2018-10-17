@@ -18,7 +18,7 @@ stlinkResetStrategy=1
 [DebugChecksum]
 <<<<<<< HEAD
 <<<<<<< HEAD
-Checksum=238176828
+Checksum=731453658
 =======
 Checksum=1408558853
 >>>>>>> parent of 14ddd8d... log debug
@@ -195,15 +195,11 @@ Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\WM_python\pymite\src\vm2\py_interp.c}.1
 Bp1=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\WM_python\board\py_plat.c}.180.14" 0 0 1 "" 0 "" 0
 Bp2=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Src\usbd_cdc_if.c}.451.5" 0 0 1 "" 0 "" 0
 Bp3=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Src\usbd_cdc_if.c}.442.5" 0 0 1 "" 0 "" 0
-Bp4=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Libs\EMS_proocol\EMS_protocol.c}.551.11" 0 0 1 "" 0 "" 0
-Count=5
+Count=4
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
 Category=_ 0
-[TermIOLog]
-LoggingEnabled=_ 0
-LogFile=_ ""
 [Aliases]
 A0=_ "C:\Users\Sergey\Desktop\INS\ILC\Drivers\STM32F4xx_HAL_Driver\Src\stm32f4xx_hal_tim.c" ""
 A1=_ "C:\Users\Sergey\Desktop\INS\ILC\Middlewares\Third_Party\FreeRTOS\Source\tasks.c" ""
@@ -220,3 +216,6 @@ Exclusions=
 Enabled=0
 [CallStackStripe]
 ShowTiming=1
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
