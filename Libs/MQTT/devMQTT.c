@@ -4,11 +4,12 @@
 #include "Network.h"
 #include "cJSON.h"
 
-static int inpub_id; //topic ID
+//static int inpub_id; //topic ID
+char inTopicName[100];
 mqtt_client_t *mqttMainClient; //Client
 devMQTT_topic* devMQTT_topics; //Topics list
 uint16_t devMQTT_cntTop; //Count
-void (*devMQTT_callBack)(uint16_t, uint8_t*, uint16_t); //Func id, data, len
+void (*devMQTT_callBack)(char*, uint8_t*, uint16_t); //Func id, data, len
 static uint8_t incMessage[MQTT_INC_BUF_SIZE];
 static uint16_t incMessageLen;
 
@@ -17,7 +18,7 @@ static uint16_t incMessageLen;
 // args: topics list
 //       count topics
 //       callBackPointer
-void devMQTT_init(devMQTT_topic* topics, uint16_t count, void (*callBackPoint)(uint16_t, uint8_t*, uint16_t))
+void devMQTT_init(devMQTT_topic* topics, uint16_t count, void (*callBackPoint)(char*, uint8_t*, uint16_t))
 {
   devMQTT_topics = topics;
   devMQTT_cntTop = count;
@@ -42,16 +43,19 @@ static void mqtt_pub_request_cb(void *arg, err_t result) {
 //--------------------------------------------------------------------------------------------------
 //Incoming publish cb
 static void mqtt_incoming_publish_cb(void *arg, const char *topic, u32_t tot_len) {
-  printf("Incoming publish at topic %s with total length %u\n", topic, (unsigned int)tot_len);
+  //printf("Incoming publish at topic %s with total length %u\n", topic, (unsigned int)tot_len);
   
-  // Decode topic string into a user defined reference
-  for (int i=0; i<devMQTT_cntTop; i++)
-  {
-    if (strcmp(topic, devMQTT_topics[i].name) == 0)
-    {
-      inpub_id = i;
-    }
-  }
+  strcpy(inTopicName, topic);
+  
+//  // Decode topic string into a user defined reference
+//  for (int i=0; i<devMQTT_cntTop; i++)
+//  {
+//    if (strcmp(topic, devMQTT_topics[i].name) == 0)
+//    {
+//      inpub_id = i;
+//      break;
+//    }
+//  }
 }
 //--------------------------------------------------------------------------------------------------
 //Incoming data cb
@@ -71,7 +75,7 @@ static void mqtt_incoming_data_cb(void *arg, const u8_t *data, u16_t len, u8_t f
   if (flags & MQTT_DATA_FLAG_LAST) {
     
     // Call function or do action depending on reference, in this case inpub_id
-    devMQTT_callBack(inpub_id, incMessage, incMessageLen);
+    devMQTT_callBack(inTopicName, incMessage, incMessageLen);
     incMessageLen = 0;
     
   } else {
@@ -134,10 +138,10 @@ DEV_Status_t devMQTT_conBySource()
   {
     if ((stat = devMQTT_conByIP(DC_set.MQTT_broc_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass)) == DEV_OK)
     {
-      DC_state.mqttLink = 1;
+      DC_state.statFlags.mqttLink = 1;
       DC_debug_ipAdrrOut("# MQTT connection OK by IP#: ", DC_set.MQTT_broc_ip);
     }else{
-      DC_state.mqttLink = 0;
+      DC_state.statFlags.mqttLink = 0;
       DC_debug_ipAdrrOut("# MQTT connection ERROR by IP#: ", DC_set.MQTT_broc_ip);
     }
     DC_set.MQTT_broc_ch = 1;
@@ -148,10 +152,10 @@ DEV_Status_t devMQTT_conBySource()
     
     if ((stat = devMQTT_conByIP(broc_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass)) == DEV_OK)
     {
-      DC_state.mqttLink = 1;
+      DC_state.statFlags.mqttLink = 1;
       DC_debugOut("# MQTT connection OK by Domen#: %s OK\r\r\n", DC_set.MQTT_broc_domen);
     }else{
-      DC_state.mqttLink = 0;
+      DC_state.statFlags.mqttLink = 0;
       DC_debugOut("# MQTT connection ERROR by Domen#: %s OK\r\r\n", DC_set.MQTT_broc_domen);
     }
     DC_set.MQTT_broc_ch = 0;

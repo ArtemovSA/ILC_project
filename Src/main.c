@@ -226,7 +226,6 @@ SemaphoreHandle_t muxSD;
   while (1)
   {
 
-
   }
 }
 
@@ -857,7 +856,7 @@ void sampleTimerCall(void const * argument)
   
   MX_link_sample(); //Link sample function  
   
-  if (DC_state.ethLink == 1)
+  if (DC_state.statFlags.ethLink == 1)
   linkState = LED_PROC_OK;
     else
   linkState = LED_PROC_ERROR;

@@ -153,23 +153,23 @@ void MX_link_sample()
   if (linkup)
   {
     netif_set_up(&gnetif);
-    DC_state.ethLink = 1;
+    DC_state.statFlags.ethLink = 1;
   }
   else
   {
     netif_set_down(&gnetif);
-    DC_state.ethLink = 0;
+    DC_state.statFlags.ethLink = 0;
   }
 }
 
 void link_callback(struct netif *net)  
 {  
   if(netif_is_link_up(&gnetif)) { //DES link up blink fast  
-    DC_state.ethLink = 1;
+    DC_state.statFlags.ethLink = 1;
     DC_debugOut(" @ ETH LINK UP\r\n");
   }  
   else { //DES link down blink slow  
-    DC_state.ethLink = 0;
+    DC_state.statFlags.ethLink = 0;
     DC_debugOut(" @ ETH LINK DOWN\r\n");
   }  
 }  

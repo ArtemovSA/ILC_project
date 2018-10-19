@@ -14,9 +14,11 @@
 devMQTT_topic emsTopics[EMS_TOPID_COUNT];
 extern SPI_HandleTypeDef hspi1;
 
-//Measure and channels
-EMC_chan_mesh_t meshChan[V9203_COUNT_CHANNELS];
-EMC_chan_mesh_t sendChan[V9203_COUNT_CHANNELS];
+//Measure
+EMS_chan_mesh_t meshChan[V9203_COUNT_CHANNELS];
+
+//EMS interaction
+EMS_vars_t vars;
 
 //Task
 osThreadId EMS_taskHandle;
@@ -33,7 +35,7 @@ extern SemaphoreHandle_t muxV9203;
 extern SemaphoreHandle_t muxData;
 
 //Callback
-void EMS_callBack(uint16_t topic_ID, uint8_t* data, uint16_t len);
+void EMS_callBack(char* topicName, uint8_t* data, uint16_t len);
 
 //------------------------------------------------------------------------------
 //Init EMS
@@ -49,25 +51,28 @@ void EMS_init()
 //Init MQTT connection
 void EMS_initMQTTConn()
 {
-// topic: id/varibles/channel
-  emsTopics[EMS_TOPID_VAR_CHAN].sub_pub = MQTT_PUB;
-  sprintf(emsTopics[EMS_TOPID_VAR_CHAN].name, "%s/%s/%s", EMS_TOPIC_VAR_PREFIX, DC_unic_idef, EMS_TOPIC_CHANNEL);
+  //Broadcast
+  emsTopics[EMS_TOPID_MASTER_NEW].sub_pub = MQTT_PUB_SUB;
+  sprintf(emsTopics[EMS_TOPID_MASTER_NEW].name, "%s", EMS_TOPIC_MASTER_NEW);
   
-  // topic: id/attributes/main_set
-  emsTopics[EMS_TOPID_ATTR_MAIN_SET].sub_pub = MQTT_PUB_SUB;
-  sprintf(emsTopics[EMS_TOPID_ATTR_MAIN_SET].name, "%s/%s/%s", EMS_TOPIC_ATR_PREFIX, DC_unic_idef, EMS_TOPIC_MAIN_SETTINGS);
-    
-  // topic: id/attributes/calibrate
-  emsTopics[EMS_TOPID_ATTR_CALIBR].sub_pub = MQTT_PUB_SUB;
-  sprintf(emsTopics[EMS_TOPID_ATTR_CALIBR].name, "%s/%s/%s", EMS_TOPIC_ATR_PREFIX, DC_unic_idef, EMS_TOPIC_CALIBRATE);
+  emsTopics[EMS_TOPID_MASTER_STOP].sub_pub = MQTT_PUB_SUB;
+  sprintf(emsTopics[EMS_TOPID_MASTER_STOP].name, "%s", EMS_TOPIC_MASTER_STOP);
   
-  // topic: id/ctrl
+  //GUID indent
+  emsTopics[EMS_TOPID_VARIABLES].sub_pub = MQTT_PUB_SUB;
+  sprintf(emsTopics[EMS_TOPID_VARIABLES].name, "%s/%s/#", EMS_TOPIC_VARIABLES, DC_unic_idef);
+  
+  emsTopics[EMS_TOPID_ATTRIBUTES].sub_pub = MQTT_PUB_SUB;
+  sprintf(emsTopics[EMS_TOPID_ATTRIBUTES].name, "%s/%s/#", EMS_TOPIC_ATTRIBUTES, DC_unic_idef);
+  
+  emsTopics[EMS_TOPID_SCRYPT].sub_pub = MQTT_PUB_SUB;
+  sprintf(emsTopics[EMS_TOPID_SCRYPT].name, "%s/%s/#", EMS_TOPIC_SCRYPT, DC_unic_idef);
+  
   emsTopics[EMS_TOPID_CTRL].sub_pub = MQTT_PUB_SUB;
-  sprintf(emsTopics[EMS_TOPID_CTRL].name, "%s/%s", EMS_TOPIC_CTRL_PREFIX, DC_unic_idef);
+  sprintf(emsTopics[EMS_TOPID_CTRL].name, "%s/%s/#", EMS_TOPIC_CTRL, DC_unic_idef);
   
-  // topic: debug/id
   emsTopics[EMS_TOPID_DEBUG].sub_pub = MQTT_PUB_SUB;
-  sprintf(emsTopics[EMS_TOPID_DEBUG].name, "%s/%s", EMS_TOPIC_DEB_PREFIX, DC_unic_idef);
+  sprintf(emsTopics[EMS_TOPID_DEBUG].name, "%s/%s/#", EMS_TOPIC_DEBUG, DC_unic_idef);
   
   //MQTT connection
   devMQTT_init(emsTopics, EMS_TOPID_COUNT, &EMS_callBack); //Init MQTT
@@ -430,16 +435,92 @@ HAL_StatusTypeDef EMS_setCalibrate(uint8_t* data, uint16_t len)
 }
 //------------------------------------------------------------------------------
 //Callback
-void EMS_callBack(uint16_t topic_ID, uint8_t* data, uint16_t len)
+void EMS_callBack(char* topicName, uint8_t* data, uint16_t len)
 {
-    switch (topic_ID)
+  char topic[100];
+  char root[30];
+  char giud[36];
+  char val[30];
+  
+  taskENTER_CRITICAL();
+  strcpy(topic, topicName);
+  taskEXIT_CRITICAL();
+   
+  //Broadcast
+  if (strcmp(topic, emsTopics[EMS_TOPID_MASTER_NEW].name) == 0)
+  {
+    DC_debugOut("@ MQTT recive MASTER_NEW\n");
+    return;
+  }
+
+  if (strcmp(topic, emsTopics[EMS_TOPID_MASTER_STOP].name) == 0)
+  {
+    DC_debugOut("@ MQTT recive MASTER_STOP\n");
+    return;
+  }
+  
+  char* ptr1= topic;
+  char* ptr2;
+  ptr2 = strchr(ptr1, '/');
+  
+  if (ptr2 != NULL)
+  {
+    //Get root
+    memcpy(root, ptr1, (int)(ptr2-topic));
+    ptr1 = strchr(ptr2+1, '/');
+
+    //Get GUID
+    if (ptr2 != NULL) 
     {
-    case EMS_TOPID_ATTR_MAIN_SET: DC_debugOut("# CALL ATTR MAIN\r\r\n"); taskENTER_CRITICAL(); EMS_setMain_set(data, len); taskEXIT_CRITICAL(); break;
-    case EMS_TOPID_ATTR_CALIBR: DC_debugOut("# CALL ATTR CALIBRATE\r\r\n"); taskENTER_CRITICAL(); EMS_setCalibrate(data, len); taskEXIT_CRITICAL(); break;
-    case EMS_TOPID_CTRL: DC_debugOut("# CALL CTRL\r\r\n"); taskENTER_CRITICAL(); EMS_ctrlCallback(data, len); taskEXIT_CRITICAL(); break;
-    case EMS_TOPID_DEBUG: DC_debugOut("# CALL DEBUG\r\r\n"); break;
-    default: DC_debugOut("# CALL NON TOPIC\r\r\n");
+      memcpy(giud, ptr1, (int)(ptr2-topic));
+      
+      //Check GUID
+      if (strcmp(giud, DC_unic_idef) == 0)
+      {
+        strcpy(val, ptr2+1);
+        
+        //By roots
+        if (strcmp(root, EMS_TOPIC_VARIABLES) == 0)
+        {
+          DC_debugOut("@ MQTT variables recived\n");
+        }
+        
+        if (strcmp(root, EMS_TOPIC_ATTRIBUTES) == 0)
+        {
+          
+        }
+        
+        if (strcmp(root, EMS_TOPIC_SCRYPT) == 0)
+        {
+          
+        }
+        
+        if (strcmp(root, EMS_TOPIC_CTRL) == 0)
+        {
+          
+        }
+        
+        if (strcmp(root, EMS_TOPIC_DEBUG) == 0)
+        {
+          
+        }
+ 
+      }
     }
+  }
+
+  DC_debugOut("@ MQTT T: %s\n", topic);
+  return;
+  
+
+//    switch (topic_ID)
+//    {
+//    case EMS_TOPID_ATTR_MAIN_SET: DC_debugOut("# CALL ATTR MAIN\r\r\n"); taskENTER_CRITICAL(); EMS_setMain_set(data, len); taskEXIT_CRITICAL(); break;
+//    case EMS_TOPID_ATTR_CALIBR: DC_debugOut("# CALL ATTR CALIBRATE\r\r\n"); taskENTER_CRITICAL(); EMS_setCalibrate(data, len); taskEXIT_CRITICAL(); break;
+//    case EMS_TOPID_CTRL: DC_debugOut("# CALL CTRL\r\r\n"); taskENTER_CRITICAL(); EMS_ctrlCallback(data, len); taskEXIT_CRITICAL(); break;
+//    case EMS_TOPID_DEBUG: DC_debugOut("# CALL DEBUG\r\r\n"); break;
+//    default: DC_debugOut("# CALL NON TOPIC\r\r\n");
+//    }
 }
 //------------------------------------------------------------------------------
 //Add float
@@ -531,11 +612,11 @@ void EMS_sendChannelVars(uint8_t channel_num)
   cJSON_Delete(root);
   //DC_debugOut(out);
   
-  if (devMQTT_publish(emsTopics[EMS_TOPID_VAR_CHAN].name, (uint8_t*)out, strlen(out), DC_set.MQTT_qos) != HAL_OK)
-  {
-    //MQTT connection by source
-    devMQTT_conBySource();
-  }
+//  if (devMQTT_publish(emsTopics[EMS_TOPID_VAR_CHAN].name, (uint8_t*)out, strlen(out), DC_set.MQTT_qos) != HAL_OK)
+//  {
+//    //MQTT connection by source
+//    devMQTT_conBySource();
+//  }
   
   vPortFree(out);
 }
@@ -556,10 +637,10 @@ void EMS_ChannelDebugOut(uint8_t channel)
 //Log mesh data
 void EMS_logMesh(uint8_t channel)
 {
-  if (DC_state.discMount == 1)
+  if (DC_state.statFlags.discMount == 1)
   {
     //Log data
-    DC_logData(LOG_DATA_FILE_NAME_PX, "%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%lld;%lld;%lld;%lld;%lld;%lld;%lld;%lld;%lld", 
+    DC_logData(LOG_DATA_FILE_NAME_PX, "%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%.2f;%lld;%lld;%lld;%lld;%lld;%lld;%lld;%lld;%lld\n", 
                channel, meshChan[channel].FREQ, meshChan[channel].RMSNI, meshChan[channel].CONSSP, meshChan[channel].COSFIS,
                meshChan[channel].phaseA.RMSV, meshChan[channel].phaseB.RMSV, meshChan[channel].phaseC.RMSV,
                meshChan[channel].phaseA.RMSI, meshChan[channel].phaseB.RMSI, meshChan[channel].phaseC.RMSI,
@@ -569,6 +650,15 @@ void EMS_logMesh(uint8_t channel)
                meshChan[channel].phaseA.CONSRP, meshChan[channel].phaseB.CONSRP, meshChan[channel].phaseC.CONSRP
                  );
   }
+}
+//------------------------------------------------------------------------------
+//server advatizing
+void EMS_serverAdvatizing()
+{
+  char *out;
+  cJSON *root = cJSON_CreateObject();
+  
+  
 }
 //******************************************************************************
 // startEMS_task function
@@ -584,16 +674,24 @@ void startEMS_task(void const * argument)
     //Alive msg
     //devMQTT_publish(emsTopics[EMS_TOPID_DEBUG].name, EMS_DBG_MES_ALIVE, strlen(EMS_DBG_MES_ALIVE), DC_set.MQTT_qos);
     
-    if (DC_state.ethLink == 1)
+    if (DC_state.statFlags.ethLink == 1)
     { 
+      if (DC_state.statFlags.mqttLink == 0)
+      {
+        devMQTT_conBySource(); //MQTT connection by source
+      }
+      
+      //If server not advatizing
+      if (DC_state.statFlags.serverEMS_adv == 0)
+      {
+        if (DC_state.statFlags.mqttLink == 1)
+        {
+          EMS_serverAdvatizing();
+        }
+      }
+      
       if (DC_set.EMS_autoSendEn == 1)
       {
-        if (DC_state.mqttLink == 0)
-        {
-          //MQTT connection by source
-          devMQTT_conBySource();
-        }
-        
         if( xSemaphoreTake( muxData, ( TickType_t ) 5000 ) == pdTRUE )
         {
           memcpy(sendChan, meshChan, sizeof(sendChan));
@@ -611,17 +709,17 @@ void startEMS_task(void const * argument)
       {
         vTaskDelay(5000);
       }else{
-        vTaskDelay(DC_set.EMS_out_period*1000);
-//      }else{
-//        vTaskDelayUntil( &xLastWakeTime, (const TickType_t) (DC_set.EMS_out_period*1000/portTICK_PERIOD_MS));
+        //vTaskDelay(DC_set.EMS_out_period*1000);
+        vTaskDelayUntil( &xLastWakeTime, (const TickType_t) (DC_set.EMS_out_period*1000/portTICK_PERIOD_MS));
       }
-      
-    }else{
-      vTaskDelay(1000);
-      DC_state.mqttLink = 0;
-      DC_debugOut("# Ethernet link down. Wait...\n");
-    } 
-  }
+    }
+    
+  }else{
+    vTaskDelay(1000);
+    DC_state.statFlags.mqttLink = 0;
+    DC_debugOut("# Ethernet link down. Wait...\n");
+  } 
+}
 }
 //******************************************************************************
 // startEMSdata_task

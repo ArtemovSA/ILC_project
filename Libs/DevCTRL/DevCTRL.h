@@ -304,19 +304,44 @@ void DC_LedBlink(LED_t led, uint16_t rate_Hz, uint16_t count);
 
 #define DC_TRY_MQTT_CONN_ERROR          5 //Count trys reconnections to MQTT
 
-enum{
-  DC_ERR_MQTT = 0,
-  DC_ERR_ETH,
-  DC_ERR_PCA9555,
-  DC_ERR_CHANNEL
-};
+//Error
+typedef union
+{
+  struct
+  {
+    unsigned char mqtt : 1;
+    unsigned char ethernet : 1;
+    unsigned char pca955 : 1;
+    unsigned char channel : 1;
+    unsigned char bit5 : 1;
+    unsigned char bit6 : 1;
+    unsigned char bit7 : 1;
+    unsigned char bit8 : 1;
+  };
+  unsigned char val;
+} DeviceError_t;
+
+//Status
+typedef union
+{
+  struct
+  {
+    unsigned char ethLink : 1;
+    unsigned char mqttLink : 1;
+    unsigned char discMount : 1;
+    unsigned char advatizing : 1;
+    unsigned char bit5 : 1;
+    unsigned char bit6 : 1;
+    unsigned char bit7 : 1;
+    unsigned char bit8 : 1;
+  };
+  unsigned char val;
+} DeviceStatus_t;
 
 typedef struct{
   uint8_t V9203_channelsActive;
-  uint32_t errorFlags;
-  uint8_t discMount;
-  uint8_t ethLink;
-  uint8_t mqttLink;
+  DeviceError_t errorFlags;
+  DeviceStatus_t statFlags;
 } DC_state_t;
 
 extern DC_state_t DC_state;

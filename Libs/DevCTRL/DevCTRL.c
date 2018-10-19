@@ -103,7 +103,7 @@ void DC_init(osMessageQId *eventQueue)
     
     if (stat == HAL_ERROR)
     {
-      DC_state.errorFlags |= DC_ERR_PCA9555;
+      DC_state.errorFlags.pca955 = 1;
       DC_debugOut("# PCA9555 ERROR\r\n");
     }
     
@@ -117,10 +117,10 @@ void DC_init(osMessageQId *eventQueue)
   if (FATFS_res != FR_OK)
   {
     DC_debugOut("# Mount error %d\r\n", FATFS_res);
-    DC_state.discMount = 0;
+    DC_state.statFlags.discMount = 0;
   }else{
     DC_debugOut("# Mount drive OK\r\n");
-    DC_state.discMount = 1;    
+    DC_state.statFlags.discMount = 1;    
   }
   
   //Start led task
@@ -334,7 +334,7 @@ void DC_debugOut(char *str, ...)
   }
   
   vTaskDelay(50);
-  if (DC_state.discMount == 1)
+  if (DC_state.statFlags.discMount == 1)
     DC_logDebug(strBuffer);
 }
 //--------------------------------------------------------------------------------------------------

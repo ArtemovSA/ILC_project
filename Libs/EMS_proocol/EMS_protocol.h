@@ -14,9 +14,16 @@
 #define LOG_DATA_FILE_NAME_PX           "LOG_meshData"
 
 //Topics names
-#define EMS_TOPIC_CHANNEL               "channel"
-#define EMS_TOPIC_CALIBRATE             "calibrate"
-#define EMS_TOPIC_MAIN_SETTINGS         "main_set"
+//Broadcast
+#define EMS_TOPIC_MASTER_NEW            "master/new_device"
+#define EMS_TOPIC_MASTER_STOP           "master/stop_device"
+
+//GUID indent
+#define EMS_TOPIC_VARIABLES             "variables"
+#define EMS_TOPIC_ATTRIBUTES            "attributes"
+#define EMS_TOPIC_SCRYPT                "srypt"
+#define EMS_TOPIC_CTRL                  "ctrl"
+#define EMS_TOPIC_DEBUG                 "debug"
 
 //Messages
 #define EMS_DBG_MES_ALIVE               "Alive"
@@ -103,11 +110,17 @@
 
 //Topics ID
 enum {
-  EMS_TOPID_VAR_CHAN=0, // channel topic
-  EMS_TOPID_ATTR_MAIN_SET, //Main settings
-  EMS_TOPID_ATTR_CALIBR, //Calibrate values
-  EMS_TOPID_CTRL, //Control
+  //Broadcast
+  EMS_TOPID_MASTER_NEW = 0,
+  EMS_TOPID_MASTER_STOP,
+  
+  //GUID indent
+  EMS_TOPID_VARIABLES,
+  EMS_TOPID_ATTRIBUTES,
+  EMS_TOPID_SCRYPT,
+  EMS_TOPID_CTRL,
   EMS_TOPID_DEBUG,
+    
   EMS_TOPID_COUNT
 };
 
@@ -133,7 +146,16 @@ typedef struct{
   EMS_phase_mesh_t phaseA;
   EMS_phase_mesh_t phaseB;
   EMS_phase_mesh_t phaseC;
-}EMC_chan_mesh_t;
+}EMS_chan_mesh_t;
+
+//Struct for intrraction with EMS system
+typedef struct{
+  char name[20];
+  uint8_t type;
+  uint8_t dtype;
+  uint8_t func;
+  char val[15];
+}EMS_vars_t;
 
 //Init EMS
 void EMS_init();

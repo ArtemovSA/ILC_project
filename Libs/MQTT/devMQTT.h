@@ -16,12 +16,11 @@
 typedef struct
 {
   uint8_t sub_pub; //Subscribe - 1
-  char name[70];
-  /////.....
+  char name[100];
 }devMQTT_topic;
 
 //Init
-void devMQTT_init(devMQTT_topic* topics, uint16_t count, void (*callBackPoint)(uint16_t, uint8_t*, uint16_t));
+void devMQTT_init(devMQTT_topic* topics, uint16_t count, void (*callBackPoint)(char*, uint8_t*, uint16_t));
 //MQTT connection by source
 DEV_Status_t devMQTT_conBySource();
 //MQTT connection
