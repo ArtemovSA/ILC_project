@@ -124,7 +124,7 @@ void DC_init(osMessageQId *eventQueue)
   }
   
   //Start led task
-  xTaskCreate(vTASK_led,(char*)"TASK_led", configMINIMAL_STACK_SIZE, NULL, tskIDLE_PRIORITY+5, &ledTask_handle);
+  xTaskCreate(vTASK_led,(char*)"TASK_led", configMINIMAL_STACK_SIZE, NULL, osPriorityHigh, &ledTask_handle);
 }
 //--------------------------------------------------------------------------------------------------
 //Log data

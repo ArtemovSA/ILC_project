@@ -585,9 +585,15 @@ void startEMS_task(void const * argument)
     //devMQTT_publish(emsTopics[EMS_TOPID_DEBUG].name, EMS_DBG_MES_ALIVE, strlen(EMS_DBG_MES_ALIVE), DC_set.MQTT_qos);
     
     if (DC_state.ethLink == 1)
-    {      
+    { 
       if (DC_set.EMS_autoSendEn == 1)
       {
+        if (DC_state.mqttLink == 0)
+        {
+          //MQTT connection by source
+          devMQTT_conBySource();
+        }
+        
         if( xSemaphoreTake( muxData, ( TickType_t ) 5000 ) == pdTRUE )
         {
           memcpy(sendChan, meshChan, sizeof(sendChan));
@@ -605,17 +611,16 @@ void startEMS_task(void const * argument)
       {
         vTaskDelay(5000);
       }else{
-        vTaskDelayUntil( &xLastWakeTime, (const TickType_t) (DC_set.EMS_out_period*1000/portTICK_PERIOD_MS));
+        vTaskDelay(DC_set.EMS_out_period*1000);
+//      }else{
+//        vTaskDelayUntil( &xLastWakeTime, (const TickType_t) (DC_set.EMS_out_period*1000/portTICK_PERIOD_MS));
       }
       
     }else{
       vTaskDelay(1000);
-      
+      DC_state.mqttLink = 0;
       DC_debugOut("# Ethernet link down. Wait...\n");
-    }
-    
-    
-    
+    } 
   }
 }
 //******************************************************************************

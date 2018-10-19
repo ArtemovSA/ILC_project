@@ -140,7 +140,7 @@ DEV_Status_t devMQTT_conBySource()
       DC_state.mqttLink = 0;
       DC_debug_ipAdrrOut("# MQTT connection ERROR by IP#: ", DC_set.MQTT_broc_ip);
     }
-    
+    DC_set.MQTT_broc_ch = 1;
   }else{
     uint8_t broc_ip[4];
     
@@ -154,6 +154,7 @@ DEV_Status_t devMQTT_conBySource()
       DC_state.mqttLink = 0;
       DC_debugOut("# MQTT connection ERROR by Domen#: %s OK\r\r\n", DC_set.MQTT_broc_domen);
     }
+    DC_set.MQTT_broc_ch = 0;
   }
   
   return stat;

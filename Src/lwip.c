@@ -152,10 +152,12 @@ void MX_link_sample()
    
   if (linkup)
   {
+    netif_set_up(&gnetif);
     DC_state.ethLink = 1;
   }
   else
   {
+    netif_set_down(&gnetif);
     DC_state.ethLink = 0;
   }
 }

@@ -61,8 +61,8 @@ extern char DC_unic_idStr[13]; //Unic id str
 #define DC_DEF_MQTT_QOS                 1
 
 //EMS
-#define DC_DEF_EMS_OUT_PERIOD           20 //sec
-#define DC_DEF_EMS_DATA_PERIOD          20 //sec
+#define DC_DEF_EMS_OUT_PERIOD           5 //sec
+#define DC_DEF_EMS_DATA_PERIOD          5 //sec
 #define DC_DEF_EMS_SEND_EN              1 //Разрешить передачу данных
 #define DC_DEF_EMS_CH_EN                3 //Channel enable in bit
 
@@ -99,7 +99,7 @@ typedef enum{
   DC_SET_VM_AUTO_START
 }DC_settingID_t;
 
-#define DC_SET_MAGICKEY 0x01
+#define DC_SET_MAGICKEY 0x02
 
 typedef struct {
   

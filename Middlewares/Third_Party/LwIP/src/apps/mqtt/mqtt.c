@@ -1032,12 +1032,16 @@ mqtt_publish(mqtt_client_t *client, const char *topic, const void *payload, u16_
   u16_t topic_len;
   u16_t remaining_length;
 
-  taskENTER_CRITICAL();
-  
   LWIP_ASSERT("mqtt_publish: client != NULL", client);
   LWIP_ASSERT("mqtt_publish: topic != NULL", topic);
-  LWIP_ERROR("mqtt_publish: TCP disconnected", (client->conn_state != TCP_DISCONNECTED), return ERR_CONN);
+  
+  if (client->conn_state == TCP_DISCONNECTED)
+    return ERR_CONN;
+  
+  //LWIP_ERROR("mqtt_publish: TCP disconnected", (client->conn_state != TCP_DISCONNECTED), return ERR_CONN);
 
+  //taskENTER_CRITICAL();
+  
   topic_strlen = strlen(topic);
   LWIP_ERROR("mqtt_publish: topic length overflow", (topic_strlen <= (0xFFFF - 2)), return ERR_ARG);
   topic_len = (u16_t)topic_strlen;
@@ -1084,7 +1088,7 @@ mqtt_publish(mqtt_client_t *client, const char *topic, const void *payload, u16_
 
   mqtt_append_request(&client->pend_req_queue, r);
   mqtt_output_send(&client->output, client->conn);
-  taskEXIT_CRITICAL();
+  //taskEXIT_CRITICAL();
   
   return ERR_OK;
 }
