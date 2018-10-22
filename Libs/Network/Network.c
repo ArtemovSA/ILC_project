@@ -5,9 +5,10 @@
 
 //--------------------------------------------------------------------------------------------------
 //Get ip from domen address
-HAL_StatusTypeDef NW_getIP_byDomen(char* domen, uint8_t* ip)
+DEV_Status_t NW_getIP_byDomen(char* domen, uint8_t* ip)
 {
   ip_addr_t ipAddress;
+  ipAddress.addr = 0;
   err_t retVal = dns_gethostbyname(domen, &ipAddress, NULL, NULL);
   
   if (retVal == ERR_OK)
@@ -17,10 +18,10 @@ HAL_StatusTypeDef NW_getIP_byDomen(char* domen, uint8_t* ip)
     *(ip+1) = (ipAddress.addr & 0x0000ff00) >> 8;
     *(ip) = (ipAddress.addr & 0x000000ff);
     
-    return HAL_OK;
+    return DEV_OK;
   }
   
-  return HAL_ERROR;
+  return DEV_ERROR;
 }
 //--------------------------------------------------------------------------------------------------
 //Convert int ip ti array

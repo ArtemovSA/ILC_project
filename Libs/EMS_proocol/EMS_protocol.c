@@ -16,9 +16,10 @@ extern SPI_HandleTypeDef hspi1;
 
 //Measure
 EMS_chan_mesh_t meshChan[V9203_COUNT_CHANNELS];
+EMS_chan_mesh_t sendChan[V9203_COUNT_CHANNELS];
 
 //EMS interaction
-EMS_vars_t vars;
+EMS_vars_t vars[EMS_VAR_COUNT];
 
 //Task
 osThreadId EMS_taskHandle;
@@ -652,22 +653,131 @@ void EMS_logMesh(uint8_t channel)
   }
 }
 //------------------------------------------------------------------------------
+//set struct
+void EMS_initStruct(uint8_t id, char *name, uint8_t type, uint8_t dtype, uint8_t func)
+{
+  strcpy(vars[id].name, name);
+  vars[id].type = type;
+  vars[id].dtype = dtype;
+  vars[id].func = func;
+}
+//------------------------------------------------------------------------------
+//Create vars struct
+void EMS_createVarsStruct()
+{
+//Create vars struct
+  EMS_initStruct(EMS_VAR_FREQ, "FREQ", EMS_TYPE_OUT, EMS_DTYPE_NUM, 0);
+  EMS_initStruct(EMS_VAR_RMSV_PA, "RMSV_PA", EMS_TYPE_OUT, EMS_DTYPE_NUM, 0);
+  EMS_initStruct(EMS_VAR_RMSI_PA, "RMSI_PA", EMS_TYPE_OUT, EMS_DTYPE_NUM, 0);
+  EMS_initStruct(EMS_VAR_RMSP_PA, "RMSP_PA", EMS_TYPE_OUT, EMS_DTYPE_NUM, 0);
+  EMS_initStruct(EEMS_VAR_RMSV_PB, "RMSV_PB", EMS_TYPE_OUT, EMS_DTYPE_NUM, 0);
+  EMS_initStruct(EMS_VAR_RMSI_PB, "RMSI_PB", EMS_TYPE_OUT, EMS_DTYPE_NUM, 0);
+  EMS_initStruct(EMS_VAR_RMSP_PB, "RMSP_PB", EMS_TYPE_OUT, EMS_DTYPE_NUM, 0);
+  EMS_initStruct(EMS_VAR_RMSV_PC, "RMSV_PC", EMS_TYPE_OUT, EMS_DTYPE_NUM, 0);
+  EMS_initStruct(EMS_VAR_RMSI_PC, "RMSI_PC", EMS_TYPE_OUT, EMS_DTYPE_NUM, 0);
+  EMS_initStruct(EMS_VAR_RMSP_PC, "RMSP_PC", EMS_TYPE_OUT, EMS_DTYPE_NUM, 0);
+  EMS_initStruct(EMS_VAR_CONS, "CONS", EMS_TYPE_OUT, EMS_DTYPE_NUM, 0);
+}
+//------------------------------------------------------------------------------
+//Reload vars struct
+void EMS_reloadVarsStruct()
+{
+  sprintf(vars[EMS_VAR_FREQ].val, "%.3f", sendChan[0].FREQ);
+  sprintf(vars[EMS_VAR_RMSV_PA].val, "%.3f", sendChan[0].phaseA.RMSV);
+  sprintf(vars[EMS_VAR_RMSI_PA].val, "%.3f", sendChan[0].phaseA.RMSI);
+  sprintf(vars[EMS_VAR_RMSP_PA].val, "%.3f", sendChan[0].phaseA.RMSP);
+  sprintf(vars[EEMS_VAR_RMSV_PB].val, "%.3f", sendChan[0].phaseB.RMSV);
+  sprintf(vars[EMS_VAR_RMSI_PB].val, "%.3f", sendChan[0].phaseB.RMSI);
+  sprintf(vars[EMS_VAR_RMSP_PB].val, "%.3f", sendChan[0].phaseB.RMSP);
+  sprintf(vars[EMS_VAR_RMSV_PC].val, "%.3f", sendChan[0].phaseC.RMSV);
+  sprintf(vars[EMS_VAR_RMSI_PC].val, "%.3f", sendChan[0].phaseC.RMSI);
+  sprintf(vars[EMS_VAR_RMSP_PC].val, "%.3f", sendChan[0].phaseC.RMSP);
+  sprintf(vars[EMS_VAR_CONS].val, "%lld", sendChan[0].phaseA.CONSP);
+}
+//------------------------------------------------------------------------------
 //server advatizing
 void EMS_serverAdvatizing()
 {
   char *out;
+  
+  //Create JSON
   cJSON *root = cJSON_CreateObject();
+  cJSON *variables = cJSON_CreateArray();
+  for (int i=0; i<EMS_VAR_COUNT; i++)
+  {
+    cJSON *var = cJSON_CreateObject();
+    cJSON_AddStringToObject(var, "name",  vars[i].name);
+    EMS_AddIntToObject(var, "type", vars[i].type);
+    EMS_AddIntToObject(var, "dtype", vars[i].dtype);
+    EMS_AddIntToObject(var, "func", vars[i].func);
+    
+    cJSON_AddItemToArray(variables, var);
+  }
   
+  cJSON_AddStringToObject(root, "guid", DC_unic_idef);
+  cJSON_AddStringToObject(root, "password", "123");
+  cJSON_AddNumberToObject(root, "timeout", 3);
+  cJSON_AddItemToObject(root, "varibles", variables);
   
+  out = cJSON_Print(root);
+  //DC_debugOut(out);
+  
+  if (devMQTT_publish(emsTopics[EMS_TOPID_MASTER_NEW].name, (uint8_t*)out, strlen(out), DC_set.MQTT_qos) == HAL_OK)
+  {
+    DC_debugOut("Advatizing pack sended\n");
+    
+  }
+}
+//------------------------------------------------------------------------------
+//Test sending
+void EMS_testSending()
+{
+  EMS_reloadVarsStruct();
+    
+  char *out;
+  cJSON *root = cJSON_CreateObject();
+  cJSON *variables = cJSON_CreateArray();
+  
+  for (int i=0; i<EMS_VAR_COUNT; i++)
+  {
+    cJSON *var = cJSON_CreateObject();
+    cJSON_AddStringToObject(var, "name",   vars[i].name);
+    cJSON_AddStringToObject(var, "value",  vars[i].val);
+    
+    cJSON_AddItemToArray(variables, var);
+  }
+  
+  time_t timestamp;
+  if ( CL_getSystem_Timestamp(&timestamp) == DEV_OK)//Get system timestamp
+  {
+    cJSON_AddNumberToObject(root, "time", (uint32_t)timestamp);
+  }else{
+    cJSON_AddNumberToObject(root, "time", 0);
+  }
+  
+  cJSON_AddItemToObject(root, "variables", variables);
+  out = cJSON_Print(root);
+  cJSON_Delete(root);
+  DC_debugOut(out);
+  
+  if (devMQTT_publish("variables/aaaaaaaa-1234-1234-1234-33004c343651", (uint8_t*)out, strlen(out), DC_set.MQTT_qos) != HAL_OK)
+  {
+    //MQTT connection by source
+    devMQTT_conBySource();
+  }
+  
+  vPortFree(out);
 }
 //******************************************************************************
 // startEMS_task function
 void startEMS_task(void const * argument)
 { 
   TickType_t xLastWakeTime = xTaskGetTickCount();
-
+  
   //Init MQTT connection
   EMS_initMQTTConn();
+  
+  EMS_createVarsStruct();
   
   while(1)
   {
@@ -680,46 +790,47 @@ void startEMS_task(void const * argument)
       {
         devMQTT_conBySource(); //MQTT connection by source
       }
-      
-      //If server not advatizing
-      if (DC_state.statFlags.serverEMS_adv == 0)
-      {
-        if (DC_state.statFlags.mqttLink == 1)
-        {
-          EMS_serverAdvatizing();
-        }
-      }
-      
-      if (DC_set.EMS_autoSendEn == 1)
-      {
-        if( xSemaphoreTake( muxData, ( TickType_t ) 5000 ) == pdTRUE )
-        {
-          memcpy(sendChan, meshChan, sizeof(sendChan));
-          xSemaphoreGive( muxData );
-        }
-        
-        for (int i=0; i < V9203_COUNT_CHANNELS; i++)
-        {
-          if (DC_state.V9203_channelsActive & (1<<i))
-            EMS_sendChannelVars(i);//Send vars
-        }
-      }
-      
-      if (DC_set.EMS_out_period == 0)
-      {
-        vTaskDelay(5000);
-      }else{
-        //vTaskDelay(DC_set.EMS_out_period*1000);
-        vTaskDelayUntil( &xLastWakeTime, (const TickType_t) (DC_set.EMS_out_period*1000/portTICK_PERIOD_MS));
-      }
     }
     
-  }else{
-    vTaskDelay(1000);
-    DC_state.statFlags.mqttLink = 0;
-    DC_debugOut("# Ethernet link down. Wait...\n");
-  } 
-}
+//    //If server not advatizing
+//    if (DC_state.statFlags.advatizing == 0)
+//    {
+//      if (DC_state.statFlags.mqttLink == 1)
+//      {
+//        EMS_serverAdvatizing();
+//      }
+//    }
+    
+    if (DC_set.EMS_autoSendEn == 1)
+    {
+      if( xSemaphoreTake( muxData, ( TickType_t ) 5000 ) == pdTRUE )
+      {
+        memcpy(sendChan, meshChan, sizeof(sendChan));
+        xSemaphoreGive( muxData );
+      }
+      
+      EMS_testSending();
+      
+//      for (int i=0; i < V9203_COUNT_CHANNELS; i++)
+//      {
+//        if (DC_state.V9203_channelsActive & (1<<i))
+//          EMS_sendChannelVars(i);//Send vars
+//      }
+    }else{
+      vTaskDelay(1000);
+      DC_state.statFlags.mqttLink = 0;
+      DC_debugOut("# Ethernet link down. Wait...\n");
+    } 
+    
+    
+    if (DC_set.EMS_out_period == 0)
+    {
+      vTaskDelay(5000);
+    }else{
+      //vTaskDelay(DC_set.EMS_out_period*1000);
+      vTaskDelayUntil( &xLastWakeTime, (const TickType_t) (DC_set.EMS_out_period*1000/portTICK_PERIOD_MS));
+    }
+  }
 }
 //******************************************************************************
 // startEMSdata_task

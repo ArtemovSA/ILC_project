@@ -334,8 +334,8 @@ void DC_debugOut(char *str, ...)
   }
   
   vTaskDelay(50);
-  if (DC_state.statFlags.discMount == 1)
-    DC_logDebug(strBuffer);
+//  if (DC_state.statFlags.discMount == 1)
+//    DC_logDebug(strBuffer);
 }
 //--------------------------------------------------------------------------------------------------
 //IP out

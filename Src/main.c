@@ -802,6 +802,8 @@ void startDebugTask(void const * argument)
 
   if (DC_set.net_DHCP_en == 1)
   {
+    vTaskDelay(1000);
+    
     uint8_t ip[4];
     if (MX_LWIP_getIP(ip))
     {
@@ -852,7 +854,7 @@ void startDebugTask(void const * argument)
 /* sampleTimerCall function */
 void sampleTimerCall(void const * argument)
 {
-  /* USER CODE BEGIN sampleTimerCall */
+  dns_tmr();
   
   MX_link_sample(); //Link sample function  
   
@@ -860,8 +862,6 @@ void sampleTimerCall(void const * argument)
   linkState = LED_PROC_OK;
     else
   linkState = LED_PROC_ERROR;
-  
-  /* USER CODE END sampleTimerCall */
 }
 
 /**

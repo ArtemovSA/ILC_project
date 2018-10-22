@@ -157,6 +157,30 @@ typedef struct{
   char val[15];
 }EMS_vars_t;
 
+#define EMS_TYPE_IN     1
+#define EMS_TYPE_OUT    2
+#define EMS_TYPE_INOUT  3
+
+#define EMS_DTYPE_NUM   1
+#define EMS_DTYPE_STR   2
+#define EMS_DTYPE_BOOL  3
+
+//For Example
+enum {
+  EMS_VAR_FREQ = 0,
+  EMS_VAR_RMSV_PA,
+  EMS_VAR_RMSI_PA,
+  EMS_VAR_RMSP_PA,
+  EEMS_VAR_RMSV_PB,
+  EMS_VAR_RMSI_PB,
+  EMS_VAR_RMSP_PB,
+  EMS_VAR_RMSV_PC,
+  EMS_VAR_RMSI_PC,
+  EMS_VAR_RMSP_PC,
+  EMS_VAR_CONS,
+  EMS_VAR_COUNT
+};
+
 //Init EMS
 void EMS_init();
 

@@ -148,17 +148,23 @@ DEV_Status_t devMQTT_conBySource()
   }else{
     uint8_t broc_ip[4];
     
-    NW_getIP_byDomen(DC_set.MQTT_broc_domen, broc_ip);
-    
-    if ((stat = devMQTT_conByIP(broc_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass)) == DEV_OK)
+    if (NW_getIP_byDomen(DC_set.MQTT_broc_domen, broc_ip) == DEV_ERROR)
     {
-      DC_state.statFlags.mqttLink = 1;
-      DC_debugOut("# MQTT connection OK by Domen#: %s OK\r\r\n", DC_set.MQTT_broc_domen);
+      DC_debugOut("# IP not found\n");
+      DC_set.MQTT_broc_ch = 0;
+      return devMQTT_conBySource();
     }else{
-      DC_state.statFlags.mqttLink = 0;
-      DC_debugOut("# MQTT connection ERROR by Domen#: %s OK\r\r\n", DC_set.MQTT_broc_domen);
+      
+      if ((stat = devMQTT_conByIP(broc_ip, DC_set.MQTT_port, DC_unic_idStr, DC_set.MQTT_user, DC_set.MQTT_pass)) == DEV_OK)
+      {
+        DC_state.statFlags.mqttLink = 1;
+        DC_debugOut("# MQTT connection OK by Domen#: %s OK\r\r\n", DC_set.MQTT_broc_domen);
+      }else{
+        DC_state.statFlags.mqttLink = 0;
+        DC_debugOut("# MQTT connection ERROR by Domen#: %s OK\r\r\n", DC_set.MQTT_broc_domen);
+      }
+      DC_set.MQTT_broc_ch = 0;
     }
-    DC_set.MQTT_broc_ch = 0;
   }
   
   return stat;
