@@ -252,6 +252,8 @@ void DC_logDebug(char *str, ...);
 
 //Init
 void DC_init();
+//Reload watchDog
+void DC_reloadDog();
 //System reset
 void DC_systemReset();
 //Out debug data

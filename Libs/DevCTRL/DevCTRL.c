@@ -10,7 +10,6 @@
 #include "deviceDefs.h"
 #include "Task_transfer.h"
 #include "fatfs.h"
-#include "stm32f4xx_hal_gpio.h"
 #include "Clock.h"
 #include "USB_port.h"
 
@@ -42,6 +41,7 @@ extern SRAM_HandleTypeDef hsram2;
 extern NAND_HandleTypeDef hnand1;
 extern SemaphoreHandle_t muxV9203;
 extern SemaphoreHandle_t muxSD;
+extern IWDG_HandleTypeDef hiwdg;
 
 //Get unic ID
 void DC_getUnicID();
@@ -125,6 +125,12 @@ void DC_init(osMessageQId *eventQueue)
   
   //Start led task
   xTaskCreate(vTASK_led,(char*)"TASK_led", configMINIMAL_STACK_SIZE, NULL, osPriorityHigh, &ledTask_handle);
+}
+//--------------------------------------------------------------------------------------------------
+//Reload watchDog
+void DC_reloadDog()
+{
+  HAL_IWDG_Refresh(&hiwdg);
 }
 //--------------------------------------------------------------------------------------------------
 //Log data

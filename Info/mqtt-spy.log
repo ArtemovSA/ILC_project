@@ -3879,3 +3879,72 @@ WillDestination             :  null
 2018-10-22 07:30:05,990 INFO  [JavaFX Application Thread     ] [NewSubscriptionController     ]  - Subscribing to variables/#
 2018-10-22 07:30:05,991 INFO  [JavaFX Application Thread     ] [MqttSubscriptionViewManager   ]  - Creating subscription for variables/#
 2018-10-22 07:30:06,087 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/#
+2018-10-22 10:05:49,661 INFO  [JavaFX Application Thread     ] [MqttViewManager               ]  - Default configuration file present (C:\Users\user\mqtt-spy\mqtt-spy-configuration.xml) = true
+2018-10-22 10:05:49,694 INFO  [JavaFX Application Thread     ] [MqttViewManager               ]  - Loading configuration file from C:\Users\user\mqtt-spy\mqtt-spy-configuration.xml
+2018-10-22 10:05:51,245 INFO  [JavaFX Application Thread     ] [MqttConfigurationUtils        ]  - Auto-complete for server URI (ems.insyte.ru:1883 -> tcp://ems.insyte.ru:1883)
+2018-10-22 10:05:51,641 ERROR [JavaFX Application Thread     ] [FileUtils                     ]  - No files in C:\Users\user\mqtt-spy\
+2018-10-22 10:05:52,176 INFO  [mqtt-spy [ConnectionRunnable for user_art@ems.insyte.ru:1883]] [MqttAsyncConnectionRunnable   ]  - Connecting client ID [user_art] to server [[tcp://ems.insyte.ru:1883]]; options = 
+============== Connection options ==============
+CleanSession                :  true
+SocketFactory               :  null
+MqttVersion                 :  0
+KeepAliveInterval           :  60
+ConTimeout                  :  30
+UserName                    :  null
+SSLProperties               :  null
+WillDestination             :  null
+==========================================
+
+2018-10-22 10:05:52,681 INFO  [MQTT Call: user_art           ] [MqttConnectionResultHandler   ]  - user_art@ems.insyte.ru:1883 connected
+2018-10-22 10:05:52,692 INFO  [JavaFX Application Thread     ] [MqttEventHandler              ]  - About to resubscribe to all requested topics
+2018-10-22 10:06:01,487 INFO  [JavaFX Application Thread     ] [NewSubscriptionController     ]  - Subscribing to variables./#
+2018-10-22 10:06:01,487 INFO  [JavaFX Application Thread     ] [MqttSubscriptionViewManager   ]  - Creating subscription for variables./#
+2018-10-22 10:06:01,537 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables./#
+2018-10-22 10:06:07,112 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables./#
+2018-10-22 10:06:07,113 INFO  [JavaFX Application Thread     ] [MqttAsyncConnection           ]  - Subscription variables./# removed
+2018-10-22 10:06:10,239 INFO  [JavaFX Application Thread     ] [NewSubscriptionController     ]  - Subscribing to variables/#
+2018-10-22 10:06:10,239 INFO  [JavaFX Application Thread     ] [MqttSubscriptionViewManager   ]  - Creating subscription for variables/#
+2018-10-22 10:06:10,286 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/#
+2018-10-22 10:06:18,903 INFO  [JavaFX Application Thread     ] [NewSubscriptionController     ]  - Subscribing to variables/aaaaaaaa-1234-1234-1234-33004c343651
+2018-10-22 10:06:18,903 INFO  [JavaFX Application Thread     ] [MqttSubscriptionViewManager   ]  - Creating subscription for variables/aaaaaaaa-1234-1234-1234-33004c343651
+2018-10-22 10:06:18,949 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/aaaaaaaa-1234-1234-1234-33004c343651
+2018-10-22 10:53:57,505 INFO  [JavaFX Application Thread     ] [NewSubscriptionController     ]  - Subscribing to variables/aaaaaaaa-1234-1234-1234-3d004c3436511734303436
+2018-10-22 10:53:57,505 INFO  [JavaFX Application Thread     ] [MqttSubscriptionViewManager   ]  - Creating subscription for variables/aaaaaaaa-1234-1234-1234-3d004c3436511734303436
+2018-10-22 10:53:57,567 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/aaaaaaaa-1234-1234-1234-3d004c3436511734303436
+2018-10-22 11:29:27,133 ERROR [MQTT Rec: user_art            ] [MqttCallbackHandler           ]  - Connection user_art@ems.insyte.ru:1883 lost
+Соединение потеряно (32109) - java.net.SocketException: Software caused connection abort: recv failed
+	at org.eclipse.paho.client.mqttv3.internal.CommsReceiver.run(CommsReceiver.java:146)
+	at java.lang.Thread.run(Unknown Source)
+Caused by: java.net.SocketException: Software caused connection abort: recv failed
+	at java.net.SocketInputStream.socketRead0(Native Method)
+	at java.net.SocketInputStream.socketRead(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.net.SocketInputStream.read(Unknown Source)
+	at java.io.DataInputStream.readByte(Unknown Source)
+	at org.eclipse.paho.client.mqttv3.internal.wire.MqttInputStream.readMqttWireMessage(MqttInputStream.java:65)
+	at org.eclipse.paho.client.mqttv3.internal.CommsReceiver.run(CommsReceiver.java:107)
+	... 1 more
+2018-10-22 11:29:27,140 WARN  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Client not connected
+2018-10-22 11:29:27,140 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables/#
+2018-10-22 11:29:27,141 WARN  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Client not connected
+2018-10-22 11:29:27,141 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables/aaaaaaaa-1234-1234-1234-33004c343651
+2018-10-22 11:29:27,142 WARN  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Client not connected
+2018-10-22 11:29:27,142 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Successfully unsubscribed from variables/aaaaaaaa-1234-1234-1234-3d004c3436511734303436
+2018-10-22 12:51:41,012 INFO  [mqtt-spy [ConnectionRunnable for user_art@ems.insyte.ru:1883]] [MqttAsyncConnectionRunnable   ]  - Connecting client ID [user_art] to server [[tcp://ems.insyte.ru:1883]]; options = 
+============== Connection options ==============
+CleanSession                :  true
+SocketFactory               :  null
+MqttVersion                 :  0
+KeepAliveInterval           :  60
+ConTimeout                  :  30
+UserName                    :  null
+SSLProperties               :  null
+WillDestination             :  null
+==========================================
+
+2018-10-22 12:51:41,044 INFO  [MQTT Call: user_art           ] [MqttConnectionResultHandler   ]  - user_art@ems.insyte.ru:1883 connected
+2018-10-22 12:51:41,053 INFO  [JavaFX Application Thread     ] [MqttEventHandler              ]  - About to resubscribe to all requested topics
+2018-10-22 12:51:41,784 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/aaaaaaaa-1234-1234-1234-33004c343651
+2018-10-22 12:51:42,711 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/aaaaaaaa-1234-1234-1234-3d004c3436511734303436
+2018-10-22 12:51:44,503 INFO  [JavaFX Application Thread     ] [BaseMqttConnection            ]  - Subscribed to variables/#
